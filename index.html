@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Electricomics Editor</title>
+
+  <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+  <link rel="stylesheet" href="js/lib/jQuery-contextMenu/jquery.contextMenu.css">
+  <link rel="stylesheet" href="font/komika/stylesheet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header id="comic-header" class="header">
+    <h1>Electricomics Layout Tool</h1>
+  </header>
+
+  <nav class="pages-nav">
+    <!-- <span class="pages-nav-add" data-page="0">Add</span> -->
+    <ul id="pages-nav" class="page-nav-wrapper"></ul>
+    <span class="pages-nav-add" data-page="-1">Add</span>
+    
+    <script type="text/template" id="page-template">
+    <li class="page-nav js-page-nav">
+      <input type="text" class="page-name">
+      <span class="page-nav-add">+</span>
+      <span class="page-nav-remove">-</span>
+      <span class="page-nav-handle">::</span>
+    </li>
+    </script>
+  </nav>
+
+  <div class="panels">
+    <details open>
+      <summary>Settings</summary>
+      <div>
+        <label>Comic Name</label>
+        <input type="text" id="comic-name">
+      </div>
+      <div>
+        <label>Retina 2x <input type="checkbox" id="comic-pxratio-2" value="2"></label>
+      </div>
+      <div>
+        <label>width <input type="number" id="comic-width"></label>
+      </div>
+      <div>
+        <label>height <input type="number" id="comic-height"></label>
+      </div>
+      <div>
+        <input type="button" id="comic-save" value="Save">
+        <input type="button" id="comic-clear" value="Clear">
+      </div>
+    </details>
+
+    <ul id="panels-nav" class="panels-nav"></ul>
+    
+    <script type="text/template" id="panel-template">
+      <li class="panel">
+        <input type="text" class="panel-page">
+        <input type="text" class="panel-index">
+        <input type="text" class="panel-id">
+        <div class="panel-img-wrapper">
+          <img src="" class="panel-img">
+        </div>
+        <div>
+          <label>width <input type="number" class="panel-w"></label>
+        </div>
+        <div>
+          <label>height <input type="number" class="panel-h"></label>
+        </div>
+        <div>
+          <label>left <input type="number" class="panel-x"></label>
+        </div>
+        <div>
+          <label>top <input type="number" class="panel-y"></label>
+        </div>
+        <div>
+          <label>z-index <input type="number" class="panel-z"></label>
+        </div>
+        <span class="panel-nav-remove">-</span>
+        <span class="panel-nav-handle">::</span>
+      </li>
+    </script>
+  </div>
+
+  <div class="artboard-wrapper">
+    <div id="artboard" class="artboard"></div>
+  </div>
+  
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/jquery-ui/jquery-ui.js"></script>
+  <script src="js/lib/jQuery-contextMenu/jquery.contextMenu.js"></script>
+  <script src="js/lib/mouse.js"></script>
+  <script src="js/eclayout.js"></script>
+  <script src="js/interface.js"></script>
+</body>
+</html>
