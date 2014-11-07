@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Electricomics Editor</title>
-
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
   <link rel="stylesheet" href="js/lib/jQuery-contextMenu/jquery.contextMenu.css">
   <link rel="stylesheet" href="font/komika/stylesheet.css">
@@ -18,14 +18,14 @@
   <nav class="pages-nav">
     <!-- <span class="pages-nav-add" data-page="0">Add</span> -->
     <ul id="pages-nav" class="page-nav-wrapper"></ul>
-    <span class="pages-nav-add" data-page="-1">Add</span>
+    <span class="pages-nav-add" data-page="-1"><span class="fa fa-file fa-2x addCenter"></span></span>
     
     <script type="text/template" id="page-template">
     <li class="page-nav js-page-nav">
       <input type="text" class="page-name">
-      <span class="page-nav-add">+</span>
-      <span class="page-nav-remove">-</span>
-      <span class="page-nav-handle">::</span>
+      <span class="page-nav-add"><span class="fa fa-plus-circle"></span></span>
+      <span class="page-nav-remove"><span class="fa fa-trash"></span></span>
+      <span class="page-nav-handle"><span class="fa fa-arrows-h fa-lg"></span></span>
     </li>
     </script>
   </nav>
@@ -56,12 +56,13 @@
     
     <script type="text/template" id="panel-template">
       <li class="panel">
-        <input type="text" class="panel-page">
-        <input type="text" class="panel-index">
-        <input type="text" class="panel-id">
+        <span class="panel-nav-handle"><span class="fa fa-arrows-v "></span></span>
         <div class="panel-img-wrapper">
           <img src="" class="panel-img">
         </div>
+        <input type="text" class="panel-page">
+        <input type="text" class="panel-index">
+        <input type="text" class="panel-id">
         <div>
           <label>width <input type="number" class="panel-w"></label>
         </div>
@@ -77,8 +78,8 @@
         <div>
           <label>z-index <input type="number" class="panel-z"></label>
         </div>
-        <span class="panel-nav-remove">-</span>
-        <span class="panel-nav-handle">::</span>
+        <span class="panel-nav-remove"><span class="fa fa-trash"></span></span>
+
       </li>
     </script>
   </div>
