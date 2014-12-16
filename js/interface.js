@@ -356,7 +356,7 @@ $('.pages-nav-add').on('click', function() {
 
 
 // buttons
-$('#comic-save').on('click', function() {
+$('#comic-export').on('click', function() {
   // export
 });
 $('#comic-clear').on('click', function() {

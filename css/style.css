@@ -290,8 +290,8 @@ box-shadow:         inset -1px -1px 2px 0px rgba(225,225,225,0.50);
   width:100px;
 }
 
-#comic-save, #comic-clear {
-  width:40%;
+#comic-export, #comic-clear {
+  width:45%;
   background-image: -o-linear-gradient(-89deg, #D9D9D9 0%, #5F5F5F 100%);
   background-image: -moz-linear-gradient(-89deg, #D9D9D9 0%, #5F5F5F 100%);
   background-image: -ms-linear-gradient(-89deg, #D9D9D9 0%, #5F5F5F 100%);
@@ -299,7 +299,7 @@ box-shadow:         inset -1px -1px 2px 0px rgba(225,225,225,0.50);
   border: 1px solid #2E2E2E;
 }
 
-#comic-save:hover, #comic-clear:hover {
+#comic-export:hover, #comic-clear:hover {
   background-image: -o-linear-gradient(-89deg, #5F5F5F 0%, #D9D9D9 100%);
   background-image: -moz-linear-gradient(-89deg, #5F5F5F 0%, #D9D9D9 100%);
   background-image: -ms-linear-gradient(-89deg, #5F5F5F 0%, #D9D9D9 100%);
