@@ -366,7 +366,7 @@ $('#comic-export').on('click', function() {
   // console.log(rendered);
 });
 $('#comic-clear').on('click', function() {
-  var check = confirm('Are you sure you want to delete all?');
+  var check = confirm('Are you sure you want to delete everything?');
   if (check) {
     myComic.clearLocalStorage();
     clearArtboard();
