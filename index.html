@@ -89,10 +89,13 @@
   </div>
 
 <script type="x-tmpl-mustache" id="export-template">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>{{title}}</title>
 <style>
-  section { position: relative; }
+  section { border: 1px solid #000; position: relative; }
   img { position: absolute; }
 </style>
+</head><body>
 <h1>{{title}}</h1>
 {{#pages}}
 {{#show}}
@@ -105,6 +108,7 @@
 </section>
 {{/show}}
 {{/pages}}
+</body></html>
 </script>
   
   <script src="js/lib/jquery.min.js"></script>
