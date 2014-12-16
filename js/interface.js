@@ -137,14 +137,16 @@ var addPanel = function(pageN, panelN) {
 
 var appendImg = function(obj) {
   var $img = $('<img>');
+  var $div = $('<div class="artboard-img">');
   var w;
   var h;
-  $img.attr('id', obj.id);
+  $div.attr('id', obj.id);
   $img.attr('src', obj.src);
-  $img.css('left', obj.x + 'px');
-  $img.css('top', obj.y + 'px');
-  $img.css('z-index', obj.z);
-  $artboard.append($img);
+  $div.css('left', obj.x + 'px');
+  $div.css('top', obj.y + 'px');
+  $div.css('z-index', obj.z);
+  $div.append($img);
+  $artboard.append($div);
 
   // when we drop a new image on the artboard we don't know it's size yet,
   // we need to append it first and then find it out
@@ -160,10 +162,10 @@ var appendImg = function(obj) {
   else {
     h = $img.height();
   }
-  $img.css('width', w + 'px');
-  $img.css('height', h + 'px');
+  $div.css('width', w + 'px');
+  $div.css('height', h + 'px');
   
-  return $img;
+  return $div;
 };
 
 var addImgEvent = function($img) {
@@ -185,9 +187,7 @@ var addImgEvent = function($img) {
     }
   });
   // make it draggable
-  // we have to make the parent div draggable as the resizable plugin
-  // wraps the image inside a div
-  $img.closest('div').draggable({
+  $img.draggable({
     stop: function(event, ui) {
       console.log(ui.position.left, ui.position.top);
       $x.val(ui.position.left);
@@ -443,7 +443,7 @@ $(document).on('change keyup', '.panel-z', function() {
 
 // Right click
 $artboard.contextMenu({
-  selector: 'img', 
+  selector: 'div.artboard-img', 
   items: {
     'front': {
       name: 'Bring to front',

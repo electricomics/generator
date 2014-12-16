@@ -174,8 +174,13 @@ details div {
   overflow: hidden;
   width: 100%;
 }
-.artboard img {
+.artboard-img {
   position: absolute;
+}
+.artboard-img img {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 /* right click menu */
