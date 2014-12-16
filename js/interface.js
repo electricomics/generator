@@ -452,7 +452,8 @@ $artboard.contextMenu({
         var $z = getPanelForm(this).find('.panel-z');
         var zIndexes = getZIndexes(id);
         var biggest = zIndexes.pop();
-        $z.val(biggest + 1);
+        $z.val(biggest + 1)
+          .trigger('change');
       }
     },
     'back': {
@@ -462,7 +463,8 @@ $artboard.contextMenu({
         var $z = getPanelForm(this).find('.panel-z');
         var zIndexes = getZIndexes(id);
         var smallest = zIndexes.shift();
-        $z.val(smallest - 1);
+        $z.val(smallest - 1)
+          .trigger('change');
       }
     },
     'sep1': '---------',
