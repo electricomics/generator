@@ -99,10 +99,10 @@
 <h1>{{title}}</h1>
 {{#pages}}
 {{#show}}
-<section style="width:{{screenW}}px; height:{{screenH}}px;">
+<section id="{{name}}" style="width:{{screenW}}px; height:{{screenH}}px;">
   {{#panels}}
   {{#id}}
-  <img src="{{{src}}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
+  <img id="{{id}}" src="{{{src}}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
   {{/id}}
   {{/panels}}
 </section>
