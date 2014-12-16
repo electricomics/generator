@@ -1,4 +1,4 @@
-/* global $, mousePositionElement, Electricomic, confirm, Mustache */
+/* global $, mousePositionElement, Electricomic, confirm, Mustache, Blob, saveAs */
 
 var $artboard = $('#artboard');
 var artboard = $artboard.get(0);
