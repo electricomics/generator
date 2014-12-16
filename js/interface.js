@@ -79,6 +79,7 @@ if (window.FileReader) {
       newImg.panelN = newPanel.panelN;
       addPanelForm(newImg);
       addImgEvent($img);
+      myComic.saveLocalStorage();
     });
   };
 }
@@ -301,12 +302,14 @@ $pagesNav.sortable({
     var newLen = myComic.movePage(pageN, newPageN);
     loadPages(newLen);
     loadPage(newPageN);
+    myComic.saveLocalStorage();
   }
 });
 
 $(document).on('change keyup', '.page-name', function() {
   var pageN = pageInfo(this);
   myComic.updatePageName(pageN, this.value);
+  myComic.saveLocalStorage();
 });
 
 $(document).on('click', '.page-nav-add', function(e) {
@@ -316,6 +319,7 @@ $(document).on('click', '.page-nav-add', function(e) {
   var newLen = myComic.addPage(null, index);
   loadPages(newLen);
   loadPage(index);
+  myComic.saveLocalStorage();
 });
 
 $(document).on('click', '.page-nav-remove', function(e) {
@@ -330,6 +334,7 @@ $(document).on('click', '.page-nav-remove', function(e) {
     }
     loadPages(newLen);
     loadPage(index);
+    myComic.saveLocalStorage();
   }
 });
 
@@ -346,12 +351,13 @@ $('.pages-nav-add').on('click', function() {
   var index = myComic.addPage();
   loadPages(index);
   loadPage(index);
+  myComic.saveLocalStorage();
 });
 
 
 // buttons
 $('#comic-save').on('click', function() {
-  myComic.saveLocalStorage();
+  // export
 });
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete all?');
@@ -360,6 +366,7 @@ $('#comic-clear').on('click', function() {
     clearArtboard();
     clearPanelsNav();
     clearPagesNav();
+    myComic.saveLocalStorage();
   }
 });
 
@@ -367,22 +374,26 @@ $('#comic-clear').on('click', function() {
 // comic
 $(document).on('change keyup', '#comic-name', function() {
   myComic.updateTitle(this.value);
+  myComic.saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-width', function() {
   myComic.updateScreen(this.value);
   updateScreen();
+  myComic.saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-height', function() {
   myComic.updateScreen(null, this.value);
   updateScreen();
+  myComic.saveLocalStorage();
 });
 
 $(document).on('change click', '#comic-pxratio-2', function() {
   var ratio = $(this).is(':checked') ? 2 : 1;
   console.log(ratio);
   myComic.updatePxRatio(ratio);
+  myComic.saveLocalStorage();
 });
 
 
@@ -394,6 +405,7 @@ $panelsNav.sortable({
     var newPanelN = ui.item.index() + 1;
     myComic.movePanel(panel.pageN, panel.panelN, newPanelN);
     loadPage(panel.pageN);
+    myComic.saveLocalStorage();
   }
 });
 
@@ -405,6 +417,7 @@ $(document).on('click', '.panel-nav-remove', function(e) {
     var panel = panelInfo(this);
     myComic.removePanel(panel.pageN, panel.panelN);
     loadPage(panel.pageN);
+    myComic.saveLocalStorage();
   }
 });
 
@@ -414,30 +427,35 @@ $(document).on('change keyup', '.panel-w', function() {
   var panel = panelInfo(this);
   myComic.resizePanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { w: this.value });
+  myComic.saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-h', function() {
   console.log('change h');
   var panel = panelInfo(this);
   myComic.resizePanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { h: this.value });
+  myComic.saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-x', function() {
   console.log('change x');
   var panel = panelInfo(this);
   myComic.moveXYPanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { x: this.value });
+  myComic.saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-y', function() {
   console.log('change y');
   var panel = panelInfo(this);
   myComic.moveXYPanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { y: this.value });
+  myComic.saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-z', function() {
   console.log('change z');
   var panel = panelInfo(this);
   myComic.moveZPanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { z: this.value });
+  myComic.saveLocalStorage();
 });
 
 
