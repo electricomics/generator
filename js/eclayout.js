@@ -10,6 +10,7 @@ var Electricomic = function() {
     return {
       id: '',
       name: '',
+      show: true,
       panels: [null]
     };
   };
@@ -38,11 +39,11 @@ var Electricomic = function() {
   this.init();
 
   this.returnJSON = function() {
-    return JSON.stringify(_comic);
+    return _comic;
   };
 
   this.saveLocalStorage = function() {
-    localStorage.electricomic = this.returnJSON();
+    localStorage.electricomic = JSON.stringify(this.returnJSON());
   };
 
   this.clearLocalStorage = function() {
@@ -72,6 +73,7 @@ var Electricomic = function() {
     return {
       id: page.id,
       name: page.name,
+      show: page.show,
       panelsLen: panelsLen
     };
   };

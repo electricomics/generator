@@ -357,7 +357,13 @@ $('.pages-nav-add').on('click', function() {
 
 // buttons
 $('#comic-export').on('click', function() {
-  // export
+  var obj = myComic.returnJSON();
+  var template = $('#export-template').html();
+  Mustache.parse(template);
+  var rendered = Mustache.render(template, obj);
+  var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
+  saveAs(blob, 'file.html');
+  // console.log(rendered);
 });
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete all?');
@@ -366,7 +372,6 @@ $('#comic-clear').on('click', function() {
     clearArtboard();
     clearPanelsNav();
     clearPagesNav();
-    myComic.saveLocalStorage();
   }
 });
 

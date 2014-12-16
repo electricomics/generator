@@ -87,13 +87,32 @@
   <div class="artboard-wrapper">
     <div id="artboard" class="artboard"></div>
   </div>
+
+<script type="x-tmpl-mustache" id="export-template">
+<style>
+  section { position: relative; }
+  img { position: absolute; }
+</style>
+<h1>{{title}}</h1>
+{{#pages}}
+{{#show}}
+<section style="width:{{screenW}}px; height:{{screenH}}px;">
+  {{#panels}}
+  {{#id}}
+  <img src="{{{src}}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
+  {{/id}}
+  {{/panels}}
+</section>
+{{/show}}
+{{/pages}}
+</script>
   
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/jquery-ui/jquery-ui.js"></script>
   <script src="js/lib/jQuery-contextMenu/jquery.contextMenu.js"></script>
-  <script src="js/lib/mouse.js"></script>
   <script src="js/lib/mustache.js"></script>
   <script src="js/lib/FileSaver.min.js"></script>
+  <script src="js/lib/mouse.js"></script>
   <script src="js/eclayout.js"></script>
   <script src="js/interface.js"></script>
 </body>
