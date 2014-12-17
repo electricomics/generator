@@ -120,6 +120,8 @@ var loadPage = function(pageN) {
   clearArtboard();
   clearPanelsNav();
   loadPanels(pageN);
+  $('.page-nav.selected').removeClass('selected');
+  $('#page-' + CURRENT_PAGE).addClass('selected');
 };
 
 var loadPanels = function(pageN) {
@@ -362,7 +364,7 @@ $('#comic-export').on('click', function() {
   Mustache.parse(template);
   var rendered = Mustache.render(template, obj);
   var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
-  saveAs(blob, 'file.html');
+  saveAs(blob, 'output.html');
   // console.log(rendered);
 });
 $('#comic-clear').on('click', function() {

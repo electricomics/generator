@@ -92,6 +92,9 @@ details div {
   vertical-align: top;
   width: 75px;
 }
+.page-nav.selected {
+  outline: 1px solid red;
+}
 .page-nav:after {
   content: attr(data-page);
   font-size: 2em;
@@ -175,7 +178,11 @@ details div {
   width: 100%;
 }
 .artboard-img {
+  cursor: move;
   position: absolute;
+}
+.artboard-img:hover {
+  outline: 1px dashed blue;
 }
 .artboard-img img {
   display: block;
