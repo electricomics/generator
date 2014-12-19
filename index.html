@@ -123,15 +123,15 @@ img {
 <body>
 <h1>{{title}}</h1>
 {{#pages}}
-{{#show}}
-<section id="{{name}}" style="width:{{screenW}}px; height:{{screenH}}px;">
+{{#if show}}
+<section id="{{name}}" class="page{{@index}}">
   {{#panels}}
-  {{#id}}
-  <img id="{{id}}" src="{{{src}}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
-  {{/id}}
+  {{#if id}}
+  <img src="{{{../src}}}" id="{{../id}}" class="panel{{@index}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+  {{/if}}
   {{/panels}}
 </section>
-{{/show}}
+{{/if}}
 {{/pages}}
 </body>
 </html></script>
@@ -139,7 +139,7 @@ img {
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/jquery-ui/jquery-ui.js"></script>
   <script src="js/lib/jQuery-contextMenu/jquery.contextMenu.js"></script>
-  <script src="js/lib/mustache.js"></script>
+  <script src="js/lib/handlebars-v2.0.0.js"></script>
   <script src="js/lib/FileSaver.min.js"></script>
   <script src="js/lib/mouse.js"></script>
   <script src="js/eclayout.js"></script>

@@ -1,4 +1,4 @@
-/* global $, mousePositionElement, Electricomic, confirm, Mustache, Blob, saveAs */
+/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs */
 
 var $artboard = $('#artboard');
 var artboard = $artboard.get(0);
@@ -360,9 +360,9 @@ $('.pages-nav-add').on('click', function() {
 // buttons
 $('#comic-export').on('click', function() {
   var obj = myComic.returnJSON();
-  var template = $('#export-template').html();
-  Mustache.parse(template);
-  var rendered = Mustache.render(template, obj);
+  var source = $('#export-template').html();
+  var template = Handlebars.compile(source);
+  var rendered = template(obj);
   var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
   saveAs(blob, 'output.html');
   // console.log(rendered);
