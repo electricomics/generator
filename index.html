@@ -88,14 +88,39 @@
     <div id="artboard" class="artboard"></div>
   </div>
 
-<script type="x-tmpl-mustache" id="export-template">
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<title>{{title}}</title>
-<style>
-  section { border: 1px solid #000; position: relative; }
-  img { position: absolute; }
-</style>
-</head><body>
+<script type="x-tmpl-mustache" id="export-template"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  <style>
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+}
+section,
+nav {
+  display: block;
+}
+section {
+  border: 1px solid #000;
+  position: relative;
+  height: {{screenH}}px;
+  width: {{screenW}}px;
+}
+img {
+  border: 0 none;
+  position: absolute;
+}
+  </style>
+</head>
+<body>
 <h1>{{title}}</h1>
 {{#pages}}
 {{#show}}
@@ -108,8 +133,8 @@
 </section>
 {{/show}}
 {{/pages}}
-</body></html>
-</script>
+</body>
+</html></script>
   
   <script src="js/lib/jquery.min.js"></script>
   <script src="js/lib/jquery-ui/jquery-ui.js"></script>
