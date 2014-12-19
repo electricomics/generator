@@ -198,6 +198,31 @@ details div {
 }
 
 
+/* preview */
+#preview {
+  background: #333;
+  border: 10px solid #EEE;
+  bottom: 1em;
+  display: none;
+  left: 1em;
+  overflow: scroll;
+  position: absolute;
+  right: 1em;
+  top: 1em;
+}
+#preview.show {
+  display: block;
+}
+#preview-close {
+  color: inherit;
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  text-decoration: none;
+  top: 0;
+}
+
+
 /* Steve Overrides ========= */
 
 h1 {

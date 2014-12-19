@@ -10,6 +10,10 @@ var $comicWidth = $('#comic-width');
 var $comicHeight = $('#comic-height');
 var $panelTemplate = $($('#panel-template').html());
 var $pageTemplate = $($('#page-template').html());
+var $exportTemplate = $('#export-template').html();
+var $preview = $('#preview');
+var $previewWrapper = $('#preview-wrapper');
+var $previewClose = $('#preview-close');
 var CURRENT_PAGE = 1;
 
 var ID = function() {
@@ -86,6 +90,14 @@ if (window.FileReader) {
 else {
   // TODO: fallback for FileReader
 }
+
+var createHtml = function() {
+  var obj = myComic.returnJSON();
+  var source = $exportTemplate;
+  var template = Handlebars.compile(source);
+  var rendered = template(obj);
+  return rendered;
+};
 
 var clearArtboard = function() {
   $artboard.html('');
@@ -359,10 +371,7 @@ $('.pages-nav-add').on('click', function() {
 
 // buttons
 $('#comic-export').on('click', function() {
-  var obj = myComic.returnJSON();
-  var source = $('#export-template').html();
-  var template = Handlebars.compile(source);
-  var rendered = template(obj);
+  var rendered = createHtml();
   var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
   saveAs(blob, 'output.html');
   // console.log(rendered);
@@ -405,6 +414,15 @@ $('#comic-clear').on('click', function() {
     clearPagesNav();
   }
 });
+$('#comic-preview').on('click', function() {
+  var rendered = createHtml();
+  $previewWrapper.html(rendered);
+  $preview.addClass('show');
+});
+$previewClose.on('click', function(e) {
+  e.preventDefault();
+  $preview.removeClass('show');
+})
 
 
 // comic
