@@ -367,6 +367,35 @@ $('#comic-export').on('click', function() {
   saveAs(blob, 'output.html');
   // console.log(rendered);
 });
+$('#comic-export-json').on('click', function() {
+  var obj = myComic.returnJSON();
+  var rendered = JSON.stringify(obj);
+  var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
+  saveAs(blob, 'output.json');
+});
+var $comicImportJson = $('#comic-import-json');
+$('#comic-import-json-button').on('click', function() {
+  $comicImportJson.trigger('click');
+});
+$comicImportJson.on('change', function() {
+  var selectedFile = this.files[0];
+  var reader = new FileReader();
+  reader.readAsText(selectedFile);
+  reader.addEventListener('loadend', function() {
+    var res = this.result;
+    try {
+      // var resObj = JSON.parse(res);
+      // TODO function to check if the object is valid
+      myComic.clearLocalStorage();
+      localStorage.electricomic = res;
+      myComic.init();
+      loadComic();
+    }
+    catch (e) {
+      console.log('file format not valid');
+    }
+  });
+});
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
   if (check) {
