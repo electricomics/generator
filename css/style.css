@@ -66,7 +66,7 @@ details div {
 .pages-nav {
   bottom: 0;
   left: 200px;
-  height: 200px;
+  height: 145px;
   position: absolute;
   right: 0;
 }
@@ -160,7 +160,7 @@ details div {
 }
 
 .artboard-wrapper {
-  bottom: 200px;
+  bottom: 145px;
   left: 200px;
   overflow: auto;
   position: absolute;
@@ -226,8 +226,7 @@ details div {
 /* Steve Overrides ========= */
 
 h1 {
-  margin-top: 10px;
-  margin-bottom: 0px;
+  padding-top: 10px;
   font-size:1.6em;
   line-height: 32px;
   text-shadow: 2px 2px 4px #000000;
