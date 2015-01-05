@@ -273,6 +273,7 @@ var loadComic = function() {
   $comicWidth.val(comicData.screenW);
   $comicHeight.val(comicData.screenH);
   $comicPxRatio2.prop('checked', comicData.pxRatio === 2);
+  $artboard.width(comicData.screenW).height(comicData.screenH);
 
   loadPages(comicData.pagesLen);
   loadPage(CURRENT_PAGE);
