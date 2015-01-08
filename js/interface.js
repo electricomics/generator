@@ -1,5 +1,7 @@
 /* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs */
 
+var isFileReader = window.FileReader || false;
+
 var $artboard = $('#artboard');
 var artboard = $artboard.get(0);
 var $pagesNav = $('#pages-nav');
@@ -20,7 +22,7 @@ var ID = function() {
   return '_' + Math.random().toString(36).substr(2, 9);
 };
 
-if (window.FileReader) {
+if (isFileReader) {
   var handleFileSelect = function(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -383,29 +385,30 @@ $('#comic-export-json').on('click', function() {
   var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
   saveAs(blob, 'output.json');
 });
-var $comicImportJson = $('#comic-import-json');
-$('#comic-import-json-button').on('click', function() {
-  $comicImportJson.trigger('click');
-});
-$comicImportJson.on('change', function() {
-  var selectedFile = this.files[0];
-  var reader = new FileReader();
-  reader.readAsText(selectedFile);
-  reader.addEventListener('loadend', function() {
-    var res = this.result;
-    try {
-      // var resObj = JSON.parse(res);
-      // TODO function to check if the object is valid
-      myComic.clearLocalStorage();
-      localStorage.electricomic = res;
-      myComic.init();
-      loadComic();
-    }
-    catch (e) {
-      console.log('file format not valid');
-    }
+if (isFileReader) {
+  $('#comic-import-json').on('change', function() {
+    var selectedFile = this.files[0];
+    var reader = new FileReader();
+    reader.readAsText(selectedFile);
+    reader.addEventListener('loadend', function() {
+      var res = this.result;
+      try {
+        // var resObj = JSON.parse(res);
+        // TODO function to check if the object is valid
+        myComic.clearLocalStorage();
+        localStorage.electricomic = res;
+        myComic.init();
+        loadComic();
+      }
+      catch (e) {
+        console.log('file format not valid');
+      }
+    });
   });
-});
+}
+else {
+  $('label[for="comic-import-json"]').hide();
+}
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
   if (check) {
@@ -423,7 +426,7 @@ $('#comic-preview').on('click', function() {
 $previewClose.on('click', function(e) {
   e.preventDefault();
   $preview.removeClass('show');
-})
+});
 
 
 // comic

@@ -277,12 +277,6 @@ input[type=text],input[type=number] {
   -moz-border-radius: 6px;
   border-radius: 6px;
 }
- 
-input[type=button]{
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-}
 
 .panels details {
   padding: 4px;
@@ -333,7 +327,10 @@ box-shadow:         inset -1px -1px 2px 0px rgba(225,225,225,0.50);
   background-image: -ms-linear-gradient(-89deg, #D9D9D9 0%, #5F5F5F 100%);
   background-image: linear-gradient(-179deg, #D9D9D9 0%, #5F5F5F 100%);
   border: 1px solid #2E2E2E;
+  border-radius: 6px;
+  color: #000;
   display: inline-block;
+  text-align: center;
 }
 
 .comic-button:hover {
