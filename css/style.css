@@ -206,11 +206,10 @@ details div {
 /* preview */
 #preview {
   background: #333;
-  border: 10px solid #EEE;
   bottom: 1em;
   display: none;
   left: 1em;
-  overflow: scroll;
+  overflow: hidden;
   position: absolute;
   right: 1em;
   top: 1em;
@@ -219,12 +218,17 @@ details div {
   display: block;
 }
 #preview-close {
-  color: inherit;
-  padding: 5px;
+  color: #333;
+  padding: 0 5px;
   position: absolute;
   right: 0;
   text-decoration: none;
   top: 0;
+}
+#preview-wrapper {
+  border: 20px solid #EEE;
+  height: 100%;
+  width: 100%;
 }
 
 

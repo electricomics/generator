@@ -417,7 +417,7 @@ $('#comic-clear').on('click', function() {
 });
 $('#comic-preview').on('click', function() {
   var rendered = createHtml();
-  $previewWrapper.html(rendered);
+  $previewWrapper.contents().find('body').append(rendered);
   $preview.addClass('show');
 });
 $previewClose.on('click', function(e) {
