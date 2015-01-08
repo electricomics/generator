@@ -11,6 +11,11 @@ li {
   margin: 0;
   padding: 0;
 }
+header,
+nav,
+details {
+  display: block;
+}
 li {
   list-style: none;
 }
