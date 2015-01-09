@@ -1,6 +1,12 @@
 /* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs */
 
 var isFileReader = window.FileReader || false;
+var isFileSaver = true;
+try {
+  var isFileSaverSupported = !!new Blob;
+} catch (e) {
+  isFileSaver = false;
+}
 
 var $artboard = $('#artboard');
 var artboard = $artboard.get(0);
@@ -372,19 +378,34 @@ $('.pages-nav-add').on('click', function() {
 });
 
 
-// buttons
-$('#comic-export').on('click', function() {
-  var rendered = createHtml();
-  var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
-  saveAs(blob, 'output.html');
-  // console.log(rendered);
-});
-$('#comic-export-json').on('click', function() {
-  var obj = myComic.returnJSON();
-  var rendered = JSON.stringify(obj);
-  var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
-  saveAs(blob, 'output.json');
-});
+// Save as html
+var $comicExport = $('#comic-export');
+if (isFileSaver) {
+  $comicExport.on('click', function() {
+    var rendered = createHtml();
+    var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
+    saveAs(blob, 'output.html');
+  });
+}
+else {
+  $comicExport.hide();
+}
+
+// Export JSON
+var $comicExportJson = $('#comic-export-json');
+if (isFileSaver) {
+  $comicExportJson.on('click', function() {
+    var obj = myComic.returnJSON();
+    var rendered = JSON.stringify(obj);
+    var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
+    saveAs(blob, 'output.json');
+  });
+}
+else {
+  $comicExportJson.hide();
+}
+
+// Import JSON
 if (isFileReader) {
   $('#comic-import-json').on('change', function() {
     var selectedFile = this.files[0];
@@ -409,6 +430,8 @@ if (isFileReader) {
 else {
   $('label[for="comic-import-json"]').hide();
 }
+
+// Clear
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
   if (check) {
@@ -418,6 +441,8 @@ $('#comic-clear').on('click', function() {
     clearPagesNav();
   }
 });
+
+// Preview
 $('#comic-preview').on('click', function() {
   var rendered = createHtml();
   $previewWrapper.contents().find('body').append(rendered);
