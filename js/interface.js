@@ -21,8 +21,11 @@ var $pageTemplate = $($('#page-template').html());
 var $exportTemplate = $('#export-template').html();
 var $preview = $('#preview');
 var $previewOverlay = $('#preview-overlay');
-var $textarea = $('#textarea');
-var $textareaOverlay = $('#textarea-overlay');
+var $textareaOutput = $('#textarea-output');
+var $textareaOutputOverlay = $('#textarea-output-overlay');
+var $textareaInput = $('#textarea-input');
+var $textareaInputOverlay = $('#textarea-input-overlay');
+var $textareaInputButton = $('#textarea-input-button');
 var CURRENT_PAGE = 1;
 
 var ID = function() {
@@ -386,9 +389,36 @@ $('.overlay-close').on('click', function(e) {
 
 // Save/export fallback
 var showOutput = function(txt) {
-  $textarea.val(txt);
-  $textareaOverlay.addClass('show');
+  $textareaOutput.val(txt);
+  $textareaOutputOverlay.addClass('show');
 };
+
+// Read JSON
+var readJSON = function(val) {
+  try {
+    // var resObj = JSON.parse(val);
+    // TODO function to check if the object is valid
+    myComic.clearLocalStorage();
+    localStorage.electricomic = val;
+    myComic.init();
+    loadComic();
+  }
+  catch (e) {
+    console.log('file format not valid');
+    return false;
+  }
+  return true;
+};
+
+// Import fallback
+$textareaInputButton.on('click', function() {
+  var val = $textareaInput.val();
+  var res = readJSON(val);
+  if (res) {
+    $('#textarea-input-close').trigger('click');
+  }
+});
+
 
 
 // Save as html
@@ -426,22 +456,15 @@ if (isFileReader) {
     reader.readAsText(selectedFile);
     reader.addEventListener('loadend', function() {
       var res = this.result;
-      try {
-        // var resObj = JSON.parse(res);
-        // TODO function to check if the object is valid
-        myComic.clearLocalStorage();
-        localStorage.electricomic = res;
-        myComic.init();
-        loadComic();
-      }
-      catch (e) {
-        console.log('file format not valid');
-      }
+      readJSON(res);
     });
   });
 }
 else {
-  $('label[for="comic-import-json"]').hide();
+  $('label[for="comic-import-json"]').on('click', function(e) {
+    e.preventDefault();
+    $textareaInputOverlay.addClass('show');
+  });
 }
 
 // Clear

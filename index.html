@@ -96,9 +96,15 @@
     <iframe id="preview"></iframe>
   </div>
 
-  <div id="textarea-overlay" class="overlay">
-    <a href="#" id="textarea-close" class="overlay-close" title="Close window">X</a>
-    <textarea id="textarea" cols="30" rows="10"></textarea>
+  <div id="textarea-output-overlay" class="overlay">
+    <a href="#" id="textarea-output-close" class="overlay-close" title="Close window">X</a>
+    <textarea id="textarea-output" cols="30" rows="10"></textarea>
+  </div>
+
+  <div id="textarea-input-overlay" class="overlay">
+    <a href="#" id="textarea-input-close" class="overlay-close" title="Close window">X</a>
+    <textarea id="textarea-input" cols="30" rows="10"></textarea>
+    <input type="button" id="textarea-input-button" class="comic-button" value="Import">
   </div>
 
 <script type="text/x-handlebars-template" id="export-template"><!DOCTYPE html>

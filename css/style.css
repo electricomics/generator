@@ -204,10 +204,22 @@ details div {
 
 
 /* textarea fallback */
-#textarea {
+#textarea-output {
   height: 100%;
   resize: none;
   width: 100%;
+}
+#textarea-input {
+  bottom: 40px;
+  position: absolute;
+  resize: none;
+  top: 0;
+  width: 100%;
+}
+#textarea-input-button {
+  bottom: 5px;
+  position: absolute;
+  right: 5px;
 }
 
 
