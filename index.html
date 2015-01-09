@@ -91,9 +91,14 @@
     <div id="artboard" class="artboard"></div>
   </div>
 
-  <div id="preview" class="overlay">
+  <div id="preview-overlay" class="overlay">
     <a href="#" id="preview-close" class="overlay-close" title="Close preview">X</a>
-    <iframe id="preview-wrapper"></iframe>
+    <iframe id="preview"></iframe>
+  </div>
+
+  <div id="textarea-overlay" class="overlay">
+    <a href="#" id="textarea-close" class="overlay-close" title="Close window">X</a>
+    <textarea id="textarea" cols="30" rows="10"></textarea>
   </div>
 
 <script type="text/x-handlebars-template" id="export-template"><!DOCTYPE html>

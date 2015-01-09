@@ -20,8 +20,9 @@ var $panelTemplate = $($('#panel-template').html());
 var $pageTemplate = $($('#page-template').html());
 var $exportTemplate = $('#export-template').html();
 var $preview = $('#preview');
-var $previewWrapper = $('#preview-wrapper');
-var $previewClose = $('#preview-close');
+var $previewOverlay = $('#preview-overlay');
+var $textarea = $('#textarea');
+var $textareaOverlay = $('#textarea-overlay');
 var CURRENT_PAGE = 1;
 
 var ID = function() {
@@ -377,33 +378,45 @@ $('.pages-nav-add').on('click', function() {
   myComic.saveLocalStorage();
 });
 
+// Close overlay
+$('.overlay-close').on('click', function(e) {
+  e.preventDefault();
+  $(this).closest('.overlay').removeClass('show');
+});
+
+// Save/export fallback
+var showOutput = function(txt) {
+  $textarea.val(txt);
+  $textareaOverlay.addClass('show');
+};
+
 
 // Save as html
 var $comicExport = $('#comic-export');
-if (isFileSaver) {
-  $comicExport.on('click', function() {
-    var rendered = createHtml();
+$comicExport.on('click', function() {
+  var rendered = createHtml();
+  if (isFileSaver) {
     var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
     saveAs(blob, 'output.html');
-  });
-}
-else {
-  $comicExport.hide();
-}
+  }
+  else {
+    showOutput(rendered);
+  }
+});
 
 // Export JSON
 var $comicExportJson = $('#comic-export-json');
-if (isFileSaver) {
-  $comicExportJson.on('click', function() {
-    var obj = myComic.returnJSON();
-    var rendered = JSON.stringify(obj);
+$comicExportJson.on('click', function() {
+  var rendered = JSON.stringify(myComic.returnJSON());
+  if (isFileSaver) {
     var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
     saveAs(blob, 'output.json');
-  });
-}
-else {
-  $comicExportJson.hide();
-}
+  }
+  else {
+    showOutput(rendered);
+  }
+});
+
 
 // Import JSON
 if (isFileReader) {
@@ -445,12 +458,8 @@ $('#comic-clear').on('click', function() {
 // Preview
 $('#comic-preview').on('click', function() {
   var rendered = createHtml();
-  $previewWrapper.contents().find('body').append(rendered);
-  $preview.addClass('show');
-});
-$previewClose.on('click', function(e) {
-  e.preventDefault();
-  $preview.removeClass('show');
+  $preview.contents().find('body').append(rendered);
+  $previewOverlay.addClass('show');
 });
 
 

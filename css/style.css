@@ -203,20 +203,21 @@ details div {
 }
 
 
-/* preview */
-#preview-wrapper {
-  border: 20px solid #EEE;
+/* textarea fallback */
+#textarea {
   height: 100%;
+  resize: none;
   width: 100%;
 }
 
 
+/* modal window */
 .overlay {
   background: #333;
+  border: 20px solid #EEE;
   bottom: 1em;
   display: none;
   left: 1em;
-  overflow: hidden;
   position: absolute;
   right: 1em;
   top: 1em;
@@ -228,8 +229,23 @@ details div {
   color: #333;
   padding: 0 5px;
   position: absolute;
-  right: 0;
+  right: -20px;
   text-decoration: none;
+  top: -20px;
+}
+
+
+/* preview */
+#preview {
+  border: 20px solid #EEE;
+  height: 100%;
+  width: 100%;
+}
+#preview-overlay {
+  border: 0 none;
+}
+#preview-close {
+  right: 0;
   top: 0;
 }
 
