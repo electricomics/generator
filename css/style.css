@@ -204,7 +204,14 @@ details div {
 
 
 /* preview */
-#preview {
+#preview-wrapper {
+  border: 20px solid #EEE;
+  height: 100%;
+  width: 100%;
+}
+
+
+.overlay {
   background: #333;
   bottom: 1em;
   display: none;
@@ -214,21 +221,16 @@ details div {
   right: 1em;
   top: 1em;
 }
-#preview.show {
+.show {
   display: block;
 }
-#preview-close {
+.overlay-close {
   color: #333;
   padding: 0 5px;
   position: absolute;
   right: 0;
   text-decoration: none;
   top: 0;
-}
-#preview-wrapper {
-  border: 20px solid #EEE;
-  height: 100%;
-  width: 100%;
 }
 
 
