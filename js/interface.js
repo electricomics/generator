@@ -513,6 +513,20 @@ $(document).on('change click', '#comic-pxratio-2', function() {
 
 
 // panel
+if (isFileReader) {
+  $('#panel-add').on('change', function() {
+    var file = this.files[0];
+    var pos = {
+      x: 0,
+      y: 0
+    };
+    addImg(file, pos);
+  });
+}
+else {
+  $('label[for="panel-add"]').hide();
+}
+
 $panelsNav.sortable({
   handle: '.panel-nav-handle',
   update: function(event, ui) {

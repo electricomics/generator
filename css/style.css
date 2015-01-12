@@ -64,6 +64,7 @@ details div {
 .panels {
   bottom: 0;
   left: 0;
+  padding: 10px;
   position: absolute;
   top: 0;
   width: 200px;
@@ -76,13 +77,13 @@ details div {
   right: 0;
 }
 
+/* pages */
 .page-nav-wrapper {
   display: inline-block;
   overflow: scroll;
   white-space: nowrap;
   width: calc(100% - 85px);
 }
-
 .pages-nav-add,
 .page-nav {
   border: 1px solid #EEE;
@@ -143,9 +144,13 @@ details div {
   margin-top: 30px;
 }
 
+/* panels */
+label[for="panel-add"] {
+  margin: 10px 0;
+  width: 100%;
+}
 .panels-nav {
   height: 70%;
-  margin: 10px;
   overflow: scroll;
 }
 .panel {
@@ -164,6 +169,7 @@ details div {
   padding: 2px;
 }
 
+/* artboard */
 .artboard-wrapper {
   bottom: 145px;
   left: 200px;
@@ -310,7 +316,6 @@ input[type=text],input[type=number] {
 
 .panels details {
   padding: 4px;
-  margin: 8px;
   border-radius: 8px;
   background-image: -o-linear-gradient(-89deg, #494949 0%, #2E2E2E 100%);
   background-image: -moz-linear-gradient(-89deg, #494949 0%, #2E2E2E 100%);
