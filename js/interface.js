@@ -66,10 +66,10 @@ if (isFileReader) {
     }
     var reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.addEventListener('loadend', function() {
+    reader.addEventListener('loadend', function(e) {
       var newImg = {
         id: ID(),
-        src: this.result,
+        src: e.target.result,
         x: pos.x,
         y: pos.y,
         z: 0,
@@ -514,13 +514,15 @@ $(document).on('change click', '#comic-pxratio-2', function() {
 
 // panel
 if (isFileReader) {
-  $('#panel-add').on('change', function() {
-    var file = this.files[0];
+  $('#panel-add').on('change', function(e) {
+    var files = e.target.files;
     var pos = {
       x: 0,
       y: 0
     };
-    addImg(file, pos);
+    for (var i = 0; i < files.length; i++) {
+      addImg(files[i], pos);
+    }
   });
 }
 else {
