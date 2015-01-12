@@ -268,6 +268,23 @@ label[for="panel-add"] {
 }
 
 
+.not-supported {
+  background: #000;
+  bottom: 0;
+  left: 0;
+  letter-spacing: 2px;
+  line-height: 2em;
+  padding: 20% 0 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+}
+.not-supported a {
+  color: #CCC;
+}
+
+
 /* Steve Overrides ========= */
 
 h1 {

@@ -108,6 +108,14 @@
     <input type="button" id="textarea-input-button" class="comic-button" value="Import">
   </div>
 
+  <!--[if lte IE 8]>
+    <div class="not-supported">
+      <h3>Electricomics Layout Tool</h3>
+      Your browser is <strong>out of date</strong> and does not support this website.<br>
+      <a href="https://browser-update.org/update.html">Learn how to update your browser</a>
+    </div>
+  <![endif]-->
+
 <script type="text/x-handlebars-template" id="export-template"><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,7 +172,7 @@ img {
   <script src="js/lib/jQuery-contextMenu/jquery.contextMenu.js"></script>
   <script src="js/lib/handlebars-v2.0.0.js"></script>
   <script src="js/lib/FileSaver.min.js"></script>
-  <!--[if lte IE 9]>
+  <!--[if IE 9]>
     <script src="js/lib/swfobject/swfobject.js"></script>
     <script src="js/lib/FileReader/jquery.FileReader.min.js"></script>
     <script>
