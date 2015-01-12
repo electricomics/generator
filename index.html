@@ -50,12 +50,12 @@
         <input type="button" class="comic-button" id="comic-export" value="Save">
         <input type="button" class="comic-button" id="comic-clear" value="Clear">
         <input type="button" class="comic-button" id="comic-export-json" value="Export">
-        <label for="comic-import-json" class="comic-button">Import JSON</label><input type="file" id="comic-import-json" style="display:none;" value="Import JSON">
+        <label for="comic-import-json" class="comic-button">Import JSON<input type="file" id="comic-import-json" style="display:none;" value="Import JSON"></label>
         <input type="button" class="comic-button" id="comic-preview" value="Preview">
       </div>
     </details>
 
-    <label for="panel-add" class="comic-button">Add Image</label><input type="file" id="panel-add" style="display:none;" value="Add Image" multiple accept="image/*">
+    <label for="panel-add" class="comic-button">Add Image<input type="file" id="panel-add" style="display:none;" value="Add Image" multiple accept="image/*"></label>
     <ul id="panels-nav" class="panels-nav"></ul>
     
     <script type="text/template" id="panel-template">
@@ -164,6 +164,13 @@ img {
   <script src="js/lib/jQuery-contextMenu/jquery.contextMenu.js"></script>
   <script src="js/lib/handlebars-v2.0.0.js"></script>
   <script src="js/lib/FileSaver.min.js"></script>
+  <!--[if lte IE 9]>
+    <script src="js/lib/swfobject/swfobject.js"></script>
+    <script src="js/lib/FileReader/jquery.FileReader.min.js"></script>
+    <script>
+      var isLteIE9 = true;
+    </script>
+  <![endif]-->
   <script src="js/lib/mouse.js"></script>
   <script src="js/eclayout.js"></script>
   <script src="js/interface.js"></script>

@@ -1,6 +1,6 @@
-/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs */
+/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9 */
 
-var isFileReader = window.FileReader || false;
+var isFileReader = !!(window.FileReader || false);
 var isFileSaver = true;
 try {
   var isFileSaverSupported = !!new Blob;
@@ -27,6 +27,13 @@ var $textareaInput = $('#textarea-input');
 var $textareaInputOverlay = $('#textarea-input-overlay');
 var $textareaInputButton = $('#textarea-input-button');
 var CURRENT_PAGE = 1;
+
+if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
+  var filereaderSWFopt = {
+    filereader: 'js/lib/FileReader/filereader.swf'
+  };
+  $('input[type="file"').fileReader(filereaderSWFopt);
+}
 
 var ID = function() {
   return '_' + Math.random().toString(36).substr(2, 9);
@@ -450,12 +457,12 @@ $comicExportJson.on('click', function() {
 
 // Import JSON
 if (isFileReader) {
-  $('#comic-import-json').on('change', function() {
-    var selectedFile = this.files[0];
+  $('#comic-import-json').on('change', function(e) {
+    var selectedFile = e.target.files[0];
     var reader = new FileReader();
     reader.readAsText(selectedFile);
-    reader.addEventListener('loadend', function() {
-      var res = this.result;
+    reader.addEventListener('loadend', function(e) {
+      var res = e.target.result;
       readJSON(res);
     });
   });
