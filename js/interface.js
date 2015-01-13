@@ -200,13 +200,13 @@ var appendImg = function(obj) {
     w = obj.w;
   }
   else {
-    w = $img.width();
+    w = $img.get(0).naturalWidth;
   }
   if (obj.h != null) {
     h = obj.h;
   }
   else {
-    h = $img.height();
+    h = $img.get(0).naturalHeight;
   }
   $div.css('width', w + 'px');
   $div.css('height', h + 'px');
