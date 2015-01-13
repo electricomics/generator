@@ -417,7 +417,6 @@ var readJSON = function(val) {
   try {
     var resObj = JSON.parse(val);
     // TODO function to check if the object is valid
-    clearLocalStorage();
     myComic.init(resObj);
     saveLocalStorage();
     loadComic();
@@ -490,10 +489,9 @@ else {
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
   if (check) {
-    clearLocalStorage();
-    clearArtboard();
-    clearPanelsNav();
-    clearPagesNav();
+    myComic.init();
+    saveLocalStorage();
+    loadComic();
   }
 });
 

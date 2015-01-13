@@ -1,10 +1,13 @@
 var Electricomic = function(existingComic) {
-  var _comic = {
-    title: 'Electricomic',
-    screenW: 1024,
-    screenH: 768,
-    pxRatio: 1,
-    pages: [null]
+  var _comic;
+  var Comic = function() {
+    return {
+      title: 'Electricomic',
+      screenW: 1024,
+      screenH: 768,
+      pxRatio: 1,
+      pages: [null]
+    };
   };
   var Page = function() {
     return {
@@ -32,7 +35,8 @@ var Electricomic = function(existingComic) {
       _comic = obj;
     }
     else {
-      _comic.pages.push(new Page());
+      _comic = new Comic();
+      this.addPage();
     }
   };
 
@@ -150,16 +154,6 @@ var Electricomic = function(existingComic) {
   this.updatePxRatio = function(pxRatio) {
     editComic('pxRatio', pxRatio);
   };
-
-  // this.addPage = function(pageObj) {
-  //   if (pageObj) {
-  //     _comic.pages.push(pageObj);
-  //   }
-  //   else {
-  //     _comic.pages.push(new Page());
-  //   }
-  //   return _comic.pages.length;
-  // };
 
   this.addPage = function(pageObj, index) {
     if (index == null) {
