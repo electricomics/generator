@@ -1,4 +1,4 @@
-/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9 */
+/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9, Storage */
 
 var isFileReader = !!(window.FileReader || false);
 var isFileSaver = true;
@@ -27,6 +27,7 @@ var $textareaInput = $('#textarea-input');
 var $textareaInputOverlay = $('#textarea-input-overlay');
 var $textareaInputButton = $('#textarea-input-button');
 var CURRENT_PAGE = 1;
+var LOCAL_STORAGE = 'electricomic';
 
 if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
   var filereaderSWFopt = {
@@ -37,6 +38,17 @@ if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
 
 var ID = function() {
   return '_' + Math.random().toString(36).substr(2, 9);
+};
+
+var storage = new Storage(LOCAL_STORAGE);
+
+var saveLocalStorage = function() {
+  var val = myComic.returnJSON();
+  storage.save(val);
+};
+
+var clearLocalStorage = function() {
+  storage.clear();
 };
 
 if (isFileReader) {
@@ -102,7 +114,7 @@ if (isFileReader) {
       newImg.panelN = newPanel.panelN;
       addPanelForm(newImg);
       addImgEvent($img);
-      myComic.saveLocalStorage();
+      saveLocalStorage();
     });
   };
 }
@@ -336,14 +348,14 @@ $pagesNav.sortable({
     var newLen = myComic.movePage(pageN, newPageN);
     loadPages(newLen);
     loadPage(newPageN);
-    myComic.saveLocalStorage();
+    saveLocalStorage();
   }
 });
 
 $(document).on('change keyup', '.page-name', function() {
   var pageN = pageInfo(this);
   myComic.updatePageName(pageN, this.value);
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 $(document).on('click', '.page-nav-add', function(e) {
@@ -353,7 +365,7 @@ $(document).on('click', '.page-nav-add', function(e) {
   var newLen = myComic.addPage(null, index);
   loadPages(newLen);
   loadPage(index);
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 $(document).on('click', '.page-nav-remove', function(e) {
@@ -368,7 +380,7 @@ $(document).on('click', '.page-nav-remove', function(e) {
     }
     loadPages(newLen);
     loadPage(index);
-    myComic.saveLocalStorage();
+    saveLocalStorage();
   }
 });
 
@@ -385,7 +397,7 @@ $('.pages-nav-add').on('click', function() {
   var index = myComic.addPage();
   loadPages(index);
   loadPage(index);
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 // Close overlay
@@ -403,11 +415,11 @@ var showOutput = function(txt) {
 // Read JSON
 var readJSON = function(val) {
   try {
-    // var resObj = JSON.parse(val);
+    var resObj = JSON.parse(val);
     // TODO function to check if the object is valid
-    myComic.clearLocalStorage();
-    localStorage.electricomic = val;
-    myComic.init();
+    clearLocalStorage();
+    myComic.init(resObj);
+    saveLocalStorage();
     loadComic();
   }
   catch (e) {
@@ -478,7 +490,7 @@ else {
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
   if (check) {
-    myComic.clearLocalStorage();
+    clearLocalStorage();
     clearArtboard();
     clearPanelsNav();
     clearPagesNav();
@@ -496,26 +508,26 @@ $('#comic-preview').on('click', function() {
 // comic
 $(document).on('change keyup', '#comic-name', function() {
   myComic.updateTitle(this.value);
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-width', function() {
   myComic.updateScreen(this.value);
   updateScreen();
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-height', function() {
   myComic.updateScreen(null, this.value);
   updateScreen();
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 $(document).on('change click', '#comic-pxratio-2', function() {
   var ratio = $(this).is(':checked') ? 2 : 1;
   console.log(ratio);
   myComic.updatePxRatio(ratio);
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 
@@ -543,7 +555,7 @@ $panelsNav.sortable({
     var newPanelN = ui.item.index() + 1;
     myComic.movePanel(panel.pageN, panel.panelN, newPanelN);
     loadPage(panel.pageN);
-    myComic.saveLocalStorage();
+    saveLocalStorage();
   }
 });
 
@@ -555,7 +567,7 @@ $(document).on('click', '.panel-nav-remove', function(e) {
     var panel = panelInfo(this);
     myComic.removePanel(panel.pageN, panel.panelN);
     loadPage(panel.pageN);
-    myComic.saveLocalStorage();
+    saveLocalStorage();
   }
 });
 
@@ -565,35 +577,35 @@ $(document).on('change keyup', '.panel-w', function() {
   var panel = panelInfo(this);
   myComic.resizePanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { w: this.value });
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-h', function() {
   console.log('change h');
   var panel = panelInfo(this);
   myComic.resizePanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { h: this.value });
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-x', function() {
   console.log('change x');
   var panel = panelInfo(this);
   myComic.moveXYPanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { x: this.value });
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-y', function() {
   console.log('change y');
   var panel = panelInfo(this);
   myComic.moveXYPanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { y: this.value });
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-z', function() {
   console.log('change z');
   var panel = panelInfo(this);
   myComic.moveZPanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { z: this.value });
-  myComic.saveLocalStorage();
+  saveLocalStorage();
 });
 
 
@@ -668,8 +680,8 @@ var getZIndexes = function(avoidId) {
 };
 
 
-
-var myComic = new Electricomic();
+var existingComic = storage.get() || null;
+var myComic = new Electricomic(existingComic);
 loadComic();
 
 // $(window).bind('beforeunload', function(){

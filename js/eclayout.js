@@ -1,4 +1,4 @@
-var Electricomic = function() {
+var Electricomic = function(existingComic) {
   var _comic = {
     title: 'Electricomic',
     screenW: 1024,
@@ -27,27 +27,19 @@ var Electricomic = function() {
     };
   };
 
-  this.init = function() {
-    if (localStorage.electricomic) {
-      _comic = JSON.parse(localStorage.electricomic);
+  this.init = function(obj) {
+    if (obj) {
+      _comic = obj;
     }
     else {
       _comic.pages.push(new Page());
     }
   };
 
-  this.init();
+  this.init(existingComic);
 
   this.returnJSON = function() {
     return _comic;
-  };
-
-  this.saveLocalStorage = function() {
-    localStorage.electricomic = JSON.stringify(this.returnJSON());
-  };
-
-  this.clearLocalStorage = function() {
-    localStorage.removeItem('electricomic');
   };
 
   this.getComic = function() {
