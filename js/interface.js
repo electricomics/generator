@@ -1,9 +1,9 @@
 /* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9, Storage */
 
 var isFileReader = !!(window.FileReader || false);
-var isFileSaver = true;
+var isFileSaver = false;
 try {
-  var isFileSaverSupported = !!new Blob;
+  isFileSaver = !!new Blob();
 } catch (e) {
   isFileSaver = false;
 }
@@ -47,9 +47,9 @@ var saveLocalStorage = function() {
   storage.save(val);
 };
 
-var clearLocalStorage = function() {
-  storage.clear();
-};
+// var clearLocalStorage = function() {
+//   storage.clear();
+// };
 
 if (isFileReader) {
   var handleFileSelect = function(e) {
