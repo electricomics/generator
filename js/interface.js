@@ -225,7 +225,7 @@ var addImgEvent = function($img) {
   $img.resizable({
     aspectRatio: true,
     stop: function(event, ui) {
-      console.log(ui.size.width, ui.size.height);
+      // console.log(ui.size.width, ui.size.height);
       $w.val(ui.size.width);
       $w.trigger('change');
       $h.val(ui.size.height);
@@ -235,7 +235,7 @@ var addImgEvent = function($img) {
   // make it draggable
   $img.draggable({
     stop: function(event, ui) {
-      console.log(ui.position.left, ui.position.top);
+      // console.log(ui.position.left, ui.position.top);
       $x.val(ui.position.left);
       $x.trigger('change');
       $y.val(ui.position.top);
@@ -422,7 +422,7 @@ var readJSON = function(val) {
     loadComic();
   }
   catch (e) {
-    console.log('file format not valid');
+    // console.log('file format not valid');
     return false;
   }
   return true;
@@ -523,7 +523,7 @@ $(document).on('change keyup', '#comic-height', function() {
 
 $(document).on('change click', '#comic-pxratio-2', function() {
   var ratio = $(this).is(':checked') ? 2 : 1;
-  console.log(ratio);
+  // console.log(ratio);
   myComic.updatePxRatio(ratio);
   saveLocalStorage();
 });
@@ -571,35 +571,35 @@ $(document).on('click', '.panel-nav-remove', function(e) {
 
 
 $(document).on('change keyup', '.panel-w', function() {
-  console.log('change w');
+  // console.log('change w');
   var panel = panelInfo(this);
   myComic.resizePanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { w: this.value });
   saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-h', function() {
-  console.log('change h');
+  // console.log('change h');
   var panel = panelInfo(this);
   myComic.resizePanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { h: this.value });
   saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-x', function() {
-  console.log('change x');
+  // console.log('change x');
   var panel = panelInfo(this);
   myComic.moveXYPanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { x: this.value });
   saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-y', function() {
-  console.log('change y');
+  // console.log('change y');
   var panel = panelInfo(this);
   myComic.moveXYPanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { y: this.value });
   saveLocalStorage();
 });
 $(document).on('change keyup', '.panel-z', function() {
-  console.log('change z');
+  // console.log('change z');
   var panel = panelInfo(this);
   myComic.moveZPanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { z: this.value });
