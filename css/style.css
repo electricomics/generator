@@ -398,6 +398,7 @@ input[type=text],input[type=number] {
   height:80px;
   width:75px;
   border-radius: 20px;
+  background-color: #124900;
   background-image: -webkit-linear-gradient( -89deg, #89B689 0%, #124900 100%);
   background-image:         linear-gradient(-179deg, #89B689 0%, #124900 100%);
   border: 1px solid #2E2E2E;
