@@ -57,6 +57,34 @@ var saveLocalStorage = function() {
   }
 };
 
+var realSizeImg = function($el) {
+  var realImg = $el.find('img').get(0);
+  var w = realImg.naturalWidth;
+  var h = realImg.naturalHeight;
+  return {
+    w: w,
+    h: h
+  };
+};
+
+var showResize = function(panelId) {
+  var $panelWrapper = $('#panel' + panelId);
+  var $resized = $panelWrapper.find('.panel-nav-resized');
+  var $original = $panelWrapper.find('.panel-nav-original');
+  var w = $panelWrapper.find('.panel-w').val() * 1;
+  var h = $panelWrapper.find('.panel-h').val() * 1;
+  var wNatural = $panelWrapper.find('.panel-w-natural').val() * 1;
+  var hNatural = $panelWrapper.find('.panel-h-natural').val() * 1;
+  if (w === wNatural && h === hNatural) {
+    $resized.removeClass('show');
+    $original.removeClass('show');
+  }
+  else {
+    $resized.addClass('show');
+    $original.addClass('show');
+  }
+};
+
 // var clearLocalStorage = function() {
 //   storage.clear();
 // };
@@ -118,6 +146,10 @@ if (isFileReader) {
       
       newImg.w = w;
       newImg.h = h;
+
+      var realSize = realSizeImg($img);
+      newImg.naturalW = realSize.w;
+      newImg.naturalH = realSize.h;
 
       var newPanel = myComic.addPanel(CURRENT_PAGE, newImg);
       newImg.pageN = newPanel.pageN;
@@ -187,6 +219,9 @@ var loadPanels = function(pageN) {
 var addPanel = function(pageN, panelN) {
   var panel = myComic.getPanelByIndex(pageN, panelN);
   var $img = appendImg(panel);
+  var realSize = realSizeImg($img);
+  panel.naturalW = realSize.w;
+  panel.naturalH = realSize.h;
   addPanelForm(panel);
   addImgEvent($img);
 };
@@ -257,6 +292,8 @@ var addImgEvent = function($img) {
 var addPanelForm = function(obj) {
   var $panel = $panelTemplate.clone();
 
+  $panel.find('.panel-w-natural').val(obj.naturalW);
+  $panel.find('.panel-h-natural').val(obj.naturalH);
   $panel.find('.panel-w').val(obj.w);
   $panel.find('.panel-h').val(obj.h);
   $panel.find('.panel-x').val(obj.x);
@@ -599,6 +636,7 @@ $(document).on('change keyup', '.panel-w', function() {
   myComic.resizePanel(panel.pageN, panel.panelN, this.value);
   updateImg(panel.id, { w: this.value });
   saveLocalStorage();
+  showResize(panel.id);
 });
 $(document).on('change keyup', '.panel-h', function() {
   // console.log('change h');
@@ -606,6 +644,7 @@ $(document).on('change keyup', '.panel-h', function() {
   myComic.resizePanel(panel.pageN, panel.panelN, null, this.value);
   updateImg(panel.id, { h: this.value });
   saveLocalStorage();
+  showResize(panel.id);
 });
 $(document).on('change keyup', '.panel-x', function() {
   // console.log('change x');

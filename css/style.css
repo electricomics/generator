@@ -114,6 +114,7 @@ details[open] ~ .panels-nav {
 .page-nav-handle,
 .panel-nav-remove,
 .panel-nav-original,
+.panel-nav-resized,
 .panel-nav-handle {
   bottom: 0;
   color: green;
@@ -125,6 +126,13 @@ details[open] ~ .panels-nav {
 }
 .panel-nav-original {
   color: #FFF;
+  display: none;
+}
+.panel-nav-resized {
+  color: #f0b800;
+  cursor: default;
+  display: none;
+  left: 26px;
 }
 .page-nav-remove,
 .panel-nav-remove {
