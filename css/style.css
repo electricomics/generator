@@ -13,7 +13,8 @@ li {
 }
 header,
 nav,
-details {
+details,
+summary {
   display: block;
 }
 li {
