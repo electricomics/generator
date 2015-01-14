@@ -4,13 +4,13 @@ var isFileReader = !!(window.FileReader || false);
 var isFileSaver = false;
 try {
   isFileSaver = !!new Blob();
-} catch(e) {
+} catch (e) {
   isFileSaver = false;
 }
 var isSavedLocalStorage = false;
 try {
   isSavedLocalStorage = !!localStorage;
-} catch(e) {
+} catch (e) {
   isSavedLocalStorage = false;
 }
 
@@ -430,8 +430,7 @@ var readJSON = function(val) {
     myComic.init(resObj);
     saveLocalStorage();
     loadComic();
-  }
-  catch(e) {
+  } catch (e) {
     // console.log('file format not valid');
     return false;
   }

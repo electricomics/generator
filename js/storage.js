@@ -4,7 +4,7 @@ var Storage = function(name) {
   this.get = function() {
     try {
       return JSON.parse(localStorage[item]);
-    } catch(e) {
+    } catch (e) {
       // console.log(e);
       return false;
     }
@@ -21,7 +21,7 @@ var Storage = function(name) {
       }
       localStorage[item] = txt;
       return true;
-    } catch(e) {
+    } catch (e) {
       // console.log(e);
       return false;
     }
@@ -31,7 +31,7 @@ var Storage = function(name) {
     try {
       localStorage.removeItem(item);
       return true;
-    } catch(e) {
+    } catch (e) {
       // console.log(e);
       return false;
     }
