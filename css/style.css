@@ -113,6 +113,7 @@ details[open] ~ .panels-nav {
 .page-nav-remove,
 .page-nav-handle,
 .panel-nav-remove,
+.panel-nav-original,
 .panel-nav-handle {
   bottom: 0;
   color: green;
@@ -121,6 +122,9 @@ details[open] ~ .panels-nav {
   line-height: 1;
   padding: 5px;
   position: absolute;
+}
+.panel-nav-original {
+  color: #FFF;
 }
 .page-nav-remove,
 .panel-nav-remove {

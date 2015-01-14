@@ -578,6 +578,20 @@ $(document).on('click', '.panel-nav-remove', function(e) {
   }
 });
 
+$(document).on('click', '.panel-nav-original', function(e) {
+  e.stopPropagation();
+  var panel = panelInfo(this);
+  var id = panel.id;
+  var el = $('#' + id).find('img').get(0);
+  var $panelWrapper = $('#panel' + id);
+  var $w = $panelWrapper.find('.panel-w');
+  var $h = $panelWrapper.find('.panel-h');
+  var w = el.naturalWidth;
+  var h = el.naturalHeight;
+  $w.val(w).trigger('change');
+  $h.val(h).trigger('change');
+});
+
 
 $(document).on('change keyup', '.panel-w', function() {
   // console.log('change w');
@@ -660,6 +674,15 @@ $artboard.contextMenu({
       }
     },
     'sep2': '---------',
+    'resize': {
+      name: 'Original size',
+      callback: function() {
+        getPanelForm(this)
+          .find('.panel-nav-original')
+          .trigger('click');
+      }
+    },
+    'sep3': '---------',
     'delete': {
       name: 'Delete',
       callback: function() {
