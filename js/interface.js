@@ -4,8 +4,14 @@ var isFileReader = !!(window.FileReader || false);
 var isFileSaver = false;
 try {
   isFileSaver = !!new Blob();
-} catch (e) {
+} catch(e) {
   isFileSaver = false;
+}
+var isSavedLocalStorage = false;
+try {
+  isSavedLocalStorage = !!localStorage;
+} catch(e) {
+  isSavedLocalStorage = false;
 }
 
 var $artboard = $('#artboard');
@@ -44,7 +50,11 @@ var storage = new Storage(LOCAL_STORAGE);
 
 var saveLocalStorage = function() {
   var val = myComic.returnJSON();
-  storage.save(val);
+  var isSaved = storage.save(val);
+  isSavedLocalStorage = false;
+  if (isSaved) {
+    isSavedLocalStorage = true;
+  }
 };
 
 // var clearLocalStorage = function() {
@@ -421,7 +431,7 @@ var readJSON = function(val) {
     saveLocalStorage();
     loadComic();
   }
-  catch (e) {
+  catch(e) {
     // console.log('file format not valid');
     return false;
   }
@@ -682,6 +692,8 @@ var existingComic = storage.get() || null;
 var myComic = new Electricomic(existingComic);
 loadComic();
 
-// $(window).bind('beforeunload', function(){
-//   return 'Are you sure you want to leave? You will Lose all changes!';
-// });
+$(window).bind('beforeunload', function(){
+  if (!isSavedLocalStorage) {
+    return 'Are you sure you want to leave? You will lose all changes!';
+  }
+});
