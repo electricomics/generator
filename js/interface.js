@@ -224,6 +224,7 @@ var addPanel = function(pageN, panelN) {
   panel.naturalH = realSize.h;
   addPanelForm(panel);
   addImgEvent($img);
+  showResize(panel.id);
 };
 
 var appendImg = function(obj) {
