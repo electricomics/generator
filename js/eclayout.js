@@ -40,8 +40,6 @@ var Electricomic = function(existingComic) {
     }
   };
 
-  this.init(existingComic);
-
   this.returnJSON = function() {
     return _comic;
   };
@@ -238,4 +236,6 @@ var Electricomic = function(existingComic) {
   this.moveZPanel = function(pageN, panelN, z) {
     editPanel(pageN, panelN, 'z', z);
   };
+
+  this.init(existingComic);
 };
