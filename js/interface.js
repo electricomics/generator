@@ -164,8 +164,9 @@ else {
   // TODO: fallback for FileReader
 }
 
-var createHtml = function() {
+var createHtml = function(save) {
   var obj = myComic.returnJSON();
+  obj.save = save || false;
   var source = $exportTemplate;
   var template = Handlebars.compile(source);
   var rendered = template(obj);
@@ -489,7 +490,7 @@ $textareaInputButton.on('click', function() {
 // Save as html
 var $comicExport = $('#comic-export');
 $comicExport.on('click', function() {
-  var rendered = createHtml();
+  var rendered = createHtml(true);
   if (isFileSaver) {
     var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
     saveAs(blob, 'output.html');
@@ -545,7 +546,17 @@ $('#comic-clear').on('click', function() {
 // Preview
 $('#comic-preview').on('click', function() {
   var rendered = createHtml();
-  $preview.contents().find('body').append(rendered);
+  $preview.contents().find('body').html(rendered);
+
+  var cwd = $preview.get(0).contentWindow.document;
+  var cwdb = cwd.body;
+  var script1 = cwd.createElement('script');
+  script1.src = 'js/lib/jquery.min.js';
+  cwdb.appendChild(script1);
+  var script2 = cwd.createElement('script');
+  script2.src = 'js/preview-nav.js';
+  cwdb.appendChild(script2);
+
   $previewOverlay.addClass('show');
 });
 

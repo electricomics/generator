@@ -124,7 +124,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>{{title}}</title>
   <style>
 html {
@@ -133,29 +133,45 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 body {
-  margin: 0;
   text-align: center;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  /* http://stackoverflow.com/questions/3779534/how-to-disable-text-selection-with-css-or-js */
+  -webkit-user-select: none;
+     -moz-user-select: none;
 }
 section,
 nav {
   display: block;
 }
+h1 {
+  display: none;
+}
 section {
-  border: 1px solid #000;
   overflow: hidden;
   position: relative;
   height: {{screenH}}px;
   margin: 0 auto;
   width: {{screenW}}px;
+  display: none;
+}
+.show {
+  display: block;
 }
 img {
   border: 0 none;
   position: absolute;
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events */
+  pointer-events: none;
 }
   </style>
 </head>
 <body>
 <h1>{{title}}</h1>
+<div id="main">
 {{#pages}}
 {{#if show}}
 <section id="{{name}}" class="page{{@index}}">
@@ -167,6 +183,12 @@ img {
 </section>
 {{/if}}
 {{/pages}}
+</div>
+{{#if save}}
+  <script src="js/lib/jquery.min.js"></{{!}}script>
+  <script src="js/lib/hammer.min.js"></{{!}}script>
+  <script src="js/output-nav.js"></{{!}}script>
+{{/if}}
 </body>
 </html></script>
   
