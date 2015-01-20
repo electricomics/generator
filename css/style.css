@@ -445,10 +445,6 @@ input[type=text],input[type=number] {
   border: 1px dashed #EEE;
 }
 
-.panel-page, .panel-index{
-  display:none;
-}
-
 .panel-nav-handle {
   top:0px;
   height:30px;
