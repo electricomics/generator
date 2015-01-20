@@ -306,6 +306,7 @@ var addPanelForm = function(obj) {
   $panel.find('.panel-page').val(obj.pageN);
   $panel.find('.panel-index').val(obj.panelN);
   $panel.find('.panel-id').val(obj.id);
+  $panel.find('.panel-name').val(obj.name);
 
   $panel.find('.panel-img').attr('src', obj.src);
 
