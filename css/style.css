@@ -25,8 +25,7 @@ body {
   background: #333;
   color: #EEE;
 }
-body,
-input {
+body {
   font-family: 'komika_displayregular', Arial, sans-serif;
 }
 
@@ -342,7 +341,6 @@ input[type=text],input[type=number] {
   height: 1.6em;
   padding-left:10px;
   margin-bottom:4px;
-  font-family: 'komika_displayregular', Arial, sans-serif; 
   font-size: 1em;
   border-radius: 6px;
 }
