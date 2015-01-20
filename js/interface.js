@@ -271,6 +271,7 @@ var addImgEvent = function($img) {
   // make it resizable
   $img.resizable({
     aspectRatio: true,
+    handles: 'all',
     stop: function(event, ui) {
       // console.log(ui.size.width, ui.size.height);
       $w.val(ui.size.width);
