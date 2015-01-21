@@ -256,6 +256,7 @@ label[for="panel-add"] {
   position: absolute;
   right: 1em;
   top: 1em;
+  z-index: 9999;
 }
 .show {
   display: block;
