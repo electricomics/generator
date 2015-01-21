@@ -1,8 +1,8 @@
 * remove the selection text (look at laser canva games)
-* check the z-index
-* preview has problems with the z-index setted
+V* check the z-index
+V* preview has problems with the z-index setted
 * bring back/forward has bugs with the z-index
-* add resize to two corners
+V* add resize to two corners
 * zoom out of the whole artboard
 * zoom out of all the pages in once (?)
 * the images are getting a size zero
@@ -20,7 +20,7 @@
 * zoom in/out
 * proportionally resize
 * additional graphical indication for where we are, what is selected
-* show file name - hide the id in the panel
+V* show file name - hide the id in the panel
 * panel with all the assets available
-* z-index auto increment
+V* z-index auto increment
 * Better labels for buttons
