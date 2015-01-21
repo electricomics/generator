@@ -41,10 +41,10 @@
         <label>Retina 2x <input type="checkbox" id="comic-pxratio-2" value="2"></label>
       </div>
       <div>
-        <label>width <input type="number" id="comic-width"></label>
+        <label>width <input type="number" min="1" id="comic-width"></label>
       </div>
       <div>
-        <label>height <input type="number" id="comic-height"></label>
+        <label>height <input type="number" min="1" id="comic-height"></label>
       </div>
       <div>
         <input type="button" class="comic-button" id="comic-export" value="Save">
@@ -71,10 +71,10 @@
         <input type="hidden" class="panel-h-natural">
         <input type="text" readonly class="panel-name">
         <div>
-          <label>width <input type="number" class="panel-w"></label>
+          <label>width <input type="number" min="1" class="panel-w"></label>
         </div>
         <div>
-          <label>height <input type="number" class="panel-h"></label>
+          <label>height <input type="number" min="1" class="panel-h"></label>
         </div>
         <div>
           <label>left <input type="number" class="panel-x"></label>
@@ -83,7 +83,7 @@
           <label>top <input type="number" class="panel-y"></label>
         </div>
         <div>
-          <label>z-index <input type="number" class="panel-z"></label>
+          <label>z-index <input type="number" min="1" class="panel-z"></label>
         </div>
         <span class="panel-nav-remove" title="Delete image"><span class="fa fa-trash"></span></span>
         <span class="panel-nav-original" title="Restore original size"><span class="fa fa-arrows-alt"></span></span>

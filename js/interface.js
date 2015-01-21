@@ -124,12 +124,14 @@ if (isFileReader) {
     var reader = new FileReader();
     reader.readAsDataURL(file);
     reader.addEventListener('loadend', function(e) {
+      var zIndexes = getZIndexes('');
+      var biggest = zIndexes.pop();
       var newImg = {
         id: ID(),
         src: e.target.result,
         x: pos.x,
         y: pos.y,
-        z: 0,
+        z: biggest + 1,
         name: file.name
       };
       var $img = appendImg(newImg);
@@ -677,8 +679,13 @@ $(document).on('change keyup', '.panel-y', function() {
 $(document).on('change keyup', '.panel-z', function() {
   // console.log('change z');
   var panel = panelInfo(this);
-  myComic.moveZPanel(panel.pageN, panel.panelN, this.value);
-  updateImg(panel.id, { z: this.value });
+  var val = this.value;
+  if (val !== '' && val < 1) {
+    val = 1;
+    this.value = 1;
+  }
+  myComic.moveZPanel(panel.pageN, panel.panelN, val);
+  updateImg(panel.id, { z: val });
   saveLocalStorage();
 });
 
