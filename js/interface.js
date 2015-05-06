@@ -1,5 +1,8 @@
 /* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9, Storage */
 
+var useLocal = false;
+var useServer = true;
+
 var isFileReader = !!(window.FileReader || false);
 var isFileSaver = false;
 try {
@@ -124,47 +127,64 @@ if (isFileReader) {
     var reader = new FileReader();
     reader.readAsDataURL(file);
     reader.addEventListener('loadend', function(e) {
-      var zIndexes = getZIndexes('');
-      var biggest = zIndexes.pop();
-      var newImg = {
-        id: ID(),
+
+      var imgFile = {
         src: e.target.result,
-        x: pos.x,
-        y: pos.y,
-        z: biggest + 1,
         name: file.name
       };
-      var $img = appendImg(newImg);
-      var w = $img.width();
-      var h = $img.height();
-
-      // TODO: make it flexible for future pixel ratio
-      if ($comicPxRatio2.is(':checked')) {
-        w = w / 2;
-        h = h / 2;
-        $img.css('width', w + 'px');
-        $img.css('height', h + 'px');
-      }
-      
-      newImg.w = w;
-      newImg.h = h;
-
-      var realSize = realSizeImg($img);
-      newImg.naturalW = realSize.w;
-      newImg.naturalH = realSize.h;
-
-      var newPanel = myComic.addPanel(CURRENT_PAGE, newImg);
-      newImg.pageN = newPanel.pageN;
-      newImg.panelN = newPanel.panelN;
-      addPanelForm(newImg);
-      addImgEvent($img);
-      saveLocalStorage();
+      addImgFile(imgFile, pos);
     });
   };
 }
 else {
   // TODO: fallback for FileReader
 }
+
+var addImgFile = function(imgFile, pos) {
+  var zIndexes = getZIndexes('');
+  var biggest = zIndexes.pop();
+  var newImg = {
+    id: ID(),
+    src: imgFile.src,
+    x: pos.x,
+    y: pos.y,
+    z: biggest + 1,
+    name: imgFile.name
+  };
+  var $img = appendImg(newImg);
+  var w = $img.width();
+  var h = $img.height();
+
+  // TODO: make it flexible for future pixel ratio
+  if ($comicPxRatio2.is(':checked')) {
+    w = w / 2;
+    h = h / 2;
+    $img.css('width', w + 'px');
+    $img.css('height', h + 'px');
+  }
+  
+  newImg.w = w;
+  newImg.h = h;
+
+  var realSize = realSizeImg($img);
+  newImg.naturalW = realSize.w;
+  newImg.naturalH = realSize.h;
+
+  var newPanel = myComic.addPanel(CURRENT_PAGE, newImg);
+  newImg.pageN = newPanel.pageN;
+  newImg.panelN = newPanel.panelN;
+  addPanelForm(newImg);
+  addImgEvent($img);
+  saveLocalStorage();
+};
+
+var addRelativeImg = function(obj, pos) {
+  var imgFile = {
+    src: obj.path,
+    name: obj.name
+  };
+  addImgFile(imgFile, pos);
+};
 
 var createHtml = function(save) {
   var obj = myComic.returnJSON();
@@ -245,6 +265,9 @@ var appendImg = function(obj) {
 
   // when we drop a new image on the artboard we don't know it's size yet,
   // we need to append it first and then find it out
+  $img.one('load', function() {
+    console.log('loaded');
+  });
   if (obj.w != null) {
     w = obj.w;
   }
@@ -592,7 +615,7 @@ $(document).on('change click', '#comic-pxratio-2', function() {
 
 
 // panel
-if (isFileReader) {
+if (useLocal && isFileReader) {
   $('#panel-add').on('change', function(e) {
     var files = e.target.files;
     var pos = {
@@ -602,6 +625,48 @@ if (isFileReader) {
     for (var i = 0; i < files.length; i++) {
       addImg(files[i], pos);
     }
+  });
+}
+else if (useServer) {
+  $('#panel-add').on('change', function(e) {
+    var files = e.target.files;
+    if (files.length > 0) {
+      $('#panel-add-submit').show();
+    }
+    else {
+      $('#panel-add-submit').hide();
+    }
+  });
+
+  $('#form-panel-add').on('submit', function(e) {
+    e.preventDefault();
+    var $this = $(this);
+    var pos = {
+      x: 0,
+      y: 0
+    };
+
+    $.ajax({
+      url: $this.attr('action'),
+      type: $this.attr('method'),
+      data: new FormData(this),
+      dataType: 'json',
+      processData: false,
+      contentType: false,
+      success: function(data) {
+        console.log(data);
+        if (data.form && data.form.panelAdd) {
+          if (Array.isArray(data.form.panelAdd)) {
+            $.each(data.form.panelAdd, function(i, obj) {
+              addRelativeImg(obj, pos);
+            });
+          }
+          else {
+            addRelativeImg(data.form.panelAdd, pos);
+          }
+        }
+      }
+    });
   });
 }
 else {
