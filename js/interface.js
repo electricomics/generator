@@ -182,8 +182,9 @@ var addImgFile = function(imgFile, pos) {
 };
 
 var addRelativeImg = function(obj, pos) {
+  var path = obj.path.replace('comic/', '');
   var imgFile = {
-    src: obj.path,
+    src: path,
     name: obj.name
   };
   addImgFile(imgFile, pos);
@@ -254,6 +255,7 @@ var addPanel = function(pageN, panelN) {
 };
 
 var imgLoaded = function(obj, $img) {
+  console.log('loaded', obj, $img);
   var $div = $('#' + obj.id);
   var w = 0;
   var h = 0;
@@ -271,15 +273,20 @@ var imgLoaded = function(obj, $img) {
   $w.trigger('change');
   $h.val(h);
   $h.trigger('change');
+  saveLocalStorage();
 };
 
 var appendImg = function(obj) {
   var $img = $('<img>');
   var $div = $('<div class="artboard-img">');
+  var src = obj.src;
+  if (useServer) {
+    src = 'comic/' + src;
+  }
   var w = 0;
   var h = 0;
   $div.attr('id', obj.id);
-  $img.attr('src', obj.src);
+  $img.attr('src', src);
   $div.css('left', obj.x + 'px');
   $div.css('top', obj.y + 'px');
   $div.css('z-index', obj.z);
@@ -352,7 +359,12 @@ var addPanelForm = function(obj) {
   $panel.find('.panel-id').val(obj.id);
   $panel.find('.panel-name').val(obj.name);
 
-  $panel.find('.panel-img').attr('src', obj.src);
+  if (useServer) {
+    $panel.find('.panel-img').attr('src', 'comic/' + obj.src);
+  }
+  else {
+    $panel.find('.panel-img').attr('src', obj.src);
+  }
 
   $panel.attr('id', 'panel' + obj.id);
 
@@ -594,14 +606,14 @@ $('#comic-preview').on('click', function() {
   var rendered = createHtml();
   $preview.contents().find('body').html(rendered);
 
-  var cwd = $preview.get(0).contentWindow.document;
-  var cwdb = cwd.body;
-  var script1 = cwd.createElement('script');
-  script1.src = 'js/lib/jquery.min.js';
-  cwdb.appendChild(script1);
-  var script2 = cwd.createElement('script');
-  script2.src = 'js/preview-nav.js';
-  cwdb.appendChild(script2);
+  // var cwd = $preview.get(0).contentWindow.document;
+  // var cwdb = cwd.body;
+  // var script1 = cwd.createElement('script');
+  // script1.src = 'js/lib/jquery.min.js';
+  // cwdb.appendChild(script1);
+  // var script2 = cwd.createElement('script');
+  // script2.src = 'js/preview-nav.js';
+  // cwdb.appendChild(script2);
 
   $previewOverlay.addClass('show');
 });

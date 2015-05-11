@@ -128,70 +128,108 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
   <title>{{title}}</title>
   <style>
-html {
-  font-family: sans-serif;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
+/* general style */
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
-body {
-  text-align: center;
-}
-html,
-body {
+html, body {
+  background: #EEE;
+  height: 100%;
   margin: 0;
   padding: 0;
+  /* disable text selection with css or js */
   /* http://stackoverflow.com/questions/3779534/how-to-disable-text-selection-with-css-or-js */
   -webkit-user-select: none;
      -moz-user-select: none;
 }
-section,
-nav {
-  display: block;
-}
-h1 {
-  display: none;
-}
-section {
-  overflow: hidden;
-  position: relative;
-  height: {{screenH}}px;
-  margin: 0 auto;
-  width: {{screenW}}px;
-  display: none;
-}
-.show {
-  display: block;
-}
 img {
   border: 0 none;
-  position: absolute;
+  display: block;
+  /* never the target of mouse events */
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events */
   pointer-events: none;
+}
+ec-comic, ec-page, ec-text, ec-curtains {
+  display: block;
+  width: 100%;
+}
+
+
+/* comic specific */
+ec-comic, ec-page {
+  height: 100%;
+}
+ec-comic {
+  background: #000;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.step {
+  display: none;
+  position: relative;
+}
+img {
+  width: 100%;
+}
+
+ec-curtains {
+  background: #000;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
   </style>
 </head>
 <body>
-<h1>{{title}}</h1>
-<div id="main">
+<ec-comic id="comic" style="width: {{screenW}}px; hight: {{screenH}}px;">
 {{#pages}}
 {{#if show}}
-<section id="{{name}}" class="page{{@index}}">
+<ec-page id="{{name}}" class="step">
   {{#panels}}
   {{#if id}}
-  <img src="{{{../src}}}" id="{{../id}}" class="panel{{@index}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{#if ../../../../save}}
+    <img src="{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{else}}
+    <img src="comic/{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{/if}}
   {{/if}}
   {{/panels}}
-</section>
+</ec-page>
 {{/if}}
 {{/pages}}
-</div>
+</ec-comic>
+
+<ec-curtains></ec-curtains>
+
+<script>
+var comicJSON = {
+  width: {{screenW}},
+  height: {{screenH}}
+};
+</{{!}}script>
 {{#if save}}
-  <script src="js/lib/jquery.min.js"></{{!}}script>
-  <script src="js/lib/hammer.min.js"></{{!}}script>
-  <script src="js/output-nav.js"></{{!}}script>
+  <script src="js/electricomics.js"></{{!}}script>
+  <script src="js/jquery.min.js"></{{!}}script>
+  <script src="js/hammer.min.js"></{{!}}script>
+  <script src="js/raf.js"></{{!}}script>
+  <script src="js/picturefill.min.js"></{{!}}script>
+  <script src="js/main.js"></{{!}}script>
+{{else}}
+  <script src="comic/js/electricomics.js"></{{!}}script>
+  <script src="comic/js/jquery.min.js"></{{!}}script>
+  <script src="comic/js/hammer.min.js"></{{!}}script>
+  <script src="comic/js/raf.js"></{{!}}script>
+  <script src="comic/js/picturefill.min.js"></{{!}}script>
+  <script src="comic/js/main.js"></{{!}}script>
 {{/if}}
 </body>
 </html></script>
