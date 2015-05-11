@@ -6,6 +6,9 @@ var done = false;
 
 /*Configure the multer.*/
 app.use(multer({ dest: './comic/images',
+  limits: {
+    fieldSize: 100000000
+  },
   rename: function (fieldname, filename) {
     return filename;
   },
