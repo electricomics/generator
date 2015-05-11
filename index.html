@@ -193,7 +193,7 @@ ec-curtains {
 <ec-comic id="comic" style="width: {{screenW}}px; height: {{screenH}}px;">
 {{#pages}}
 {{#if show}}
-<ec-page id="{{name}}" class="step">
+<ec-page id="step-{{@index}}-{{name}}" class="step">
   {{#panels}}
   {{#if id}}
     {{#if ../../../../save}}
