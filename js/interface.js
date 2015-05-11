@@ -143,6 +143,9 @@ else {
 var addImgFile = function(imgFile, pos) {
   var zIndexes = getZIndexes('');
   var biggest = zIndexes.pop();
+  if (biggest == null) {
+    biggest = 0;
+  }
   var newImg = {
     id: ID(),
     src: imgFile.src,
