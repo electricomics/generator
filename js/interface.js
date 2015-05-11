@@ -250,11 +250,31 @@ var addPanel = function(pageN, panelN) {
   showResize(panel.id);
 };
 
+var imgLoaded = function(obj, $img) {
+  var $div = $('#' + obj.id);
+  var w = 0;
+  var h = 0;
+  var $panelWrapper = $('#panel' + obj.id);
+  var $w = $panelWrapper.find('.panel-w');
+  var $h = $panelWrapper.find('.panel-h');
+  
+  w = $img.get(0).naturalWidth;
+  h = $img.get(0).naturalHeight;
+  
+  $div.css('width', w + 'px');
+  $div.css('height', h + 'px');
+
+  $w.val(w);
+  $w.trigger('change');
+  $h.val(h);
+  $h.trigger('change');
+};
+
 var appendImg = function(obj) {
   var $img = $('<img>');
   var $div = $('<div class="artboard-img">');
-  var w;
-  var h;
+  var w = 0;
+  var h = 0;
   $div.attr('id', obj.id);
   $img.attr('src', obj.src);
   $div.css('left', obj.x + 'px');
@@ -263,22 +283,18 @@ var appendImg = function(obj) {
   $div.append($img);
   $artboard.append($div);
 
-  // when we drop a new image on the artboard we don't know it's size yet,
+  // when we drop a new image on the artboard we don't know its size yet,
   // we need to append it first and then find it out
-  $img.one('load', function() {
-    console.log('loaded');
-  });
+  if (obj.w == null || obj.h == null) {
+    $img.one('load', function(e) {
+      imgLoaded(obj, $(this), e);
+    });
+  }
   if (obj.w != null) {
     w = obj.w;
   }
-  else {
-    w = $img.get(0).naturalWidth;
-  }
   if (obj.h != null) {
     h = obj.h;
-  }
-  else {
-    h = $img.get(0).naturalHeight;
   }
   $div.css('width', w + 'px');
   $div.css('height', h + 'px');
