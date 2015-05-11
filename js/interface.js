@@ -547,16 +547,16 @@ $textareaInputButton.on('click', function() {
 
 // Save as html
 var $comicExport = $('#comic-export');
-$comicExport.on('click', function() {
-  var rendered = createHtml(true);
-  if (isFileSaver) {
-    var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
-    saveAs(blob, 'output.html');
-  }
-  else {
-    showOutput(rendered);
-  }
-});
+  $comicExport.on('click', function() {
+    var rendered = createHtml(true);
+    if (isFileSaver) {
+      var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
+      saveAs(blob, 'output.html');
+    }
+    else {
+      showOutput(rendered);
+    }
+  });
 
 // Export JSON
 var $comicExportJson = $('#comic-export-json');
@@ -602,21 +602,28 @@ $('#comic-clear').on('click', function() {
 });
 
 // Preview
-$('#comic-preview').on('click', function() {
-  var rendered = createHtml();
-  $preview.contents().find('body').html(rendered);
+if (useLocal) {
+  $('#comic-preview').on('click', function() {
+    var rendered = createHtml();
+    $preview.contents().find('body').html(rendered);
 
-  // var cwd = $preview.get(0).contentWindow.document;
-  // var cwdb = cwd.body;
-  // var script1 = cwd.createElement('script');
-  // script1.src = 'js/lib/jquery.min.js';
-  // cwdb.appendChild(script1);
-  // var script2 = cwd.createElement('script');
-  // script2.src = 'js/preview-nav.js';
-  // cwdb.appendChild(script2);
+    // var cwd = $preview.get(0).contentWindow.document;
+    // var cwdb = cwd.body;
+    // var script1 = cwd.createElement('script');
+    // script1.src = 'js/lib/jquery.min.js';
+    // cwdb.appendChild(script1);
+    // var script2 = cwd.createElement('script');
+    // script2.src = 'js/preview-nav.js';
+    // cwdb.appendChild(script2);
 
-  $previewOverlay.addClass('show');
-});
+    $previewOverlay.addClass('show');
+  });
+}
+if (useServer) {
+  $('#comic-preview').on('click', function() {
+    window.open(location.origin + '/comic/output.html', '_blank');
+  });
+}
 
 
 // comic
