@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Electricomics Editor</title>
+  <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+  <link rel="stylesheet" href="js/lib/jQuery-contextMenu/jquery.contextMenu.css">
+  <link rel="stylesheet" href="fonts/komika/stylesheet.css">
+  <link rel="stylesheet" href="fonts/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header id="comic-header" class="header">
+    <h1>Electricomics Layout Tool</h1>
+  </header>
+
+  <nav class="pages-nav">
+    <!-- <span class="pages-nav-add" data-page="0">Add</span> -->
+    <ul id="pages-nav" class="page-nav-wrapper"></ul>
+    <span class="pages-nav-add" data-page="-1"><span class="fa fa-file fa-2x addCenter"></span></span>
+    
+    <script type="text/template" id="page-template">
+    <li class="page-nav js-page-nav">
+      <input type="text" class="page-name">
+      <span class="page-nav-add" title="Add page after this"><span class="fa fa-plus-circle"></span></span>
+      <span class="page-nav-clone" title="Clone this page"><span class="fa fa-clone"></span></span>
+      <span class="page-nav-remove" title="Delete page"><span class="fa fa-trash"></span></span>
+      <span class="page-nav-handle" title="Move page"><span class="fa fa-arrows-h fa-lg"></span></span>
+    </li>
+    </script>
+  </nav>
+
+  <div class="panels">
+    <details open>
+      <summary>Settings</summary>
+      <div>
+        <label>Comic Name</label>
+        <input type="text" id="comic-name">
+      </div>
+      <div style="display: none;">
+        <label>Retina 2x <input type="checkbox" id="comic-pxratio-2" value="2"></label>
+      </div>
+      <div>
+        <label>width <input type="number" min="1" id="comic-width"></label>
+      </div>
+      <div>
+        <label>height <input type="number" min="1" id="comic-height"></label>
+      </div>
+      <div>
+        <input type="button" class="comic-button" id="comic-export" value="Save">
+        <input type="button" class="comic-button" id="comic-clear" value="Clear">
+        <input type="button" class="comic-button" id="comic-export-json" value="Export">
+        <label for="comic-import-json" class="comic-button">Import<input type="file" id="comic-import-json" style="display:none;" value="Import"></label>
+        <input type="button" class="comic-button" id="comic-preview" value="Preview">
+      </div>
+    </details>
+
+    <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">
+      <label for="panel-add" class="comic-button">Add Image<input type="file" id="panel-add" name="panelAdd" style="display:none;" value="Add Image" multiple accept="image/*"></label>
+      <input type="submit" id="panel-add-submit" value="Upload" style="display: none;">
+    </form>
+    <ul id="panels-nav" class="panels-nav"></ul>
+    
+    <script type="text/template" id="panel-template">
+      <li class="panel">
+        <span class="panel-nav-handle" title="Reorder image"><span class="fa fa-arrows-v"></span></span>
+        <div class="panel-img-wrapper">
+          <img src="" class="panel-img">
+        </div>
+        <input type="hidden" class="panel-page">
+        <input type="hidden" class="panel-index">
+        <input type="hidden" readonly class="panel-id">
+        <input type="hidden" class="panel-w-natural">
+        <input type="hidden" class="panel-h-natural">
+        <input type="text" readonly class="panel-name">
+        <div>
+          <label>width <input type="number" min="1" class="panel-w"></label>
+        </div>
+        <div>
+          <label>height <input type="number" min="1" class="panel-h"></label>
+        </div>
+        <div>
+          <label>left <input type="number" class="panel-x"></label>
+        </div>
+        <div>
+          <label>top <input type="number" class="panel-y"></label>
+        </div>
+        <div>
+          <label>z-index <input type="number" min="1" class="panel-z"></label>
+        </div>
+        <span class="panel-nav-remove" title="Delete image"><span class="fa fa-trash"></span></span>
+        <span class="panel-nav-original" title="Restore original size"><span class="fa fa-arrows-alt"></span></span>
+        <span class="panel-nav-resized" title="This image has been resized"><span class="fa fa-warning"></span></span>
+      </li>
+    </script>
+  </div>
+
+  <div class="artboard-wrapper">
+    <div id="artboard" class="artboard"></div>
+  </div>
+
+  <div id="preview-overlay" class="overlay">
+    <a href="#" id="preview-close" class="overlay-close" title="Close preview">X</a>
+    <iframe id="preview"></iframe>
+  </div>
+
+  <div id="textarea-output-overlay" class="overlay">
+    <a href="#" id="textarea-output-close" class="overlay-close" title="Close window">X</a>
+    <textarea id="textarea-output" cols="30" rows="10"></textarea>
+  </div>
+
+  <div id="textarea-input-overlay" class="overlay">
+    <a href="#" id="textarea-input-close" class="overlay-close" title="Close window">X</a>
+    <textarea id="textarea-input" cols="30" rows="10"></textarea>
+    <input type="button" id="textarea-input-button" class="comic-button" value="Import">
+  </div>
+
+  <!--[if lte IE 8]>
+    <div class="not-supported">
+      <h3>Electricomics Layout Tool</h3>
+      Your browser is <strong>out of date</strong> and does not support this website.<br>
+      <a href="https://browser-update.org/update.html">Learn how to update your browser</a>
+    </div>
+  <![endif]-->
+
+<script type="text/x-handlebars-template" id="export-template"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <title>{{title}}</title>
+  <style>
+/* general style */
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+html, body {
+  background: #EEE;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* disable text selection with css or js */
+  /* http://stackoverflow.com/questions/3779534/how-to-disable-text-selection-with-css-or-js */
+  -webkit-user-select: none;
+     -moz-user-select: none;
+}
+img {
+  border: 0 none;
+  display: block;
+  /* never the target of mouse events */
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events */
+  pointer-events: none;
+}
+ec-comic, ec-page, ec-text, ec-curtains {
+  display: block;
+  width: 100%;
+}
+
+
+/* comic specific */
+ec-comic, ec-page {
+  height: 100%;
+}
+ec-comic {
+  background: #000;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.step {
+  display: none;
+  position: relative;
+}
+img {
+  width: 100%;
+}
+
+ec-curtains {
+  background: #000;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+  </style>
+</head>
+<body>
+<ec-comic id="comic" style="width: {{screenW}}px; height: {{screenH}}px;">
+{{#pages}}
+{{#if show}}
+<ec-page id="step-{{@index}}-{{name}}" class="step">
+  {{#panels}}
+  {{#if id}}
+    {{#if ../../../../save}}
+    <img src="{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{else}}
+    <img src="comic/{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{/if}}
+  {{/if}}
+  {{/panels}}
+</ec-page>
+{{/if}}
+{{/pages}}
+</ec-comic>
+
+<ec-curtains></ec-curtains>
+
+<script>
+var comicJSON = {
+  width: {{screenW}},
+  height: {{screenH}}
+};
+</{{!}}script>
+{{#if save}}
+  <script src="js/electricomics.js"></{{!}}script>
+  <script src="js/jquery.min.js"></{{!}}script>
+  <script src="js/hammer.min.js"></{{!}}script>
+  <script src="js/raf.js"></{{!}}script>
+  <script src="js/picturefill.min.js"></{{!}}script>
+  <script src="js/main.js"></{{!}}script>
+{{else}}
+  <script src="comic/js/electricomics.js"></{{!}}script>
+  <script src="comic/js/jquery.min.js"></{{!}}script>
+  <script src="comic/js/hammer.min.js"></{{!}}script>
+  <script src="comic/js/raf.js"></{{!}}script>
+  <script src="comic/js/picturefill.min.js"></{{!}}script>
+  <script src="comic/js/main.js"></{{!}}script>
+{{/if}}
+</body>
+</html></script>
+  
+  <script src="js/lib/jquery.min.js"></script>
+  <script src="js/lib/jquery-ui/jquery-ui.js"></script>
+  <script src="js/lib/jQuery-contextMenu/jquery.contextMenu.js"></script>
+  <script src="js/lib/handlebars-v2.0.0.js"></script>
+  <script src="js/lib/FileSaver.min.js"></script>
+  <!--[if IE 9]>
+    <script src="js/lib/swfobject/swfobject.js"></script>
+    <script src="js/lib/FileReader/jquery.FileReader.min.js"></script>
+    <script>
+      var isLteIE9 = true;
+    </script>
+  <![endif]-->
+  <script src="js/lib/mouse.js"></script>
+  <script src="js/eclayout.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/interface.js"></script>
+
+<!-- <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-51389282-2', 'auto');ga('send', 'pageview');
+</script> -->
+</body>
+</html>
