@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Electricomic Layout Tool",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodewebkit"
   },
   "author": "Ocasta Studios",
   "devDependencies": {
@@ -13,7 +13,16 @@
   },
   "dependencies": {
     "express": "^4.12.0",
-    "multer": "^0.1.8"
+    "multer": "^0.1.8",
+    "nodewebkit": "^0.11.6"
+  },
+  "main": "index.html",
+  "window": {
+    "width": 1024,
+    "height": 768,
+    "fullscreen": false,
+    "title": "Electricomic Creator Tool",
+    "toolbar": false
   },
   "private": true
 }
