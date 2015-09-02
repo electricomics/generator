@@ -475,6 +475,19 @@ $(document).on('click', '.page-nav-add', function(e) {
   saveLocalStorage();
 });
 
+$(document).on('click', '.page-nav-clone', function(e) {
+  e.stopPropagation();
+
+  var index = $(this).parent().data('page') * 1 + 1;
+  var originalPage = myComic.getPage(index - 1);
+  console.log(originalPage);
+  // return;
+  var newLen = myComic.addPage(originalPage, index);
+  loadPages(newLen);
+  loadPage(index);
+  saveLocalStorage();
+});
+
 $(document).on('click', '.page-nav-remove', function(e) {
   e.stopPropagation();
 

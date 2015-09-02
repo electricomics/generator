@@ -109,6 +109,7 @@ details[open] ~ .panels-nav {
   font-size: 2em;
 }
 .page-nav-add,
+.page-nav-clone,
 .page-nav-remove,
 .page-nav-handle,
 .panel-nav-remove,
@@ -122,6 +123,10 @@ details[open] ~ .panels-nav {
   line-height: 1;
   padding: 5px;
   position: absolute;
+}
+.page-nav-clone {
+  color: #0FF;
+  left: 18px;
 }
 .panel-nav-original {
   color: #FFF;
@@ -151,6 +156,7 @@ details[open] ~ .panels-nav {
   cursor: move;
 }
 .page-nav-add:hover,
+.page-nav-clone:hover,
 .page-nav-remove:hover,
 .page-nav-handle:hover,
 .panel-nav-remove:hover,
