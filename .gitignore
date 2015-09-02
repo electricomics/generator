@@ -1,5 +1,5 @@
 .DS_Store
 node_modules
 *.log
-comic/images
-comic/output.html
+public/comic/images
+public/comic/output.html
