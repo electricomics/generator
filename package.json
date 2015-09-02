@@ -1,7 +1,7 @@
 {
-  "name": "elcx-layout-tool",
+  "name": "elcx-creator-tool",
   "version": "1.0.0",
-  "description": "Electricomic Layout Tool",
+  "description": "Electricomic Creator Tool",
   "scripts": {
     "start": "nodewebkit"
   },
