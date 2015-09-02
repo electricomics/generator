@@ -8,7 +8,7 @@ module.exports = function (grunt) {
         livereload: true,
       },
       html: {
-        files: ['index.html'],
+        files: ['*.html', '*.json'],
         tasks: [],
         options: {
           spawn: false
@@ -34,8 +34,7 @@ module.exports = function (grunt) {
       server: {
         options: {
           port: 8000,
-          base: '',
-          hostname: '*'
+          livereload: true
         }
       }
     },
