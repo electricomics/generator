@@ -44,6 +44,14 @@ http.get(options, function(res) {
     }
   }));
 
+  function getUserHome() {
+    var what = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+    return path.join(what, 'electricomics/comics');
+  }
+
+  // console.log(path.join(process.cwd(), 'public/giulia'));
+  console.log(getUserHome());
+
   // all environments
   app.set('port', options.port);
   app.use(express.static(path.join(process.cwd(), 'public')));
