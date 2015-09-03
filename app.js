@@ -10,6 +10,7 @@ var server;
 var sockets = {};
 var nextSocketId = 0;
 var bodyParser = require('body-parser');
+var archiver = require('archiver');
 
 var done = false;
 
@@ -25,6 +26,28 @@ var red = function() {
   if (window.location.hostname !== options.host) { 
     window.location = 'http://' + options.host + ':' + options.port + '/loading.html';
   }
+};
+
+
+var createZip = function(mypath) {
+  console.log('zip');
+  var outputPath = mypath + '-electricomic.zip';
+  var srcDirectory = mypath;
+  var output = fs.createWriteStream(outputPath);
+  var zipArchive = archiver('zip');
+  output.on('close', function() {
+    console.log('done with the zip', outputPath);
+  });
+  zipArchive.pipe(output);
+  zipArchive.bulk([
+    { src: [ '**/*' ], cwd: srcDirectory, expand: true }
+  ]);
+  zipArchive.finalize(function(err, bytes) {
+    if (err) {
+      throw err;
+    }
+    console.log('done: ', bytes);
+  });
 };
 
 
@@ -105,6 +128,10 @@ var start = function(mypath) {
         console.log('socket', socketId, 'destroyed');
         sockets[socketId].destroy();
       }
+    });
+
+    app.get('/zip', function(req, res) {
+      createZip(mypath);
     });
 
     server = http.createServer(app);
