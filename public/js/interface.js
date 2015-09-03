@@ -2,6 +2,7 @@
 
 var useLocal = false;
 var useServer = true;
+var useNodeWebkitServer = true;
 
 var isFileReader = !!(window.FileReader || false);
 var isFileSaver = false;
@@ -635,6 +636,21 @@ if (useLocal) {
 if (useServer) {
   $('#comic-preview').on('click', function() {
     window.open(location.origin + '/comic/output.html', '_blank');
+  });
+}
+
+// Close
+if (useNodeWebkitServer) {
+  $('#comic-close').on('click', function() {
+    $.ajax({
+      url: '/close',
+      method: 'POST',
+      data: { file: 'project.json', content: localStorage.getItem('electricomic')},
+      success: function() {
+        sessionStorage.clear();
+        history.go(-(window.history.length - 1));
+      }
+    });
   });
 }
 

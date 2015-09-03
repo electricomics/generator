@@ -1,9 +1,15 @@
+/* global Electricomic */
+
 var express = require('express');
 var multer = require('multer');
 var app = express();
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
+var server;
+var sockets = {};
+var nextSocketId = 0;
+var bodyParser = require('body-parser');
 
 var done = false;
 
@@ -55,7 +61,7 @@ var start = function(mypath) {
     fs.exists(mypath + '/project.json', function(exists) {
       if (!exists) {
         var emptyComic = new Electricomic(null);
-        fs.appendFile(mypath + '/project.json', JSON.stringify(emptyComic.returnJSON(), null, 2));
+        fs.writeFile(mypath + '/project.json', JSON.stringify(emptyComic.returnJSON(), null, 2));
       }
     });
 
@@ -71,14 +77,40 @@ var start = function(mypath) {
       }
     });
 
-    http.createServer(app).listen(options.port, function(err) {
+    // create application/json parser
+    var jsonParser = bodyParser.json();
+    // create application/x-www-form-urlencoded parser
+    var urlencodedParser = bodyParser.urlencoded({ extended: true });
+    
+    app.post('/close', urlencodedParser, function(req, res) {
+      fs.writeFile(mypath + '/project.json', JSON.stringify(JSON.parse(req.body.content), null, 2));
+      res.end('{"status": "ok"}');
+      server.close(function() {
+        console.log('closed');
+      });
+      for (var socketId in sockets) {
+        console.log('socket', socketId, 'destroyed');
+        sockets[socketId].destroy();
+      }
+    });
+
+    server = http.createServer(app);
+    server.listen(options.port, function(err) {
       console.log('server created');
       red();
     });
+
+    server.on('connection', function (socket) {
+      // Add a newly connected socket
+      var socketId = nextSocketId++;
+      sockets[socketId] = socket;
+      console.log('socket', socketId, 'opened');
+
+      // Remove the socket when it closes
+      socket.on('close', function () {
+        console.log('socket', socketId, 'closed');
+        delete sockets[socketId];
+      });
+    });
   });
-};
-
-
-var stop = function() {
-
 };

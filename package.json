@@ -12,6 +12,7 @@
     "grunt-contrib-watch": "^0.6.1"
   },
   "dependencies": {
+    "body-parser": "^1.13.3",
     "express": "^4.12.0",
     "multer": "^0.1.8",
     "nodewebkit": "^0.11.6"
