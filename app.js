@@ -51,6 +51,16 @@ var createZip = function(mypath) {
 };
 
 
+var writeJSON = function(file, content) {
+  fs.writeFile(mypath + '/' + file, JSON.stringify(content, null, 2));
+};
+
+
+var save = function() {
+
+};
+
+
 var start = function(mypath) {
   if (!mypath) {
     console.log('server not started, invalid path');
@@ -84,7 +94,8 @@ var start = function(mypath) {
     fs.exists(mypath + '/project.json', function(exists) {
       if (!exists) {
         var emptyComic = new Electricomic(null);
-        fs.writeFile(mypath + '/project.json', JSON.stringify(emptyComic.returnJSON(), null, 2));
+        // fs.writeFile(mypath + '/project.json', JSON.stringify(emptyComic.returnJSON(), null, 2));
+        writeJSON('project.json', emptyComic.returnJSON());
       }
     });
 
@@ -119,7 +130,8 @@ var start = function(mypath) {
     var urlencodedParser = bodyParser.urlencoded({ extended: true });
     
     app.post('/close', urlencodedParser, function(req, res) {
-      fs.writeFile(mypath + '/project.json', JSON.stringify(JSON.parse(req.body.content), null, 2));
+      // fs.writeFile(mypath + '/project.json', JSON.stringify(JSON.parse(req.body.content), null, 2));
+      writeJSON('project.json', JSON.parse(req.body.content));
       res.end('{"status": "ok"}');
       server.close(function() {
         console.log('closed');
