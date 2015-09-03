@@ -71,9 +71,22 @@ var start = function(mypath) {
     app.use('/comic', express.static(mypath));
 
     app.post('/upload',function(req, res){
-      if(done === true){
-        // console.log(req.files);
-        res.end('{"status": "ok", "form": ' + JSON.stringify(req.files) + '}');
+      if (done === true){
+        var txt = JSON.stringify(req.files);
+        txt = JSON.parse(txt);
+        if (txt.panelAdd) {
+          if (Array.isArray(txt.panelAdd)) {
+            for (var i = 0; i < txt.panelAdd.length; i++) {
+              txt.panelAdd[i].path = txt.panelAdd[i].path.replace(mypath + '/', '');
+            }
+          }
+          else {
+            txt.panelAdd.path = txt.panelAdd.path.replace(mypath + '/', '');
+          }
+        }
+        txt = JSON.stringify(txt);
+        // console.log(txt);
+        res.end('{"status": "ok", "form": ' + txt + '}');
       }
     });
 
