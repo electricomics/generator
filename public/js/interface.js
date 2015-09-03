@@ -574,29 +574,39 @@ var $comicExport = $('#comic-export');
 
 // Export JSON
 var $comicExportJson = $('#comic-export-json');
-$comicExportJson.on('click', function() {
-  var rendered = JSON.stringify(myComic.returnJSON());
-  if (isFileSaver) {
-    var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
-    saveAs(blob, 'output.json');
-  }
-  else {
-    showOutput(rendered);
-  }
-});
+if (!useNodeWebkitServer) {
+  $comicExportJson.on('click', function() {
+    var rendered = JSON.stringify(myComic.returnJSON());
+    if (isFileSaver) {
+      var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
+      saveAs(blob, 'output.json');
+    }
+    else {
+      showOutput(rendered);
+    }
+  });
+}
+else {
+  $comicExportJson.hide();
+}
 
 
 // Import JSON
 if (isFileReader) {
-  $('#comic-import-json').on('change', function(e) {
-    var selectedFile = e.target.files[0];
-    var reader = new FileReader();
-    reader.readAsText(selectedFile);
-    reader.addEventListener('loadend', function(e) {
-      var res = e.target.result;
-      readJSON(res);
+  if (!useNodeWebkitServer) {
+    $('#comic-import-json').on('change', function(e) {
+      var selectedFile = e.target.files[0];
+      var reader = new FileReader();
+      reader.readAsText(selectedFile);
+      reader.addEventListener('loadend', function(e) {
+        var res = e.target.result;
+        readJSON(res);
+      });
     });
-  });
+  }
+  else {
+    $('label[for="comic-import-json"]').hide();
+  }
 }
 else {
   $('label[for="comic-import-json"]').on('click', function(e) {
@@ -652,6 +662,9 @@ if (useNodeWebkitServer) {
       }
     });
   });
+}
+else {
+  $('#comic-close').hide();
 }
 
 
