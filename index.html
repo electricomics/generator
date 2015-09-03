@@ -3,9 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Electricomics Editor</title>
+  <script type="text/javascript" src="app.js"></script>
 </head>
 <body>
   <h1>STARTING ELECTRICOMICS CREATOR TOOL</h1>
-  <script type="text/javascript" src="app.js"></script>
+  <form id="form">
+    <input type="file" webkitdirectory id="path" required>
+    <input type="submit" value="start">
+  </form>
+  <script src="public/js/lib/jquery.min.js"></script>
+  <script>
+  var $form = $('#form');
+  var $path = $('#path');
+  $form.on('submit', function(e) {
+    e.preventDefault();
+    var path = $path.val();
+    console.log(path);
+    if (path !== '') {
+      start(path);
+    }
+  });
+  </script>
 </body>
 </html>

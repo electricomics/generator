@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+<script src="js/lib/jquery.min.js"></script>
+<script>
+  if (!sessionStorage.getItem('nwjs')) {
+    sessionStorage.setItem('nwjs', 'true');
+    localStorage.clear();
+    $.ajax({
+      url: 'comic/project.json',
+      success: function(data) {
+        localStorage.setItem('electricomic', JSON.stringify(data.electricomic));
+        window.location = 'index.html';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
