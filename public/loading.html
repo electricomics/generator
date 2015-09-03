@@ -14,7 +14,7 @@
     $.ajax({
       url: 'comic/project.json',
       success: function(data) {
-        localStorage.setItem('electricomic', JSON.stringify(data.electricomic));
+        localStorage.setItem('electricomic', JSON.stringify(data));
         window.location = 'index.html';
       }
     });

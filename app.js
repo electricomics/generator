@@ -3,6 +3,7 @@ var multer = require('multer');
 var app = express();
 var http = require('http');
 var path = require('path');
+var fs = require('fs');
 
 var done = false;
 
@@ -49,6 +50,14 @@ var start = function(mypath) {
         done = true;
       }
     }));
+
+    // create package.json if it doesn't exist
+    fs.exists(mypath + '/project.json', function(exists) {
+      if (!exists) {
+        var emptyComic = new Electricomic(null);
+        fs.appendFile(mypath + '/project.json', JSON.stringify(emptyComic.returnJSON(), null, 2));
+      }
+    });
 
     // all environments
     app.set('port', options.port);
