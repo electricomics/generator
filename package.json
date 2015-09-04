@@ -1,7 +1,7 @@
 {
   "name": "elcx-creator-tool",
   "version": "1.0.0",
-  "description": "Electricomic Creator Tool",
+  "description": "Electricomics Creator Tool",
   "scripts": {
     "start": "nodewebkit"
   },
