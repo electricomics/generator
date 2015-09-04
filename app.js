@@ -190,22 +190,34 @@ var startProject = function(mypath) {
 
 // UI
 var $iframe = $('#creator-tool');
+var $newProject = $('#new-project');
 var $openProject = $('#open-project');
-var $pathProject = $('#path-project');
 var $saveProject = $('#save-project');
 var $closeProject = $('#close-project');
 var $comicPreview = $('#comic-preview');
 var $comicFolder = $('#comic-folder');
 var $comicExport = $('#comic-export');
+var $quit = $('#quit');
 var projectPath;
 
 
-$openProject.on('submit', function(e) {
-  e.preventDefault();
-  projectPath = $pathProject.val();
+$quit.on('click', function() {
+  if (confirm('Are you sure you want to quit the app?')) {
+    nwgui.App.quit();
+  }
+});
+
+$newProject.on('change', function() {
+  console.log(this.value);
+  // this.value = '';
+});
+
+$openProject.on('change', function() {
+  projectPath = this.value;
   console.log(projectPath);
   if (projectPath !== '') {
     startProject(projectPath);
+    this.value = '';
   }
 });
 

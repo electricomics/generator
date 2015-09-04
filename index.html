@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Electricomics Editor</title>
+  <title>Electricomics Creator Tool</title>
   <style>
 html, body {
   height: 100%;
@@ -14,12 +14,33 @@ main {
   flex-direction: column;
   height: 100%;
 }
-header {
-  padding: 20px 0;
-}
 iframe {
   height: 100%;
   width: 100%;
+}
+input[type=file] {
+  display: none;
+}
+.menu {
+  background: #EEE;
+  font-size: 0;
+  padding: 0;
+}
+.menu-item {
+  background: #EEE;
+  border: 0 none;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 1rem;
+  outline: 0 none;
+  padding: 6px 10px;
+}
+.menu-item:hover {
+  background: #CCC;
+}
+.menu-item:active {
+  background: #09f;
+  color: #FFF;
 }
 
 
@@ -27,30 +48,21 @@ iframe {
 </head>
 <body>
   <main>
-    <header>
-      <h1>STARTING ELECTRICOMICS CREATOR TOOL</h1>
-      <form id="open-project">
-        <input type="file" webkitdirectory id="path-project" required>
-        <input type="submit" value="open project">
-      </form>
-      <input type="button" id="save-project" value="save project">
-      <input type="button" id="close-project" value="close project">
-      <input type="button" id="comic-preview" value="show comic preview">
-      <input type="button" id="comic-folder" value="show comic folder">
-      <input type="button" id="comic-export" value="export comic">
+    <header class="menu">
+      <label class="menu-item">New Project<input type="file" id="new-project" nwsaveas="electricomic.elcxproject"></label>
+      <label class="menu-item">Open Project<input type="file" id="open-project" accept=".elcxproject"></label>
+      <input class="menu-item" type="button" id="save-project" value="Save Project">
+      <input class="menu-item" type="button" id="close-project" value="Close Project">
+      <input class="menu-item" type="button" id="quit" value="Quit">
+      <input class="menu-item" type="button" id="comic-preview" value="View Comic Preview">
+      <input class="menu-item" type="button" id="comic-folder" value="View Comic Folder">
+      <input class="menu-item" type="button" id="comic-export" value="Export Comic">
     </header>
     <iframe src="empty.html" frameborder="0" id="creator-tool"></iframe>
   </main>
   
   <script src="public/js/lib/jquery.min.js"></script>
   <script src="public/js/eclayout.js"></script>
-  <script type="text/javascript" src="app.js"></script>
-  <script>
-  window.onmessage = function(e){
-    if (e.data === 'hello') {
-      console.log(window.location.href, localStorage);
-    }
-  };
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
