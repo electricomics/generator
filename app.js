@@ -60,12 +60,12 @@ var writeJSON = function(file, content) {
 
 
 var saveProject = function() {
-
+  $iframe.get(0).contentWindow.postMessage('{"type": "saved"}', serverUrl);
 };
 
 
-var closeProject = function(content) {
-  // writeJSON('project.json', content);
+var closeProject = function() {
+  saveProject();
   if (server) {
     server.close(function() {
       console.log('closed');
@@ -75,6 +75,8 @@ var closeProject = function(content) {
       sockets[socketId].destroy();
     }
   }
+  $iframe.attr('src', 'empty.html');
+  projectPath = '';
 };
 
 
@@ -208,13 +210,11 @@ $openProject.on('submit', function(e) {
 });
 
 $saveProject.on('click', function() {
-
+  $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
 });
 
 $closeProject.on('click', function() {
-  closeProject();
-  $iframe.attr('src', 'empty.html');
-  projectPath = '';
+  $iframe.get(0).contentWindow.postMessage('{"type": "close"}', serverUrl);
 });
 
 $comicPreview.on('click', function() {
@@ -233,3 +233,24 @@ $comicExport.on('click', function() {
     nwgui.Shell.showItemInFolder(projectPath);
   }
 });
+
+window.addEventListener('message', function(e) {
+  if (e.origin !== serverUrl) {
+    return false;
+  }
+  
+  var msg;
+  try {
+    msg = JSON.parse(e.data);
+  } catch(err) {
+    console.log('error in the received post message');
+    return false;
+  }
+
+  if (msg.type === 'save') {
+    saveProject();
+  }
+  if (msg.type === 'close') {
+    closeProject();
+  }
+}, false);

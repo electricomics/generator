@@ -817,6 +817,25 @@ var getZIndexes = function(avoidId) {
 };
 
 
+if (useNodeWebkitServer) {
+  window.addEventListener('message', function(e) {
+    var msg;
+    try {
+      msg = JSON.parse(e.data);
+    } catch(err) {
+      console.log('error in the received post message');
+      return false;
+    }
+    if (msg.type === 'save' || msg.type === 'close') {
+      window.parent.postMessage('{"type": "' + msg.type + '", "content": ' + localStorage.electricomic + '}', '*');
+    }
+    if (msg.type === 'saved') {
+      console.log('saved');
+    }
+  }, false);
+}
+
+
 var existingComic = storage.get() || null;
 var myComic = new Electricomic(existingComic);
 loadComic();
