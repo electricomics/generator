@@ -3,27 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <title>Electricomics Editor</title>
-  <script src="public/js/eclayout.js"></script>
-  <script type="text/javascript" src="app.js"></script>
+  <style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+header {
+  padding: 20px 0;
+}
+iframe {
+  height: 100%;
+  width: 100%;
+}
+
+
+  </style>
 </head>
 <body>
-  <h1>STARTING ELECTRICOMICS CREATOR TOOL</h1>
-  <form id="form">
-    <input type="file" webkitdirectory id="path" required>
-    <input type="submit" value="start">
-  </form>
+  <main>
+    <header>
+      <h1>STARTING ELECTRICOMICS CREATOR TOOL</h1>
+      <form id="open-project">
+        <input type="file" webkitdirectory id="path-project" required>
+        <input type="submit" value="open project">
+      </form>
+      <input type="button" id="save-project" value="save project">
+      <input type="button" id="close-project" value="close project">
+      <input type="button" id="comic-preview" value="show comic preview">
+      <input type="button" id="comic-folder" value="show comic folder">
+      <input type="button" id="comic-export" value="export comic">
+    </header>
+    <iframe src="empty.html" frameborder="0" id="creator-tool"></iframe>
+  </main>
+  
   <script src="public/js/lib/jquery.min.js"></script>
+  <script src="public/js/eclayout.js"></script>
+  <script type="text/javascript" src="app.js"></script>
   <script>
-  var $form = $('#form');
-  var $path = $('#path');
-  $form.on('submit', function(e) {
-    e.preventDefault();
-    var path = $path.val();
-    console.log(path);
-    if (path !== '') {
-      start(path);
+  window.onmessage = function(e){
+    if (e.data === 'hello') {
+      console.log(window.location.href, localStorage);
     }
-  });
+  };
   </script>
 </body>
 </html>

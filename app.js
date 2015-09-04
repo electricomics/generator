@@ -11,6 +11,8 @@ var sockets = {};
 var nextSocketId = 0;
 var bodyParser = require('body-parser');
 var archiver = require('archiver');
+var nwgui = require('nw.gui');
+nwgui.Window.get().showDevTools();
 
 var done = false;
 
@@ -18,13 +20,14 @@ var options = {
   host: '0.0.0.0',
   port: 8000
 };
+var serverUrl = 'http://' + options.host + ':' + options.port;
 
 var red = function() {
   if (typeof window === 'undefined') {
     return false;
   }
-  if (window.location.hostname !== options.host) { 
-    window.location = 'http://' + options.host + ':' + options.port + '/loading.html';
+  if ($iframe.attr('src').indexOf(serverUrl) < 1) { 
+    $iframe.attr('src', serverUrl + '/loading.html');
   }
 };
 
@@ -56,12 +59,26 @@ var writeJSON = function(file, content) {
 };
 
 
-var save = function() {
+var saveProject = function() {
 
 };
 
 
-var start = function(mypath) {
+var closeProject = function(content) {
+  // writeJSON('project.json', content);
+  if (server) {
+    server.close(function() {
+      console.log('closed');
+    });
+    for (var socketId in sockets) {
+      console.log('socket', socketId, 'destroyed');
+      sockets[socketId].destroy();
+    }
+  }
+};
+
+
+var startProject = function(mypath) {
   if (!mypath) {
     console.log('server not started, invalid path');
     return false;
@@ -131,15 +148,16 @@ var start = function(mypath) {
     
     app.post('/close', urlencodedParser, function(req, res) {
       // fs.writeFile(mypath + '/project.json', JSON.stringify(JSON.parse(req.body.content), null, 2));
-      writeJSON('project.json', JSON.parse(req.body.content));
+      // writeJSON('project.json', JSON.parse(req.body.content));
       res.end('{"status": "ok"}');
-      server.close(function() {
-        console.log('closed');
-      });
-      for (var socketId in sockets) {
-        console.log('socket', socketId, 'destroyed');
-        sockets[socketId].destroy();
-      }
+      // server.close(function() {
+      //   console.log('closed');
+      // });
+      // for (var socketId in sockets) {
+      //   console.log('socket', socketId, 'destroyed');
+      //   sockets[socketId].destroy();
+      // }
+      stop(JSON.parse(req.body.content));
     });
 
     app.get('/zip', function(req, res) {
@@ -166,3 +184,52 @@ var start = function(mypath) {
     });
   });
 };
+
+
+// UI
+var $iframe = $('#creator-tool');
+var $openProject = $('#open-project');
+var $pathProject = $('#path-project');
+var $saveProject = $('#save-project');
+var $closeProject = $('#close-project');
+var $comicPreview = $('#comic-preview');
+var $comicFolder = $('#comic-folder');
+var $comicExport = $('#comic-export');
+var projectPath;
+
+
+$openProject.on('submit', function(e) {
+  e.preventDefault();
+  projectPath = $pathProject.val();
+  console.log(projectPath);
+  if (projectPath !== '') {
+    startProject(projectPath);
+  }
+});
+
+$saveProject.on('click', function() {
+
+});
+
+$closeProject.on('click', function() {
+  closeProject();
+  $iframe.attr('src', 'empty.html');
+  projectPath = '';
+});
+
+$comicPreview.on('click', function() {
+  nwgui.Shell.openExternal(serverUrl + '/comic');
+});
+
+$comicFolder.on('click', function() {
+  if (projectPath !== '') {
+    nwgui.Shell.showItemInFolder(projectPath);
+  }
+});
+
+$comicExport.on('click', function() {
+  if (projectPath !== '') {
+    createZip(projectPath);
+    nwgui.Shell.showItemInFolder(projectPath);
+  }
+});
