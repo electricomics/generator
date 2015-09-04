@@ -23,11 +23,12 @@ input[type=file] {
 }
 .menu {
   background: #EEE;
+  border: 1px solid #CCC;
   font-size: 0;
   padding: 0;
 }
 .menu-item {
-  background: #EEE;
+  background: inherit;
   border: 0 none;
   cursor: pointer;
   font-family: sans-serif;
@@ -39,24 +40,36 @@ input[type=file] {
   background: #CCC;
 }
 .menu-item:active {
-  background: #09f;
+  background: #09F;
   color: #FFF;
 }
+.disabled {
+  color: #AAA;
+  cursor: default;
+}
+.disabled:hover,
+.disabled:active {
+  background: inherit;
+  color: #AAA;
+}
+
 
 
   </style>
 </head>
 <body>
   <main>
-    <header class="menu">
-      <label class="menu-item">New Project<input type="file" id="new-project" nwsaveas="electricomic.elcxproject"></label>
-      <label class="menu-item">Open Project<input type="file" id="open-project" accept=".elcxproject"></label>
-      <input class="menu-item" type="button" id="save-project" value="Save Project">
-      <input class="menu-item" type="button" id="close-project" value="Close Project">
-      <input class="menu-item" type="button" id="quit" value="Quit">
-      <input class="menu-item" type="button" id="comic-preview" value="View Comic Preview">
-      <input class="menu-item" type="button" id="comic-folder" value="View Comic Folder">
-      <input class="menu-item" type="button" id="comic-export" value="Export Comic">
+    <header>
+      <nav class="menu">
+        <label class="menu-item">New Project<input type="file" id="new-project" nwsaveas="electricomic.elcxproject"></label>
+        <label class="menu-item">Open Project<input type="file" id="open-project" accept=".elcxproject"></label>
+        <input class="menu-item disabled" type="button" id="save-project" value="Save Project">
+        <input class="menu-item disabled" type="button" id="close-project" value="Close Project">
+        <input class="menu-item" type="button" id="quit" value="Quit">
+        <input class="menu-item disabled" type="button" id="comic-preview" value="View Comic Preview">
+        <input class="menu-item disabled" type="button" id="comic-folder" value="View Comic Folder">
+        <input class="menu-item disabled" type="button" id="comic-export" value="Export Comic">
+      </nav>
     </header>
     <iframe src="empty.html" frameborder="0" id="creator-tool"></iframe>
   </main>

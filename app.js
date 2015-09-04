@@ -222,24 +222,39 @@ $openProject.on('change', function() {
 });
 
 $saveProject.on('click', function() {
+  if ($(this).hasClass('disabled')) {
+    return;
+  }
   $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
 });
 
 $closeProject.on('click', function() {
+  if ($(this).hasClass('disabled')) {
+    return;
+  }
   $iframe.get(0).contentWindow.postMessage('{"type": "close"}', serverUrl);
 });
 
 $comicPreview.on('click', function() {
+  if ($(this).hasClass('disabled')) {
+    return;
+  }
   nwgui.Shell.openExternal(serverUrl + '/comic');
 });
 
 $comicFolder.on('click', function() {
+  if ($(this).hasClass('disabled')) {
+    return;
+  }
   if (projectPath !== '') {
     nwgui.Shell.showItemInFolder(projectPath);
   }
 });
 
 $comicExport.on('click', function() {
+  if ($(this).hasClass('disabled')) {
+    return;
+  }
   if (projectPath !== '') {
     createZip(projectPath);
     nwgui.Shell.showItemInFolder(projectPath);
