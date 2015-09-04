@@ -649,24 +649,6 @@ if (useServer) {
   });
 }
 
-// Close
-if (useNodeWebkitServer) {
-  $('#comic-close').on('click', function() {
-    $.ajax({
-      url: '/close',
-      method: 'POST',
-      data: { file: 'project.json', content: localStorage.getItem('electricomic')},
-      success: function() {
-        sessionStorage.clear();
-        history.go(-(window.history.length - 1));
-      }
-    });
-  });
-}
-else {
-  $('#comic-close').hide();
-}
-
 
 // comic
 $(document).on('change keyup', '#comic-name', function() {
