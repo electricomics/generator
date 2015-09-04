@@ -559,62 +559,6 @@ $textareaInputButton.on('click', function() {
 
 
 
-// Save as html
-var $comicExport = $('#comic-export');
-  $comicExport.on('click', function() {
-    var rendered = createHtml(true);
-    if (isFileSaver) {
-      var blob = new Blob([rendered], {type: 'text/html;charset=utf-8'});
-      saveAs(blob, 'output.html');
-    }
-    else {
-      showOutput(rendered);
-    }
-  });
-
-// Export JSON
-var $comicExportJson = $('#comic-export-json');
-if (!useNodeWebkitServer) {
-  $comicExportJson.on('click', function() {
-    var rendered = JSON.stringify(myComic.returnJSON());
-    if (isFileSaver) {
-      var blob = new Blob([rendered], {type: 'application/json;charset=utf-8'});
-      saveAs(blob, 'output.json');
-    }
-    else {
-      showOutput(rendered);
-    }
-  });
-}
-else {
-  $comicExportJson.hide();
-}
-
-
-// Import JSON
-if (isFileReader) {
-  if (!useNodeWebkitServer) {
-    $('#comic-import-json').on('change', function(e) {
-      var selectedFile = e.target.files[0];
-      var reader = new FileReader();
-      reader.readAsText(selectedFile);
-      reader.addEventListener('loadend', function(e) {
-        var res = e.target.result;
-        readJSON(res);
-      });
-    });
-  }
-  else {
-    $('label[for="comic-import-json"]').hide();
-  }
-}
-else {
-  $('label[for="comic-import-json"]').on('click', function(e) {
-    e.preventDefault();
-    $textareaInputOverlay.addClass('show');
-  });
-}
-
 // Clear
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
@@ -624,30 +568,6 @@ $('#comic-clear').on('click', function() {
     loadComic();
   }
 });
-
-// Preview
-if (useLocal) {
-  $('#comic-preview').on('click', function() {
-    var rendered = createHtml();
-    $preview.contents().find('body').html(rendered);
-
-    // var cwd = $preview.get(0).contentWindow.document;
-    // var cwdb = cwd.body;
-    // var script1 = cwd.createElement('script');
-    // script1.src = 'js/lib/jquery.min.js';
-    // cwdb.appendChild(script1);
-    // var script2 = cwd.createElement('script');
-    // script2.src = 'js/preview-nav.js';
-    // cwdb.appendChild(script2);
-
-    $previewOverlay.addClass('show');
-  });
-}
-if (useServer) {
-  $('#comic-preview').on('click', function() {
-    window.open(location.origin + '/comic/output.html', '_blank');
-  });
-}
 
 
 // comic
