@@ -55,7 +55,7 @@ var createZip = function(mypath) {
 
 
 var writeJSON = function(file, content) {
-  fs.writeFile(mypath + '/' + file, JSON.stringify(content, null, 2));
+  fs.writeFile(projectPath + '/' + file, JSON.stringify(content, null, 2));
 };
 
 
