@@ -252,9 +252,14 @@ var projectOpenAll = function() {
   }
 };
 
-var projectSave = function(id) {
+var projectStartSave = function(id) {
   var projectId = id || currentProject;
-  // $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
+  iframes[projectId].get(0).contentWindow.postMessage('{"type": "save", "iframe": "' + projectId + '"}', serverUrl);
+};
+
+var projectSave = function(content, id) {
+  var projectId = id || currentProject;
+  iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '"}', serverUrl);
 };
 
 var projectNew = function(newPath, name) {
@@ -416,7 +421,7 @@ $saveProject.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  projectSave();
+  projectStartSave();
 });
 
 $closeProject.on('click', function() {
@@ -463,10 +468,10 @@ window.addEventListener('message', function(e) {
   }
 
   if (msg.type === 'save') {
-    projectSave();
+    projectSave(msg.content, msg.iframe);
   }
   if (msg.type === 'close') {
-    projectClose();
+    projectClose(msg.iframe);
   }
 }, false);
 

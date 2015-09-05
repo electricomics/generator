@@ -836,6 +836,10 @@ var getZIndexes = function(avoidId) {
 
 if (useNodeWebkitServer) {
   window.addEventListener('message', function(e) {
+    if (e.origin !== 'file://') {
+      return false;
+    }
+
     var msg;
     try {
       msg = JSON.parse(e.data);
@@ -843,11 +847,14 @@ if (useNodeWebkitServer) {
       console.log('error in the received post message');
       return false;
     }
+    if (msg.iframe !== LOCAL_STORAGE) {
+      return false;
+    }
     if (msg.type === 'save' || msg.type === 'close') {
-      window.parent.postMessage('{"type": "' + msg.type + '", "content": ' + storage.getItem() + '}', '*');
+      window.parent.postMessage('{"type": "' + msg.type + '", "iframe": "' + LOCAL_STORAGE + '", "content": ' + storage.getItem() + '}', '*');
     }
     if (msg.type === 'saved') {
-      console.log('saved');
+      console.log(LOCAL_STORAGE + ' saved');
     }
   }, false);
 }
