@@ -48,6 +48,14 @@ var red = function() {
 };
 
 
+var writeJSON = function(path, content) {
+  fs.writeFile(path, JSON.stringify(content, null, 2));
+};
+
+var writeFile = function(path, content) {
+  fs.writeFile(path, content);
+};
+
 var createZip = function(mypath) {
   console.log('zip');
   var outputPath = mypath + '-electricomic.zip';
@@ -94,7 +102,7 @@ var iframeAdd = function(id) {
 var iframeClose = function(id) {
   var prevIframe = tabs[id].prev();
   if (prevIframe.length > 0) {
-    iframeSelect(prevIframe);
+    iframeSelect(prevIframe.attr('id').replace('tab-', ''));
   }
   iframes[id].remove();
   tabs[id].remove();
@@ -107,9 +115,9 @@ var iframeClose = function(id) {
 var iframeSelect = function(id) {
   currentProject = id;
   $('.iframe-selected').removeClass('iframe-selected');
-  iframes[id].addClass('iframe-selected');
+  iframes[currentProject].addClass('iframe-selected');
   $('.tab-selected').removeClass('tab-selected');
-  tabs[id].addClass('tab-selected');
+  tabs[currentProject].addClass('tab-selected');
 };
 
 
@@ -252,13 +260,15 @@ var projectOpenAll = function() {
   }
 };
 
-var projectStartSave = function(id) {
+var projectStartMessage = function(type, id) {
   var projectId = id || currentProject;
-  iframes[projectId].get(0).contentWindow.postMessage('{"type": "save", "iframe": "' + projectId + '"}', serverUrl);
+  iframes[projectId].get(0).contentWindow.postMessage('{"type": "'+ type + '", "iframe": "' + projectId + '"}', serverUrl);
 };
 
 var projectSave = function(content, id) {
   var projectId = id || currentProject;
+  console.log(id + ' saving');
+  // todo saving
   iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '"}', serverUrl);
 };
 
@@ -284,94 +294,37 @@ var projectNew = function(newPath, name) {
   projectOpen(newPath, name);
 };
 
-var projectClose = function(id) {
+var projectClose = function(content, id) {
   var projectId = id || currentProject;
-  projectSave(currentProject);
-  iframeClose(currentProject);
+  projectSave(content, projectId);
+  iframeClose(projectId);
+  delete projects[projectId];
+  localStorage.setItem('projects', JSON.stringify(projects));
   // unmount folder
 };
 
-// var startProject = function(mypath) {
-//   if (!mypath) {
-//     console.log('server not started, invalid path');
-//     return false;
-//   }
-//   //check if server is already running
-//   http.get(options, function(res) {
-//     console.log('server is running, redirecting to localhost');
-//     red();
-//   }).on('error', function(e) {
-//     //server is not yet running
 
-//     // configure multer
-//     app.use(multer({ dest: mypath + '/images',
-//       limits: {
-//         fieldSize: 100000000
-//       },
-//       rename: function (fieldname, filename) {
-//         return filename;
-//       },
-//       onFileUploadStart: function (file) {
-//         // console.log(file.originalname + ' is starting ...');
-//       },
-//       onFileUploadComplete: function (file) {
-//         // console.log(file.fieldname + ' uploaded to  ' + file.path);
-//         done = true;
-//       }
-//     }));
+window.addEventListener('message', function(e) {
+  if (e.origin !== serverUrl) {
+    return false;
+  }
+  
+  var msg;
+  try {
+    msg = JSON.parse(e.data);
+  } catch(err) {
+    console.log('error in the received post message');
+    return false;
+  }
 
-//     // create package.json if it doesn't exist
-//     fs.exists(mypath + '/project.json', function(exists) {
-//       if (!exists) {
-//         var emptyComic = new Electricomic(null);
-//         writeJSON('project.json', emptyComic.returnJSON());
-//       }
-//     });
+  if (msg.type === 'save') {
+    projectSave(msg.content, msg.iframe);
+  }
+  if (msg.type === 'close') {
+    projectClose(msg.content, msg.iframe);
+  }
+}, false);
 
-//     // all environments
-//     app.set('port', options.port);
-//     app.use(express.static(path.join(process.cwd(), 'public')));
-//     app.use('/comic', express.static(mypath));
-
-//     app.post('/upload',function(req, res){
-//       if (done === true){
-//         var txt = JSON.stringify(req.files);
-//         txt = JSON.parse(txt);
-//         if (txt.panelAdd) {
-//           if (Array.isArray(txt.panelAdd)) {
-//             for (var i = 0; i < txt.panelAdd.length; i++) {
-//               txt.panelAdd[i].path = txt.panelAdd[i].path.replace(mypath + '/', '');
-//             }
-//           }
-//           else {
-//             txt.panelAdd.path = txt.panelAdd.path.replace(mypath + '/', '');
-//           }
-//         }
-//         txt = JSON.stringify(txt);
-//         res.end('{"status": "ok", "form": ' + txt + '}');
-//       }
-//     });
-
-//     server = http.createServer(app);
-//     server.listen(options.port, function(err) {
-//       console.log('server created');
-//       red();
-//     });
-
-//     server.on('connection', function (socket) {
-//       // Add a newly connected socket
-//       var socketId = nextSocketId++;
-//       sockets[socketId] = socket;
-//       console.log('socket', socketId, 'opened');
-
-//       // Remove the socket when it closes
-//       socket.on('close', function () {
-//         console.log('socket', socketId, 'closed');
-//         delete sockets[socketId];
-//       });
-//     });
-//   });
-// };
 
 
 // UI
@@ -421,15 +374,14 @@ $saveProject.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  projectStartSave();
+  projectStartMessage('save');
 });
 
 $closeProject.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  // $iframe.get(0).contentWindow.postMessage('{"type": "close"}', serverUrl);
-  projectClose();
+  projectStartMessage('close');
 });
 
 $comicPreview.on('click', function() {
@@ -454,26 +406,6 @@ $comicExport.on('click', function() {
   nwgui.Shell.showItemInFolder(projects[currentProject].fsPath);
 });
 
-window.addEventListener('message', function(e) {
-  if (e.origin !== serverUrl) {
-    return false;
-  }
-  
-  var msg;
-  try {
-    msg = JSON.parse(e.data);
-  } catch(err) {
-    console.log('error in the received post message');
-    return false;
-  }
-
-  if (msg.type === 'save') {
-    projectSave(msg.content, msg.iframe);
-  }
-  if (msg.type === 'close') {
-    projectClose(msg.iframe);
-  }
-}, false);
 
 
 serverStart();
