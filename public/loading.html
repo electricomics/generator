@@ -2,27 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title></title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<h1>loading</h1>
 
 <script src="js/lib/jquery.min.js"></script>
 <script>
 /* global $ */
-  if (!sessionStorage.getItem('nwjs')) {
-    sessionStorage.setItem('nwjs', 'true');
-    localStorage.clear();
-    $.ajax({
-      url: 'comic/project.json',
-      success: function(data) {
-        localStorage.setItem('electricomic', JSON.stringify(data));
-        window.location = 'index.html';
-      }
-    });
-  }
-  else {
-    window.location = 'index.html';
-  }
+if (window.location.search === '') {
+  window.location = 'empty.html';
+}
+
+var searchParams = {};
+var searchArr = window.location.search.substring(1).split(',');
+var tmp;
+for (var i = 0; i < searchArr.length; i++) {
+  tmp = searchArr[i].split('=');
+  searchParams[ tmp[0] ] = tmp[1];
+}
+
+if (!searchParams.path) {
+  window.location = 'empty.html';
+}
+
+if (!localStorage.getItem(searchParams.id)) {
+  $.ajax({
+    url: searchParams.path + '/project.json',
+    success: function(data) {
+      localStorage.setItem(searchParams.id, JSON.stringify(data));
+      window.location = 'index.html' + '?id=' + searchParams.id;
+    }
+  });
+}
+else {
+  window.location = 'index.html' + '?id=' + searchParams.id;
+}
 </script>
 
 </body>

@@ -52,6 +52,27 @@ input[type=file] {
   background: inherit;
   color: #AAA;
 }
+.tabs {
+  background: #333;
+  border-bottom: 1px solid #EEE;
+  color: #EEE;
+  font-family: sans-serif;
+  padding-top: 5px;
+}
+.tab {
+  border: 1px solid #EEE;
+  border-bottom: 0 none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tab:hover {
+  background: #EEE;
+  color: #333;
+}
+.selected {
+  background: #09F;
+  color: #FFF;
+}
 
 
 
@@ -69,6 +90,23 @@ input[type=file] {
         <input class="menu-item disabled" type="button" id="comic-preview" value="View Comic Preview">
         <input class="menu-item disabled" type="button" id="comic-folder" value="View Comic Folder">
         <input class="menu-item disabled" type="button" id="comic-export" value="Export Comic">
+      </nav>
+      <nav class="tabs">
+        <span class="tab">Empty</span>
+        <span class="tab selected">Project 1</span>
+        <span class="tab">Project 2</span>
+        <span class="tab">Project 3</span>
+        <span class="tab">Project 4</span>
+        <span class="tab">Project 5</span>
+        <span class="tab">Really really really really long Project 6</span>
+        <span class="tab">Project 7</span>
+        <span class="tab">Project 8</span>
+        <span class="tab">Project 9</span>
+        <span class="tab">Project 10</span>
+        <span class="tab">Project 11</span>
+        <span class="tab">Project 12</span>
+        <span class="tab">Project 13</span>
+        <span class="tab">Project 14</span>
       </nav>
     </header>
     <iframe src="empty.html" frameborder="0" id="creator-tool"></iframe>

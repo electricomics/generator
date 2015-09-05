@@ -36,4 +36,8 @@ var Storage = function(name) {
       return false;
     }
   };
+
+  this.getItem = function() {
+    return localStorage.getItem(item);
+  };
 };

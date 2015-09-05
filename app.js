@@ -6,21 +6,33 @@ var app = express();
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
-var server;
-var sockets = {};
-var nextSocketId = 0;
 var bodyParser = require('body-parser');
 var archiver = require('archiver');
 var nwgui = require('nw.gui');
-nwgui.Window.get().showDevTools();
 
-var done = false;
+// server stuff
+var server;
+var sockets = {};
+var nextSocketId = 0;
+
+// create application/json parser
+var jsonParser = bodyParser.json();
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: true });
+
+// debug
+nwgui.Window.get().showDevTools();
 
 var options = {
   host: '0.0.0.0',
   port: 8000
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
+
+// project = id, fsPath, serverPath, name
+var projects = {};
+var projectsCounter = 0;
+var projectExt = '.elcxproject';
 
 var red = function() {
   if (typeof window === 'undefined') {
@@ -54,116 +66,66 @@ var createZip = function(mypath) {
 };
 
 
+// configure multer
+var multerStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '/Users/electric_g/multer');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now());
+  }
+});
+var multerUpload = multer({
+  storage: multerStorage,
+  limits: {
+    fieldSize: 100000000
+  },
+  rename: function (fieldname, filename) {
+    return filename;
+  },
+  onFileUploadStart: function (file) {
+    // console.log(file.originalname + ' is starting ...');
+  },
+  onFileUploadComplete: function (file) {
+    // console.log(file.fieldname + ' uploaded to  ' + file.path);
+  }
+});
+
+
 var writeJSON = function(file, content) {
   fs.writeFile(projectPath + '/' + file, JSON.stringify(content, null, 2));
 };
 
 
-var saveProject = function() {
-  $iframe.get(0).contentWindow.postMessage('{"type": "saved"}', serverUrl);
-};
-
-
-var closeProject = function() {
-  saveProject();
-  if (server) {
-    server.close(function() {
-      console.log('closed');
-    });
-    for (var socketId in sockets) {
-      console.log('socket', socketId, 'destroyed');
-      sockets[socketId].destroy();
-    }
-  }
-  $iframe.attr('src', 'empty.html');
-  projectPath = '';
-};
-
-
-var startProject = function(mypath) {
-  if (!mypath) {
-    console.log('server not started, invalid path');
-    return false;
-  }
+var serverStart = function() {
   //check if server is already running
   http.get(options, function(res) {
-    console.log('server is running, redirecting to localhost');
-    red();
+    console.log('server is already running');
   }).on('error', function(e) {
     //server is not yet running
-
-    // configure multer
-    app.use(multer({ dest: mypath + '/images',
-      limits: {
-        fieldSize: 100000000
-      },
-      rename: function (fieldname, filename) {
-        return filename;
-      },
-      onFileUploadStart: function (file) {
-        // console.log(file.originalname + ' is starting ...');
-      },
-      onFileUploadComplete: function (file) {
-        // console.log(file.fieldname + ' uploaded to  ' + file.path);
-        done = true;
-      }
-    }));
-
-    // create package.json if it doesn't exist
-    fs.exists(mypath + '/project.json', function(exists) {
-      if (!exists) {
-        var emptyComic = new Electricomic(null);
-        // fs.writeFile(mypath + '/project.json', JSON.stringify(emptyComic.returnJSON(), null, 2));
-        writeJSON('project.json', emptyComic.returnJSON());
-      }
-    });
 
     // all environments
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
-    app.use('/comic', express.static(mypath));
+    // app.use('/comic', express.static(mypath));
 
-    app.post('/upload',function(req, res){
-      if (done === true){
-        var txt = JSON.stringify(req.files);
-        txt = JSON.parse(txt);
-        if (txt.panelAdd) {
-          if (Array.isArray(txt.panelAdd)) {
-            for (var i = 0; i < txt.panelAdd.length; i++) {
-              txt.panelAdd[i].path = txt.panelAdd[i].path.replace(mypath + '/', '');
-            }
-          }
-          else {
-            txt.panelAdd.path = txt.panelAdd.path.replace(mypath + '/', '');
+    // todo
+    app.post('/upload', multerUpload.array(), function(req, res) {
+      // to finish
+      var txt = JSON.stringify(req.files);
+      txt = JSON.parse(txt);
+      if (txt.panelAdd) {
+        if (Array.isArray(txt.panelAdd)) {
+          for (var i = 0; i < txt.panelAdd.length; i++) {
+            txt.panelAdd[i].path = txt.panelAdd[i].path.replace(mypath + '/', '');
           }
         }
-        txt = JSON.stringify(txt);
-        // console.log(txt);
-        res.end('{"status": "ok", "form": ' + txt + '}');
+        else {
+          txt.panelAdd.path = txt.panelAdd.path.replace(mypath + '/', '');
+        }
       }
-    });
-
-    // create application/json parser
-    var jsonParser = bodyParser.json();
-    // create application/x-www-form-urlencoded parser
-    var urlencodedParser = bodyParser.urlencoded({ extended: true });
-    
-    app.post('/close', urlencodedParser, function(req, res) {
-      // fs.writeFile(mypath + '/project.json', JSON.stringify(JSON.parse(req.body.content), null, 2));
-      // writeJSON('project.json', JSON.parse(req.body.content));
-      res.end('{"status": "ok"}');
-      // server.close(function() {
-      //   console.log('closed');
-      // });
-      // for (var socketId in sockets) {
-      //   console.log('socket', socketId, 'destroyed');
-      //   sockets[socketId].destroy();
-      // }
-      stop(JSON.parse(req.body.content));
-    });
-
-    app.get('/zip', function(req, res) {
-      createZip(mypath);
+      txt = JSON.stringify(txt);
+      res.end('{"status": "ok", "form": ' + txt + '}');
     });
 
     server = http.createServer(app);
@@ -186,6 +148,158 @@ var startProject = function(mypath) {
     });
   });
 };
+
+// not sure I need this
+var serverStop = function() {
+  if (server) {
+    server.close(function() {
+      console.log('closed');
+    });
+    for (var socketId in sockets) {
+      console.log('socket', socketId, 'destroyed');
+      sockets[socketId].destroy();
+    }
+  }
+};
+
+
+var projectOpen = function(path, name) {
+  if (!path) {
+    return false;
+  }
+  for (var p in projects) {
+    if (projects.hasOwnProperty(p)) {
+      // check if this filesystem path aka the project has been already opened
+      if (projects[p].fsPath === path) {
+        return false;
+      }
+    }
+  }
+  projectsCounter++;
+  var id = projectsCounter + '-' + name;
+  projects[id] = {
+    name: name,
+    fsPath: path,
+    serverPath: '/' + id
+  };
+  app.use('/' + id, express.static(path));
+};
+
+var projectOpenAll = function() {
+
+};
+
+var projectSave = function() {
+
+}
+
+var projectNew = function() {
+  // create package.json if it doesn't exist
+  // fs.exists(mypath + '/project.json', function(exists) {
+  //   if (!exists) {
+  //     var emptyComic = new Electricomic(null);
+  //     writeJSON('project.json', emptyComic.returnJSON());
+  //   }
+  // });
+};
+
+var projectClose = function() {
+  projectSave();
+  // close iframe
+  // unmount folder
+};
+
+var saveProject = function() {
+  $iframe.get(0).contentWindow.postMessage('{"type": "saved"}', serverUrl);
+};
+
+var closeProject = function() {
+  saveProject();
+  $iframe.attr('src', 'empty.html');
+  projectPath = '';
+};
+
+// var startProject = function(mypath) {
+//   if (!mypath) {
+//     console.log('server not started, invalid path');
+//     return false;
+//   }
+//   //check if server is already running
+//   http.get(options, function(res) {
+//     console.log('server is running, redirecting to localhost');
+//     red();
+//   }).on('error', function(e) {
+//     //server is not yet running
+
+//     // configure multer
+//     app.use(multer({ dest: mypath + '/images',
+//       limits: {
+//         fieldSize: 100000000
+//       },
+//       rename: function (fieldname, filename) {
+//         return filename;
+//       },
+//       onFileUploadStart: function (file) {
+//         // console.log(file.originalname + ' is starting ...');
+//       },
+//       onFileUploadComplete: function (file) {
+//         // console.log(file.fieldname + ' uploaded to  ' + file.path);
+//         done = true;
+//       }
+//     }));
+
+//     // create package.json if it doesn't exist
+//     fs.exists(mypath + '/project.json', function(exists) {
+//       if (!exists) {
+//         var emptyComic = new Electricomic(null);
+//         writeJSON('project.json', emptyComic.returnJSON());
+//       }
+//     });
+
+//     // all environments
+//     app.set('port', options.port);
+//     app.use(express.static(path.join(process.cwd(), 'public')));
+//     app.use('/comic', express.static(mypath));
+
+//     app.post('/upload',function(req, res){
+//       if (done === true){
+//         var txt = JSON.stringify(req.files);
+//         txt = JSON.parse(txt);
+//         if (txt.panelAdd) {
+//           if (Array.isArray(txt.panelAdd)) {
+//             for (var i = 0; i < txt.panelAdd.length; i++) {
+//               txt.panelAdd[i].path = txt.panelAdd[i].path.replace(mypath + '/', '');
+//             }
+//           }
+//           else {
+//             txt.panelAdd.path = txt.panelAdd.path.replace(mypath + '/', '');
+//           }
+//         }
+//         txt = JSON.stringify(txt);
+//         res.end('{"status": "ok", "form": ' + txt + '}');
+//       }
+//     });
+
+//     server = http.createServer(app);
+//     server.listen(options.port, function(err) {
+//       console.log('server created');
+//       red();
+//     });
+
+//     server.on('connection', function (socket) {
+//       // Add a newly connected socket
+//       var socketId = nextSocketId++;
+//       sockets[socketId] = socket;
+//       console.log('socket', socketId, 'opened');
+
+//       // Remove the socket when it closes
+//       socket.on('close', function () {
+//         console.log('socket', socketId, 'closed');
+//         delete sockets[socketId];
+//       });
+//     });
+//   });
+// };
 
 
 // UI
@@ -213,10 +327,11 @@ $newProject.on('change', function() {
 });
 
 $openProject.on('change', function() {
-  projectPath = this.value;
-  console.log(projectPath);
-  if (projectPath !== '') {
-    startProject(projectPath);
+  var path = this.files[0].path;
+  var name = this.files[0].name;
+  console.log(path, name);
+  if (path !== '') {
+    projectOpen(path, name);
     this.value = '';
   }
 });
@@ -281,3 +396,6 @@ window.addEventListener('message', function(e) {
     closeProject();
   }
 }, false);
+
+
+serverStart();

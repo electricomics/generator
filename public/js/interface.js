@@ -39,6 +39,23 @@ var $textareaInputButton = $('#textarea-input-button');
 var CURRENT_PAGE = 1;
 var LOCAL_STORAGE = 'electricomic';
 
+if (useNodeWebkitServer) {
+  if (window.location.search !== '') {
+    var searchParams = (function() {
+        var searchParams = {};
+        var searchArr = window.location.search.substring(1).split(',');
+        var tmp;
+        for (var i = 0; i < searchArr.length; i++) {
+          tmp = searchArr[i].split('=');
+          searchParams[ tmp[0] ] = tmp[1];
+        }
+        return searchParams;
+      })();
+  
+    LOCAL_STORAGE = searchParams.id || LOCAL_STORAGE;
+  }
+}
+
 if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
   var filereaderSWFopt = {
     filereader: 'js/lib/FileReader/filereader.swf'
@@ -827,7 +844,7 @@ if (useNodeWebkitServer) {
       return false;
     }
     if (msg.type === 'save' || msg.type === 'close') {
-      window.parent.postMessage('{"type": "' + msg.type + '", "content": ' + localStorage.electricomic + '}', '*');
+      window.parent.postMessage('{"type": "' + msg.type + '", "content": ' + storage.getItem() + '}', '*');
     }
     if (msg.type === 'saved') {
       console.log('saved');
