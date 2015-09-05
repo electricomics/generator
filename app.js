@@ -388,7 +388,7 @@ $comicPreview.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  nwgui.Shell.openExternal(serverUrl + '/comic');
+  nwgui.Shell.openExternal(path.join(serverUrl, projects[currentProject].serverPath));
 });
 
 $comicFolder.on('click', function() {
