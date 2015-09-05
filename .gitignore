@@ -3,3 +3,5 @@ node_modules
 *.log
 public/comic/images
 public/comic/output.html
+*.zip
+*.elcx
