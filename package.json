@@ -16,6 +16,7 @@
     "body-parser": "^1.13.3",
     "express": "^4.12.0",
     "multer": "^1.0.3",
+    "ncp": "^2.0.0",
     "nodewebkit": "^0.11.6"
   },
   "main": "index.html",

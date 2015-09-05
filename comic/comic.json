@@ -1,0 +1,17 @@
+{
+  "title": "Electricomic",
+  "screenW": 1024,
+  "screenH": 768,
+  "pxRatio": 1,
+  "pages": [
+    null,
+    {
+      "id": "",
+      "name": "",
+      "show": true,
+      "panels": [
+        null
+      ]
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+/* general style */
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* disable text selection with css or js */
+  /* http://stackoverflow.com/questions/3779534/how-to-disable-text-selection-with-css-or-js */
+  -webkit-user-select: none;
+     -moz-user-select: none;
+  /* disable flash on tap */
+  /* http://stackoverflow.com/questions/6211959/html5-div-flashes-on-tap */
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+img {
+  border: 0 none;
+  display: block;
+  /* never the target of mouse events */
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events */
+  pointer-events: none;
+}
+
+/*body:after {
+  background: rgba(0, 0, 0, .5) url('../elcxlogosmall.png') no-repeat;
+  background-size: cover;
+  border-radius: 100%;
+  content: '';
+  height: 50px;
+  left: 20px;
+  position: absolute;
+  top: 20px;
+  width: 50px;
+}*/
+
+ec-curtains {
+  background: #000;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 999999999;
+}
+ec-curtains .loading,
+ec-curtains .start {
+  color: #FFF;
+  font-size: 10vw;
+  text-transform: uppercase;
+  display: -webkit-flex;
+  display:         flex;
+  -webkit-align-items: center;
+          align-items: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+ec-curtains .start {
+  display: none;
+}
+ec-curtains.loaded .loading {
+  display: none;
+}
+ec-curtains.loaded .start {
+  display: -webkit-flex;
+  display:         flex;
+}
+
+/* horizontal and vertical centered comic */
+html.vh-center,
+html.vh-bottom {
+  display: table;
+  margin: 0 auto;
+  width: 100%;
+}
+.vh-center body {
+  display: table-cell;
+  vertical-align: middle;
+}
+.vh-bottom body {
+  display: table-cell;
+  vertical-align: bottom;
+}
+
+ec-end {
+  color: #FFF;
+  font-size: 10vw;
+  text-transform: uppercase;
+  display: -webkit-flex;
+  display:         flex;
+  -webkit-align-items: center;
+          align-items: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* comic specific */
+body {
+  background: #000;
+}
+img {
+  max-height: 100%;
+  width: 100%;
+}
+ec-comic,
+ec-page,
+ec-panel,
+ec-panel-bg,
+ec-panel-protagonist,
+ec-panel-character,
+ec-panel-balloon,
+ec-panel-animation {
+  display: block;
+}
+ec-comic {
+  cursor: pointer;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+ec-panel-bg,
+ec-panel-protagonist,
+ec-panel-character,
+ec-panel-balloon,
+ec-panel-animation,
+ec-layer {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+ec-panel-balloon {
+  z-index: 1;
+}
+.step {
+  display: none;
+}
+.three,
+.four,
+.nine {
+  font-size: 0;
+  height: 100%;
+  width: 100%;
+}
+.three ec-panel,
+.four ec-panel,
+.nine ec-panel {
+  position: relative;
+  vertical-align: top;
+}
+.three ec-panel {
+  height: 33.33%;
+}
+.four ec-panel {
+  height: 25%;
+}
+.nine ec-panel {
+  display: inline-block;
+  height: 33%;
+  width: 33%;
+}
+.layer-top {
+  visibility: hidden;
+}
+.step.show ~ .layer-top {
+  visibility: visible;
+}
+
+/* animations */
+ec-panel-animation {
+  font-size: 0;
+  white-space: nowrap;
+}
+ec-panel-animation img {
+  display: inline-block;
+}
+@-webkit-keyframes twostep {
+  100% {
+    -webkit-transform: translate3d(-200%, 0, 0);
+  }
+}
+@keyframes twostep {
+  100% {
+    transform: translate3d(-200%, 0, 0);
+  }
+}
+@-webkit-keyframes fourstep {
+  100% {
+    -webkit-transform: translate3d(-400%, 0, 0);
+  }
+}
+@keyframes fourstep {
+  100% {
+    transform: translate3d(-400%, 0, 0);
+  }
+}
+@-webkit-keyframes elevenstep {
+  100% {
+    -webkit-transform: translate3d(-1000%, 0, 0);
+  }
+}
+@keyframes elevenstep {
+  100% {
+    transform: translate3d(-1000%, 0, 0);
+  }
+}
+.infinite-twostep-animation {
+  -webkit-animation: twostep 2s steps(2) infinite;
+          animation: twostep 2s steps(2) infinite;
+}
+.twice-twostep-animation {
+  -webkit-animation: twostep 2s steps(2) 2 forwards;
+          animation: twostep 2s steps(2) 2 forwards;
+}
+.infinite-fourstep-animation {
+  -webkit-animation: fourstep 2s steps(4) infinite;
+          animation: fourstep 2s steps(4) infinite;
+}
+.once-11step-animation {
+  -webkit-animation: elevenstep 2s steps(10) 1 forwards;
+          animation: elevenstep 2s steps(10) 1 forwards;
+}

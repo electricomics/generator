@@ -8,6 +8,7 @@ var path = require('path');
 var fs = require('fs');
 var bodyParser = require('body-parser');
 var archiver = require('archiver');
+var ncp = require('ncp').ncp;
 var nwgui = require('nw.gui');
 
 // server stuff
@@ -256,7 +257,7 @@ var projectSave = function(id) {
   // $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
 };
 
-var projectNew = function(path, name) {
+var projectNew = function(newPath, name) {
   // create package.json if it doesn't exist
   // fs.exists(mypath + '/project.json', function(exists) {
   //   if (!exists) {
@@ -266,7 +267,16 @@ var projectNew = function(path, name) {
   // });
 
   // create folder and files
-  projectOpen(path, name);
+  var source = path.join(process.cwd(), 'comic');
+  ncp(source, newPath, function (err) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log('copy done');
+  });
+  
+  projectOpen(newPath, name);
 };
 
 var projectClose = function(id) {
