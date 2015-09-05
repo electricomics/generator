@@ -29,11 +29,13 @@ var options = {
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
-// project = id, fsPath, serverPath, name
+// project = { id, fsPath, serverPath, name }
 var projects = {};
 var projectsCounter = 0;
 var projectExt = '.elcxproject';
 var projectExtReg = new RegExp(projectExt + '$', 'i');
+var iframesOpen = 0;
+var currentProject;
 
 var red = function() {
   if (typeof window === 'undefined') {
@@ -67,6 +69,15 @@ var createZip = function(mypath) {
 };
 
 
+var iframeFrill = function() {
+  if (iframesOpen <= 0) {
+    $menuItemProject.addClass('menu-item-disabled');
+  }
+  else {
+    $menuItemProject.removeClass('menu-item-disabled');
+  }
+};
+
 var iframeAdd = function(id) {
   var $newIframe = $('<iframe class="iframe" src="' + serverUrl + '/loading.html?id=' + id + '&path=' + projects[id].serverPath + '" frameborder="0" id="iframe-' + id + '"></iframe>');
   var $newTab = $('<span class="tab" id="tab-' + id + '">' + projects[id].name + '</span>');
@@ -75,16 +86,25 @@ var iframeAdd = function(id) {
   iframes[id] = $newIframe;
   tabs[id] = $newTab;
   iframeSelect(id);
+  iframesOpen++;
+  iframeFrill();
 };
 
 var iframeClose = function(id) {
-  $iframes.remove(iframes[id]);
-  $tabs.remove(tabs[id]);
+  var prevIframe = tabs[id].prev();
+  if (prevIframe.length > 0) {
+    iframeSelect(prevIframe);
+  }
+  iframes[id].remove();
+  tabs[id].remove();
   delete iframes[id];
   delete tabs[id];
+  iframesOpen--;
+  iframeFrill();
 };
 
 var iframeSelect = function(id) {
+  currentProject = id;
   $('.iframe-selected').removeClass('iframe-selected');
   iframes[id].addClass('iframe-selected');
   $('.tab-selected').removeClass('tab-selected');
@@ -118,9 +138,9 @@ var multerUpload = multer({
 });
 
 
-var writeJSON = function(file, content) {
-  fs.writeFile(projectPath + '/' + file, JSON.stringify(content, null, 2));
-};
+// var writeJSON = function(file, content) {
+//   fs.writeFile(projectPath + '/' + file, JSON.stringify(content, null, 2));
+// };
 
 
 var serverStart = function() {
@@ -231,11 +251,12 @@ var projectOpenAll = function() {
   }
 };
 
-var projectSave = function() {
+var projectSave = function(id) {
+  var projectId = id || currentProject;
+  // $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
+};
 
-}
-
-var projectNew = function() {
+var projectNew = function(path, name) {
   // create package.json if it doesn't exist
   // fs.exists(mypath + '/project.json', function(exists) {
   //   if (!exists) {
@@ -245,23 +266,14 @@ var projectNew = function() {
   // });
 
   // create folder and files
-  // projectOpen(path, name);
+  projectOpen(path, name);
 };
 
-var projectClose = function() {
-  projectSave();
-  // close iframe
+var projectClose = function(id) {
+  var projectId = id || currentProject;
+  projectSave(currentProject);
+  iframeClose(currentProject);
   // unmount folder
-};
-
-var saveProject = function() {
-  $iframe.get(0).contentWindow.postMessage('{"type": "saved"}', serverUrl);
-};
-
-var closeProject = function() {
-  saveProject();
-  $iframe.attr('src', 'empty.html');
-  projectPath = '';
 };
 
 // var startProject = function(mypath) {
@@ -361,7 +373,7 @@ var $iframes = $('#iframes');
 var iframes = {};
 var $tabs = $('#tabs');
 var tabs = {};
-var projectPath;
+var $menuItemProject = $('.menu-item-project');
 
 
 $quit.on('click', function() {
@@ -371,8 +383,13 @@ $quit.on('click', function() {
 });
 
 $newProject.on('change', function() {
-  console.log(this.value);
-  // this.value = '';
+  var path = this.files[0].path;
+  var name = this.files[0].name;
+  console.log(path, name);
+  if (path !== '') {
+    projectNew(path, name);
+    this.value = '';
+  }
 });
 
 $openProject.on('change', function() {
@@ -389,14 +406,15 @@ $saveProject.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
+  projectSave();
 });
 
 $closeProject.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  $iframe.get(0).contentWindow.postMessage('{"type": "close"}', serverUrl);
+  // $iframe.get(0).contentWindow.postMessage('{"type": "close"}', serverUrl);
+  projectClose();
 });
 
 $comicPreview.on('click', function() {
@@ -410,19 +428,15 @@ $comicFolder.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  if (projectPath !== '') {
-    nwgui.Shell.showItemInFolder(projectPath);
-  }
+  nwgui.Shell.showItemInFolder(projects[currentProject].fsPath);
 });
 
 $comicExport.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
-  if (projectPath !== '') {
-    createZip(projectPath);
-    nwgui.Shell.showItemInFolder(projectPath);
-  }
+  createZip(projects[currentProject].fsPath);
+  nwgui.Shell.showItemInFolder(projects[currentProject].fsPath);
 });
 
 window.addEventListener('message', function(e) {
@@ -439,10 +453,10 @@ window.addEventListener('message', function(e) {
   }
 
   if (msg.type === 'save') {
-    saveProject();
+    projectSave();
   }
   if (msg.type === 'close') {
-    closeProject();
+    projectClose();
   }
 }, false);
 
