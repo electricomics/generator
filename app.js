@@ -89,7 +89,7 @@ var iframeFrill = function() {
 
 var iframeAdd = function(id) {
   var $newIframe = $('<iframe class="iframe" src="' + serverUrl + '/loading.html?id=' + id + '&path=' + projects[id].serverPath + '" frameborder="0" id="iframe-' + id + '"></iframe>');
-  var $newTab = $('<span class="tab" id="tab-' + id + '">' + projects[id].name + '</span>');
+  var $newTab = $('<span class="tab" id="tab-' + id + '" data-iframe="' + id + '">' + projects[id].name + '</span>');
   $iframes.append($newIframe);
   $tabs.append($newTab);
   iframes[id] = $newIframe;
@@ -102,7 +102,7 @@ var iframeAdd = function(id) {
 var iframeClose = function(id) {
   var prevIframe = tabs[id].prev();
   if (prevIframe.length > 0) {
-    iframeSelect(prevIframe.attr('id').replace('tab-', ''));
+    iframeSelect(prevIframe.data('iframe'));
   }
   iframes[id].remove();
   tabs[id].remove();
@@ -404,6 +404,11 @@ $comicExport.on('click', function() {
   }
   createZip(projects[currentProject].fsPath);
   nwgui.Shell.showItemInFolder(projects[currentProject].fsPath);
+});
+
+$(document).on('click', '.tab', function() {
+  var id = $(this).data('iframe');
+  iframeSelect(id);
 });
 
 
