@@ -43,7 +43,7 @@ if (useNodeWebkitServer) {
   if (window.location.search !== '') {
     var searchParams = (function() {
         var searchParams = {};
-        var searchArr = window.location.search.substring(1).split(',');
+        var searchArr = window.location.search.substring(1).split('&');
         var tmp;
         for (var i = 0; i < searchArr.length; i++) {
           tmp = searchArr[i].split('=');

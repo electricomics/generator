@@ -9,21 +9,33 @@ html, body {
   margin: 0;
   padding: 0;
 }
-main {
+.wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-iframe {
+main {
   height: 100%;
+  margin-top: 3px;
+  position: relative;
+}
+.iframe {
+  display: none;
+  height: 100%;
+  position: absolute;
   width: 100%;
 }
+.iframe-selected {
+  display: block;
+}
+
 input[type=file] {
   display: none;
 }
+
 .menu {
   background: #EEE;
-  border: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
   font-size: 0;
   padding: 0;
 }
@@ -32,9 +44,9 @@ input[type=file] {
   border: 0 none;
   cursor: pointer;
   font-family: sans-serif;
-  font-size: 1rem;
+  font-size: 14px;
   outline: 0 none;
-  padding: 6px 10px;
+  padding: 4px 8px;
 }
 .menu-item:hover {
   background: #CCC;
@@ -43,74 +55,70 @@ input[type=file] {
   background: #09F;
   color: #FFF;
 }
-.disabled {
+.menu-item-disabled {
   color: #AAA;
   cursor: default;
 }
-.disabled:hover,
-.disabled:active {
+.menu-item-disabled:hover,
+.menu-item-disabled:active {
   background: inherit;
   color: #AAA;
 }
+
 .tabs {
-  background: #333;
-  border-bottom: 1px solid #EEE;
-  color: #EEE;
+  background: #EEE;
+  border-bottom: 1px solid #333;
+  color: #333;
   font-family: sans-serif;
-  padding-top: 5px;
+  font-size: 0;
+  padding: 5px 0 0 5px;
 }
 .tab {
-  border: 1px solid #EEE;
+  border: 1px solid #333;
   border-bottom: 0 none;
   cursor: pointer;
+  font-size: .8rem;
+  margin: 0 1px;
+  padding: 0 4px;
   white-space: nowrap;
 }
 .tab:hover {
-  background: #EEE;
-  color: #333;
-}
-.selected {
   background: #09F;
   color: #FFF;
 }
+.tab-selected,
+.tab-selected:hover {
+  background: #333;
+  color: #EEE;
+  padding-bottom: 1px;
+}
+
 
 
 
   </style>
 </head>
 <body>
-  <main>
+  <div class="wrapper">
     <header>
       <nav class="menu">
         <label class="menu-item">New Project<input type="file" id="new-project" nwsaveas="electricomic.elcxproject"></label>
         <label class="menu-item">Open Project<input type="file" id="open-project" accept=".elcxproject"></label>
-        <input class="menu-item disabled" type="button" id="save-project" value="Save Project">
-        <input class="menu-item disabled" type="button" id="close-project" value="Close Project">
+        <input class="menu-item menu-item-disabled" type="button" id="save-project" value="Save Project">
+        <input class="menu-item menu-item-disabled" type="button" id="close-project" value="Close Project">
         <input class="menu-item" type="button" id="quit" value="Quit">
-        <input class="menu-item disabled" type="button" id="comic-preview" value="View Comic Preview">
-        <input class="menu-item disabled" type="button" id="comic-folder" value="View Comic Folder">
-        <input class="menu-item disabled" type="button" id="comic-export" value="Export Comic">
+        <input class="menu-item menu-item-disabled" type="button" id="comic-preview" value="View Comic Preview">
+        <input class="menu-item menu-item-disabled" type="button" id="comic-folder" value="View Comic Folder">
+        <input class="menu-item menu-item-disabled" type="button" id="comic-export" value="Export Comic">
       </nav>
-      <nav class="tabs">
-        <span class="tab">Empty</span>
-        <span class="tab selected">Project 1</span>
-        <span class="tab">Project 2</span>
-        <span class="tab">Project 3</span>
-        <span class="tab">Project 4</span>
-        <span class="tab">Project 5</span>
-        <span class="tab">Really really really really long Project 6</span>
-        <span class="tab">Project 7</span>
-        <span class="tab">Project 8</span>
-        <span class="tab">Project 9</span>
-        <span class="tab">Project 10</span>
-        <span class="tab">Project 11</span>
-        <span class="tab">Project 12</span>
-        <span class="tab">Project 13</span>
-        <span class="tab">Project 14</span>
+      <nav class="tabs" id="tabs">
+        <span class="tab tab-selected">Empty</span>
       </nav>
     </header>
-    <iframe src="empty.html" frameborder="0" id="creator-tool"></iframe>
-  </main>
+    <main id="iframes">
+      <iframe class="iframe iframe-selected" src="public/empty.html" frameborder="0" id="creator-tool"></iframe>
+    </main>
+  </div>
   
   <script src="public/js/lib/jquery.min.js"></script>
   <script src="public/js/eclayout.js"></script>

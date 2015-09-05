@@ -33,6 +33,7 @@ var serverUrl = 'http://' + options.host + ':' + options.port;
 var projects = {};
 var projectsCounter = 0;
 var projectExt = '.elcxproject';
+var projectExtReg = new RegExp(projectExt + '$', 'i');
 
 var red = function() {
   if (typeof window === 'undefined') {
@@ -63,6 +64,31 @@ var createZip = function(mypath) {
     }
     console.log('done: ', bytes);
   });
+};
+
+
+var iframeAdd = function(id) {
+  var $newIframe = $('<iframe class="iframe" src="' + serverUrl + '/loading.html?id=' + id + '&path=' + projects[id].serverPath + '" frameborder="0" id="iframe-' + id + '"></iframe>');
+  var $newTab = $('<span class="tab" id="tab-' + id + '">' + projects[id].name + '</span>');
+  $iframes.append($newIframe);
+  $tabs.append($newTab);
+  iframes[id] = $newIframe;
+  tabs[id] = $newTab;
+  iframeSelect(id);
+};
+
+var iframeClose = function(id) {
+  $iframes.remove(iframes[id]);
+  $tabs.remove(tabs[id]);
+  delete iframes[id];
+  delete tabs[id];
+};
+
+var iframeSelect = function(id) {
+  $('.iframe-selected').removeClass('iframe-selected');
+  iframes[id].addClass('iframe-selected');
+  $('.tab-selected').removeClass('tab-selected');
+  tabs[id].addClass('tab-selected');
 };
 
 
@@ -131,7 +157,7 @@ var serverStart = function() {
     server = http.createServer(app);
     server.listen(options.port, function(err) {
       console.log('server created');
-      red();
+      projectOpenAll();
     });
 
     server.on('connection', function (socket) {
@@ -176,17 +202,33 @@ var projectOpen = function(path, name) {
     }
   }
   projectsCounter++;
-  var id = projectsCounter + '-' + name;
+  var nameNoExt = name.replace(projectExtReg, '');
+  var id = projectsCounter + '-' + nameNoExt;
   projects[id] = {
-    name: name,
+    name: nameNoExt,
     fsPath: path,
     serverPath: '/' + id
   };
+  // mount folder
   app.use('/' + id, express.static(path));
+  // save that we opened this project
+  localStorage.setItem('projects', JSON.stringify(projects));
+  // load iframe
+  iframeAdd(id);
 };
 
 var projectOpenAll = function() {
-
+  try {
+    var proj = JSON.parse(localStorage.getItem('projects'));
+  }
+  catch (e) {
+    return false;
+  }
+  for (var p in proj) {
+    if (proj.hasOwnProperty(p)) {
+      projectOpen(proj[p].fsPath, proj[p].name);
+    }
+  }
 };
 
 var projectSave = function() {
@@ -201,6 +243,9 @@ var projectNew = function() {
   //     writeJSON('project.json', emptyComic.returnJSON());
   //   }
   // });
+
+  // create folder and files
+  // projectOpen(path, name);
 };
 
 var projectClose = function() {
@@ -312,6 +357,10 @@ var $comicPreview = $('#comic-preview');
 var $comicFolder = $('#comic-folder');
 var $comicExport = $('#comic-export');
 var $quit = $('#quit');
+var $iframes = $('#iframes');
+var iframes = {};
+var $tabs = $('#tabs');
+var tabs = {};
 var projectPath;
 
 
@@ -337,28 +386,28 @@ $openProject.on('change', function() {
 });
 
 $saveProject.on('click', function() {
-  if ($(this).hasClass('disabled')) {
+  if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
   $iframe.get(0).contentWindow.postMessage('{"type": "save"}', serverUrl);
 });
 
 $closeProject.on('click', function() {
-  if ($(this).hasClass('disabled')) {
+  if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
   $iframe.get(0).contentWindow.postMessage('{"type": "close"}', serverUrl);
 });
 
 $comicPreview.on('click', function() {
-  if ($(this).hasClass('disabled')) {
+  if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
   nwgui.Shell.openExternal(serverUrl + '/comic');
 });
 
 $comicFolder.on('click', function() {
-  if ($(this).hasClass('disabled')) {
+  if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
   if (projectPath !== '') {
@@ -367,7 +416,7 @@ $comicFolder.on('click', function() {
 });
 
 $comicExport.on('click', function() {
-  if ($(this).hasClass('disabled')) {
+  if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
   if (projectPath !== '') {
