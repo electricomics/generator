@@ -200,7 +200,7 @@ var addImgFile = function(imgFile, pos) {
 };
 
 var addRelativeImg = function(obj, pos) {
-  var path = obj.path.replace('comic/', '');
+  var path = obj.path.replace(LOCAL_STORAGE + '/', '');
   var imgFile = {
     src: path,
     name: obj.name
@@ -299,7 +299,7 @@ var appendImg = function(obj) {
   var $div = $('<div class="artboard-img">');
   var src = obj.src;
   if (useServer) {
-    src = 'comic/' + src;
+    src = LOCAL_STORAGE + '/' + src;
   }
   var w = 0;
   var h = 0;
@@ -378,7 +378,7 @@ var addPanelForm = function(obj) {
   $panel.find('.panel-name').val(obj.name);
 
   if (useServer) {
-    $panel.find('.panel-img').attr('src', 'comic/' + obj.src);
+    $panel.find('.panel-img').attr('src', LOCAL_STORAGE + '/' + obj.src);
   }
   else {
     $panel.find('.panel-img').attr('src', obj.src);
@@ -646,7 +646,7 @@ else if (useServer) {
     };
 
     $.ajax({
-      url: $this.attr('action'),
+      url: $this.attr('action') + '?id=' + LOCAL_STORAGE,
       type: $this.attr('method'),
       data: new FormData(this),
       dataType: 'json',

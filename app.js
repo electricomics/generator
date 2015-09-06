@@ -124,25 +124,17 @@ var iframeSelect = function(id) {
 // configure multer
 var multerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '/Users/electric_g/multer');
+    var id = req.query.id;
+    cb(null, projects[id].fsPath + '/images');
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now());
+    cb(null, file.originalname);
   }
 });
 var multerUpload = multer({
   storage: multerStorage,
   limits: {
     fieldSize: 100000000
-  },
-  rename: function (fieldname, filename) {
-    return filename;
-  },
-  onFileUploadStart: function (file) {
-    // console.log(file.originalname + ' is starting ...');
-  },
-  onFileUploadComplete: function (file) {
-    // console.log(file.fieldname + ' uploaded to  ' + file.path);
   }
 });
 
@@ -162,21 +154,19 @@ var serverStart = function() {
     // all environments
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
-    // app.use('/comic', express.static(mypath));
 
-    // todo
-    app.post('/upload', multerUpload.array(), function(req, res) {
-      // to finish
+    app.post('/upload', multerUpload.fields([{name: 'panelAdd'}]), function(req, res) {
+      var id = req.query.id;
       var txt = JSON.stringify(req.files);
       txt = JSON.parse(txt);
       if (txt.panelAdd) {
         if (Array.isArray(txt.panelAdd)) {
           for (var i = 0; i < txt.panelAdd.length; i++) {
-            txt.panelAdd[i].path = txt.panelAdd[i].path.replace(mypath + '/', '');
+            txt.panelAdd[i].path = txt.panelAdd[i].path.replace(projects[id].fsPath + '/', '');
           }
         }
         else {
-          txt.panelAdd.path = txt.panelAdd.path.replace(mypath + '/', '');
+          txt.panelAdd.path = txt.panelAdd.path.replace(projects[id].fsPath + '/', '');
         }
       }
       txt = JSON.stringify(txt);
