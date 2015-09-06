@@ -1,5 +1,7 @@
-/* global Electricomic */
+/* global $, Electricomic */
 
+var nwgui = require('nw.gui');
+// nwgui.Window.get().maximize();
 var express = require('express');
 var multer = require('multer');
 var app = express();
@@ -8,7 +10,6 @@ var path = require('path');
 var fs = require('fs');
 var archiver = require('archiver');
 var ncp = require('ncp').ncp;
-var nwgui = require('nw.gui');
 
 // server stuff
 var server;
@@ -32,23 +33,14 @@ var projectExtReg = new RegExp(projectExt + '$', 'i');
 var iframesOpen = 0;
 var currentProject;
 
-var red = function() {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-  if ($iframe.attr('src').indexOf(serverUrl) < 1) { 
-    $iframe.attr('src', serverUrl + '/loading.html');
-  }
-};
 
+// var writeJSON = function(path, content) {
+//   fs.writeFile(path, JSON.stringify(content, null, 2));
+// };
 
-var writeJSON = function(path, content) {
-  fs.writeFile(path, JSON.stringify(content, null, 2));
-};
-
-var writeFile = function(path, content) {
-  fs.writeFile(path, content);
-};
+// var writeFile = function(path, content) {
+//   fs.writeFile(path, content);
+// };
 
 var createZip = function(mypath) {
   console.log('zip');
@@ -133,11 +125,6 @@ var multerUpload = multer({
 });
 
 
-// var writeJSON = function(file, content) {
-//   fs.writeFile(projectPath + '/' + file, JSON.stringify(content, null, 2));
-// };
-
-
 var serverStart = function() {
   //check if server is already running
   http.get(options, function(res) {
@@ -177,11 +164,11 @@ var serverStart = function() {
       // Add a newly connected socket
       var socketId = nextSocketId++;
       sockets[socketId] = socket;
-      console.log('socket', socketId, 'opened');
+      // console.log('socket', socketId, 'opened');
 
       // Remove the socket when it closes
       socket.on('close', function () {
-        console.log('socket', socketId, 'closed');
+        // console.log('socket', socketId, 'closed');
         delete sockets[socketId];
       });
     });
@@ -189,14 +176,17 @@ var serverStart = function() {
 };
 
 // not sure I need this
+// todo implement win.on('close')
 var serverStop = function() {
   if (server) {
     server.close(function() {
       console.log('closed');
     });
     for (var socketId in sockets) {
-      console.log('socket', socketId, 'destroyed');
-      sockets[socketId].destroy();
+      if (sockets.hasOwnProperty(socketId)) {
+        // console.log('socket', socketId, 'destroyed');
+        sockets[socketId].destroy();
+      }
     }
   }
 };
@@ -231,8 +221,9 @@ var projectOpen = function(path, name) {
 };
 
 var projectOpenAll = function() {
+  var proj;
   try {
-    var proj = JSON.parse(localStorage.getItem('projects'));
+    proj = JSON.parse(localStorage.getItem('projects'));
   }
   catch (e) {
     return false;
@@ -284,7 +275,7 @@ var projectClose = function(content, id) {
   iframeClose(projectId);
   delete projects[projectId];
   localStorage.setItem('projects', JSON.stringify(projects));
-  // unmount folder
+  // todo unmount folder
 };
 
 
@@ -312,7 +303,6 @@ window.addEventListener('message', function(e) {
 
 
 // UI
-var $iframe = $('#creator-tool');
 var $newProject = $('#new-project');
 var $openProject = $('#open-project');
 var $saveProject = $('#save-project');
@@ -329,7 +319,7 @@ var $menuItemProject = $('.menu-item-project');
 
 
 $quit.on('click', function() {
-  if (confirm('Are you sure you want to quit the app?')) {
+  if (window.confirm('Are you sure you want to quit the app?')) {
     nwgui.App.quit();
   }
 });
