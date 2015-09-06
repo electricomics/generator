@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "archiver": "^0.15.0",
-    "body-parser": "^1.13.3",
     "express": "^4.12.0",
     "multer": "^1.0.3",
     "ncp": "^2.0.0",

@@ -6,7 +6,6 @@ var app = express();
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
-var bodyParser = require('body-parser');
 var archiver = require('archiver');
 var ncp = require('ncp').ncp;
 var nwgui = require('nw.gui');
@@ -15,11 +14,6 @@ var nwgui = require('nw.gui');
 var server;
 var sockets = {};
 var nextSocketId = 0;
-
-// create application/json parser
-var jsonParser = bodyParser.json();
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 // debug
 nwgui.Window.get().showDevTools();
