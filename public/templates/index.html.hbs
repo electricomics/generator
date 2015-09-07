@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <meta http-equiv="expires" content="-1">
+  <meta name="robots" content="noindex">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<ec-comic id="comic" style="width: {{screenW}}px; height: {{screenH}}px;">
+{{#pages}}
+{{#if show}}
+<ec-page id="step-{{@index}}-{{name}}" class="step">
+  {{#panels}}
+  {{#if id}}
+    {{#if ../../../../save}}
+    <img src="{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{else}}
+    <img src="comic/{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
+    {{/if}}
+  {{/if}}
+  {{/panels}}
+</ec-page>
+{{/if}}
+{{/pages}}
+</ec-comic>
+
+<ec-curtains></ec-curtains>
+
+<script src="js/electricomics.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/hammer.min.js"></script>
+<script src="js/raf.js"></script>
+<script src="js/picturefill.min.js"></script>
+<script src="js/comic.js"></script>
+
+<script>
+/* global CreateDigitalComic */
+var comicJSON = {
+  storage: true,
+  audio: window.ipadAudio,
+  zoom: true,
+  id: 'ec-big-nemo',
+  width: {{screenW}},
+  height: {{screenH}},
+  transitionIn: 'normal',
+  transitionOut: 'normal'
+};
+var comic;
+
+window.onload = function() {
+  // $.getJSON('comic.json', function(data) {
+    // comicJSON = $.extend(comicJSON, data);
+
+    comic = new CreateDigitalComic(comicJSON);
+    comic.start();
+
+    window.onresize = function() {
+      requestAnimationFrame(comic.resize);
+    };
+  // });
+};
+</script>
+
+</body>
+</html>

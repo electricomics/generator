@@ -28,7 +28,7 @@ if (!searchParams.path) {
   window.location = 'empty.html';
 }
 
-if (!localStorage.getItem(searchParams.id)) {
+// if (!localStorage.getItem(searchParams.id)) {
   $.ajax({
     url: searchParams.path + '/project.json',
     success: function(data) {
@@ -36,10 +36,10 @@ if (!localStorage.getItem(searchParams.id)) {
       window.location = 'index.html' + '?id=' + searchParams.id;
     }
   });
-}
-else {
-  window.location = 'index.html' + '?id=' + searchParams.id;
-}
+// }
+// else {
+//   window.location = 'index.html' + '?id=' + searchParams.id;
+// }
 </script>
 
 </body>

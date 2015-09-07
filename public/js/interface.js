@@ -28,13 +28,15 @@ var $comicWidth = $('#comic-width');
 var $comicHeight = $('#comic-height');
 var $panelTemplate = $($('#panel-template').html());
 var $pageTemplate = $($('#page-template').html());
-var $exportTemplate = $('#export-template').html();
-var $preview = $('#preview');
-var $previewOverlay = $('#preview-overlay');
+// var $exportTemplate = $('#export-template').html();
+var templateFiles = ['index.html.hbs', 'comic.json.hbs'];
+var templateFilesContent = {};
+// var $preview = $('#preview');
+// var $previewOverlay = $('#preview-overlay');
 var $textareaOutput = $('#textarea-output');
 var $textareaOutputOverlay = $('#textarea-output-overlay');
 var $textareaInput = $('#textarea-input');
-var $textareaInputOverlay = $('#textarea-input-overlay');
+// var $textareaInputOverlay = $('#textarea-input-overlay');
 var $textareaInputButton = $('#textarea-input-button');
 var CURRENT_PAGE = 1;
 var LOCAL_STORAGE = 'electricomic';
@@ -54,6 +56,22 @@ if (useNodeWebkitServer) {
   
     LOCAL_STORAGE = searchParams.id || LOCAL_STORAGE;
   }
+}
+
+if (useNodeWebkitServer) {
+  (function() {
+    for (var i = 0; i < templateFiles.length; i++) {
+      (function(file) {
+        $.ajax({
+          url: 'templates/' + file,
+          dataType: 'text',
+          success: function(data) {
+            templateFilesContent[ file ] = data;
+          }
+        });
+      })(templateFiles[i]);
+    }
+  })();
 }
 
 if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
@@ -208,12 +226,24 @@ var addRelativeImg = function(obj, pos) {
   addImgFile(imgFile, pos);
 };
 
-var createHtml = function(save) {
+// var createHtml = function(save) {
+//   var obj = myComic.returnJSON();
+//   obj.save = save || false;
+//   var source = $exportTemplate;
+//   var template = Handlebars.compile(source);
+//   var rendered = template(obj);
+//   return rendered;
+// };
+
+var createTemplateContent = function(save) {
   var obj = myComic.returnJSON();
   obj.save = save || false;
-  var source = $exportTemplate;
-  var template = Handlebars.compile(source);
-  var rendered = template(obj);
+  var template = {};
+  var rendered = {};
+  for (var i = 0; i < templateFiles.length; i++) {
+    template[ templateFiles[i] ] = Handlebars.compile(templateFilesContent[ templateFiles[i] ]);
+    rendered[ templateFiles[i] ] = template[ templateFiles[i] ](obj);
+  }
   return rendered;
 };
 
@@ -498,7 +528,7 @@ $(document).on('click', '.page-nav-clone', function(e) {
 
   var index = $(this).parent().data('page') * 1 + 1;
   var originalPage = myComic.getPage(index - 1);
-  console.log(originalPage);
+  // console.log(originalPage);
   // return;
   var newLen = myComic.addPage(originalPage, index);
   loadPages(newLen);
@@ -545,10 +575,10 @@ $('.overlay-close').on('click', function(e) {
 });
 
 // Save/export fallback
-var showOutput = function(txt) {
-  $textareaOutput.val(txt);
-  $textareaOutputOverlay.addClass('show');
-};
+// var showOutput = function(txt) {
+//   $textareaOutput.val(txt);
+//   $textareaOutputOverlay.addClass('show');
+// };
 
 // Read JSON
 var readJSON = function(val) {
@@ -653,7 +683,7 @@ else if (useServer) {
       processData: false,
       contentType: false,
       success: function(data) {
-        console.log(data);
+        // console.log(data);
         if (data.form && data.form.panelAdd) {
           if (Array.isArray(data.form.panelAdd)) {
             $.each(data.form.panelAdd, function(i, obj) {
@@ -851,7 +881,20 @@ if (useNodeWebkitServer) {
       return false;
     }
     if (msg.type === 'save' || msg.type === 'close') {
-      window.parent.postMessage('{"type": "' + msg.type + '", "iframe": "' + LOCAL_STORAGE + '", "content": ' + storage.getItem() + '}', '*');
+      var content = createTemplateContent();
+      for (var c in content) {
+        if (content.hasOwnProperty(c) && c.indexOf('.json') >= 0) {
+          try {
+            content[c] = JSON.stringify(JSON.parse(content[c]));
+          } catch (e) {
+
+          }
+        }
+      }
+      content['project.json.hbs'] = storage.getItem();
+      
+      var s = JSON.stringify(content);
+      window.parent.postMessage('{"type": "' + msg.type + '", "iframe": "' + LOCAL_STORAGE + '", "content": ' + s + '}', '*');
     }
     if (msg.type === 'saved') {
       console.log(LOCAL_STORAGE + ' saved');

@@ -34,13 +34,20 @@ var iframesOpen = 0;
 var currentProject;
 
 
-// var writeJSON = function(path, content) {
-//   fs.writeFile(path, JSON.stringify(content, null, 2));
-// };
+var writeJSON = function(path, content) {
+  var c;
+  try {
+    c = JSON.stringify(content, null, 2);
+  }
+  catch (e) {
+    c = content;
+  }
+  fs.writeFile(path, c);
+};
 
-// var writeFile = function(path, content) {
-//   fs.writeFile(path, content);
-// };
+var writeFile = function(path, content) {
+  fs.writeFile(path, content);
+};
 
 var createZip = function(mypath) {
   console.log('zip');
@@ -242,8 +249,27 @@ var projectStartMessage = function(type, id) {
 
 var projectSave = function(content, id) {
   var projectId = id || currentProject;
-  console.log(id + ' saving');
-  // todo saving
+  var files = content;
+  var p;
+  var c;
+  for (var f in files) {
+    if (files.hasOwnProperty(f)) {
+      p = path.join(projects[projectId].fsPath, f.replace('.hbs', ''));
+      if (f.indexOf('.json') >= 0) {
+        try {
+          c = JSON.parse(files[f]);
+        }
+        catch (e) {
+          c = files[f];
+        }
+        writeJSON(p, c);
+      }
+      else {
+        writeFile(p, files[f]);
+      }
+    }
+  }
+  // console.log(id + ' saving');
   iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '"}', serverUrl);
 };
 
