@@ -334,29 +334,3 @@ var CreateDigitalComic = function(options) {
 
   return this;
 };
-
-
-var comicJSON = {
-  storage: true,
-  audio: window.ipadAudio,
-  zoom: true,
-  id: 'ec-big-nemo',
-  width: 768,
-  height: 960,
-  transitionIn: 'normal',
-  transitionOut: 'normal'
-};
-var comic;
-
-window.onload = function() {
-  // $.getJSON('comic.json', function(data) {
-    // comicJSON = $.extend(comicJSON, data);
-
-    comic = new CreateDigitalComic(comicJSON);
-    comic.start();
-
-    window.onresize = function() {
-      requestAnimationFrame(comic.resize);
-    };
-  // });
-};

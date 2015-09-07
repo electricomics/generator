@@ -12,17 +12,21 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<ec-comic id="comic" style="width: {{screenW}}px; height: {{screenH}}px;">
+
+<ec-curtains>
+  <div class="loading">loading</div>
+  <div class="start">tap to start</div>
+</ec-curtains>
+
+<ec-comic id="comic" style="width:{{screenW}}px; height:{{screenH}}px;">
 {{#pages}}
 {{#if show}}
-<ec-page id="step-{{@index}}-{{name}}" class="step">
+<ec-page id="step-{{@index}}" class="step">
   {{#panels}}
   {{#if id}}
-    {{#if ../../../../save}}
-    <img src="{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
-    {{else}}
-    <img src="comic/{{{../src}}}" id="{{../id}}" style="width:{{../w}}px; height:{{../h}}px; left:{{../x}}px; top:{{../y}}px; z-index:{{../z}};">
-    {{/if}}
+  <ec-panel id="panel-{{@../index}}-{{@index}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
+    <img src="{{{src}}}">
+  </ec-panel>
   {{/if}}
   {{/panels}}
 </ec-page>
@@ -30,7 +34,6 @@
 {{/pages}}
 </ec-comic>
 
-<ec-curtains></ec-curtains>
 
 <script src="js/electricomics.js"></script>
 <script src="js/storage.js"></script>
@@ -44,9 +47,8 @@
 /* global CreateDigitalComic */
 var comicJSON = {
   storage: true,
-  audio: window.ipadAudio,
-  zoom: true,
-  id: 'ec-big-nemo',
+  zoom: false,
+  id: 'xec-big-nemo',
   width: {{screenW}},
   height: {{screenH}},
   transitionIn: 'normal',
@@ -55,16 +57,12 @@ var comicJSON = {
 var comic;
 
 window.onload = function() {
-  // $.getJSON('comic.json', function(data) {
-    // comicJSON = $.extend(comicJSON, data);
+  comic = new CreateDigitalComic(comicJSON);
+  comic.start();
 
-    comic = new CreateDigitalComic(comicJSON);
-    comic.start();
-
-    window.onresize = function() {
-      requestAnimationFrame(comic.resize);
-    };
-  // });
+  window.onresize = function() {
+    requestAnimationFrame(comic.resize);
+  };
 };
 </script>
 
