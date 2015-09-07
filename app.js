@@ -21,7 +21,7 @@ nwgui.Window.get().showDevTools();
 
 var options = {
   host: '0.0.0.0',
-  port: 8000
+  port: 8123
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
