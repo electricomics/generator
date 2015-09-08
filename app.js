@@ -285,12 +285,16 @@ var projectSave = function(content, id) {
       }
     }
   }
+  for (var ff in projects[projectId].files) {
+    if (projects[projectId].files.hasOwnProperty(ff)) {
+      projects[projectId].files[ff].saved = false;
+    }
+  }
 
   for (var f in files) {
     if (files.hasOwnProperty(f)) {
       dest = f.replace('.hbs', '');
       p = path.join(projects[projectId].fsPath, dest);
-      projects[projectId].files[dest].saved = false;
       if (f.indexOf('.json') >= 0) {
         try {
           c = JSON.parse(files[f]);
