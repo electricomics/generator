@@ -19,6 +19,14 @@ var nextSocketId = 0;
 // debug
 nwgui.Window.get().showDevTools();
 
+// prevent backspace key from navigating back
+$(document).on('keydown', function(e) {
+  if (e.keyCode === 8) {
+    e.preventDefault();
+    return false;
+  }
+});
+
 var options = {
   host: '0.0.0.0',
   port: 8123
