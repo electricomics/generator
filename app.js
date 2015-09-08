@@ -3,6 +3,7 @@
 var DEBUG = true;
 
 var nwgui = require('nw.gui');
+var win = nwgui.Window.get();
 var express = require('express');
 var multer = require('multer');
 var app = express();
@@ -18,10 +19,10 @@ var sockets = {};
 var nextSocketId = 0;
 
 if (DEBUG) {
-  nwgui.Window.get().showDevTools();
+  win.showDevTools();
 }
 else {
-  nwgui.Window.get().maximize();
+  win.maximize();
 }
 
 // prevent backspace key from navigating back
@@ -196,7 +197,6 @@ var serverStart = function() {
 };
 
 // not sure I need this
-// todo implement win.on('close')
 var serverStop = function() {
   if (server) {
     server.close(function() {
@@ -368,8 +368,14 @@ var $menuItemProject = $('.menu-item-project');
 
 $quit.on('click', function() {
   if (window.confirm('Are you sure you want to quit the app?')) {
-    nwgui.App.quit();
+    win.close();
   }
+});
+
+win.on('close', function() {
+  this.hide(); // Pretend to be closed already
+  // todo save all projects
+  this.close(true);
 });
 
 $newProject.on('change', function() {
