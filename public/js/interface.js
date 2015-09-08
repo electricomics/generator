@@ -682,6 +682,9 @@ else if (useServer) {
     else {
       $('#panel-add-submit').hide();
     }
+    if (this.value === '') {
+      $('#panel-add-submit').hide();
+    }
   });
 
   $('#form-panel-add').on('submit', function(e) {
@@ -701,6 +704,7 @@ else if (useServer) {
       contentType: false,
       success: function(data) {
         // console.log(data);
+        $('#panel-add').val('').trigger('change');
         if (data.form && data.form.panelAdd) {
           if (Array.isArray(data.form.panelAdd)) {
             $.each(data.form.panelAdd, function(i, obj) {
