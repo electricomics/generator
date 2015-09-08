@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Electricomics Creator Tool</title>
+  <link rel="stylesheet" href="public/js/lib/jquery-ui/jquery-ui.min.css">
   <style>
 *, *:before, *:after {
   -webkit-box-sizing: border-box;
@@ -130,9 +131,13 @@ input[type=file] {
       <!-- <iframe class="iframe iframe-selected" src="public/empty.html" frameborder="0" id="creator-tool"></iframe> -->
     </main>
   </div>
+
+  <div id="dialog-close" title="Close this project?">
+    <p>Are you sure you want to close this project without saving it first?</p>
+  </div>
   
   <script src="public/js/lib/jquery.min.js"></script>
-  <script src="public/js/eclayout.js"></script>
+  <script src="public/js/lib/jquery-ui/jquery-ui.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

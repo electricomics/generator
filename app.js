@@ -387,12 +387,25 @@ var projectClose = function(content, id) {
     cb();
   }
   else {
-    if (window.confirm('do you want to save this project?')) {
-      projectSave(content, projectId, cb);
-    }
-    else {
-      cb();
-    }
+    var confirm = $('#dialog-close').dialog({
+      resizable: false,
+      modal: true,
+      width: 550,
+      buttons: {
+        'Close without saving': function() {
+          $(this).dialog('close');
+          cb();
+        },
+        Cancel: function() {
+          $(this).dialog('close');
+        },
+        'Save and close': function() {
+          $(this).dialog('close');
+          projectSave(content, projectId, cb);
+        }
+      }
+    });
+    confirm.dialog('open');
   }
   
 };
