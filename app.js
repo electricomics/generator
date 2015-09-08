@@ -1,7 +1,8 @@
-/* global $, Electricomic */
+/* global $ */
+
+var DEBUG = true;
 
 var nwgui = require('nw.gui');
-// nwgui.Window.get().maximize();
 var express = require('express');
 var multer = require('multer');
 var app = express();
@@ -16,8 +17,12 @@ var server;
 var sockets = {};
 var nextSocketId = 0;
 
-// debug
-nwgui.Window.get().showDevTools();
+if (DEBUG) {
+  nwgui.Window.get().showDevTools();
+}
+else {
+  nwgui.Window.get().maximize();
+}
 
 // prevent backspace key from navigating back
 $(document).on('keydown', function(e) {
