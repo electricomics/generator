@@ -18,6 +18,8 @@ try {
   isSavedLocalStorage = false;
 }
 
+var isSavedRemote = true;
+
 // prevent backspace key from navigating back
 // $(document).on('keydown', function(e) {
 //   if (e.keyCode === 8) {
@@ -101,6 +103,13 @@ var saveLocalStorage = function() {
   isSavedLocalStorage = false;
   if (isSaved) {
     isSavedLocalStorage = true;
+
+    if (useNodeWebkitServer) {
+      if (isSavedRemote) {
+        isSavedRemote = false;
+        window.parent.postMessage('{"type": "changed", "iframe": "' + LOCAL_STORAGE + '", "status": ' + isSavedRemote + '}', '*');
+      }
+    }
   }
 };
 
@@ -905,7 +914,7 @@ if (useNodeWebkitServer) {
       window.parent.postMessage('{"type": "' + msg.type + '", "iframe": "' + LOCAL_STORAGE + '", "content": ' + s + '}', '*');
     }
     if (msg.type === 'saved') {
-      console.log(LOCAL_STORAGE + ' saved');
+      isSavedRemote = msg.status;
     }
   }, false);
 }

@@ -39,7 +39,7 @@ var options = {
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
-// project[id] = { fsPath, serverPath, name, files: { nameOfFile: { saved: bool } } }
+// project[id] = { fsPath, serverPath, name, saved, files: { nameOfFile: { saved: bool } } }
 var projects = {};
 var projectsCounter = 0;
 var projectExt = '.elcxproject';
@@ -232,7 +232,8 @@ var projectOpen = function(path, name) {
     name: nameNoExt,
     fsPath: path,
     serverPath: '/' + id,
-    files: {}
+    files: {},
+    saved: true
   };
   for (var i = 0; i < projectsFiles.length; i++) {
     projects[id].files[ projectsFiles[i] ] = {
@@ -299,17 +300,40 @@ var projectSave = function(content, id) {
         }
         writeJSON(p, c, (function(w) {
           w.saved = true;
+          if (checkFilesStatus(projectId)) {
+            projectSaved(projectId, true);
+          }
         })(projects[projectId].files[dest]));
       }
       else {
         writeFile(p, files[f], (function(w) {
           w.saved = true;
+          if (checkFilesStatus(projectId)) {
+            projectSaved(projectId, true);
+          }
         })(projects[projectId].files[dest]));
       }
     }
   }
-  // console.log(id + ' saving');
-  iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '"}', serverUrl);
+};
+
+var projectSaved = function(id, status) {
+  var projectId = id || currentProject;
+  iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '", "status": ' + status + '}', serverUrl);
+  projects[projectId].saved = status;
+  tabs[projectId].toggleClass('tab-unsaved', !status);
+};
+
+var checkFilesStatus = function(id) {
+  var projectId = id || currentProject;
+  for (var file in projects[projectId].files) {
+    if (projects[projectId].files.hasOwnProperty(file)) {
+      if (projects[projectId].files[file].saved === false) {
+        return false;
+      }
+    }
+  }
+  return true;
 };
 
 var projectNew = function(newPath, name) {
@@ -371,6 +395,9 @@ window.addEventListener('message', function(e) {
   }
   if (msg.type === 'close') {
     projectClose(msg.content, msg.iframe);
+  }
+  if (msg.type === 'changed') {
+    projectSaved(msg.iframe, msg.status);
   }
 }, false);
 
