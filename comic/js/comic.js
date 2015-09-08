@@ -1,4 +1,4 @@
-/* global $, Electricomics, Hammer, Storage, Melodist */
+/* global $, Electricomics, Hammer, Storage */
 
 var CreateDigitalComic = function(options) {
   var defaults = {
@@ -22,7 +22,6 @@ var CreateDigitalComic = function(options) {
   };
   // extend default options with those provided
   var opts = $.extend(defaults, options);
-  var that = this;
 
   var comic = new Electricomics();
   var $comic = $('#comic');
@@ -144,7 +143,6 @@ var CreateDigitalComic = function(options) {
       return comic.getStepId(0);
     },
     gotoId: function(id) {
-      // return comic.getStepId(id);
       return id;
     }
   };
@@ -210,6 +208,7 @@ var CreateDigitalComic = function(options) {
     var fx = function() {
       loadStep(null, null, function() {
         $curtains.hide();
+        initHammer();
       });
     };
     var $curtainsStart = $curtains.find('.start');
@@ -243,21 +242,9 @@ var CreateDigitalComic = function(options) {
       this.storage = initStorage();
       firstStep = this.storage.getItem('currentStep');
     }
-    if (opts.audio === true) {
-      this.audio = new Melodist({
-        comic: comic,
-        callback: function() {
-          comic.start(firstStep);
-          that.resize();
-          init();
-        }
-      });
-    }
-    else {
-      comic.start(firstStep);
-      this.resize();
-      init();
-    }
+    comic.start(firstStep);
+    this.resize();
+    init();
   };
 
   // restart from first step and delete history
@@ -282,33 +269,21 @@ var CreateDigitalComic = function(options) {
   };
 
   // Hammer
-  // var mc = new Hammer.Manager(document.body);
-  // // mc.add(new Hammer.Swipe());
-  // // mc.on('swipeleft', function() {navToStep('next');});
-  // // mc.on('swiperight', function() {navToStep('prev');});
-  // mc.add(new Hammer.Tap({ event: 'singletap', threshold: 2, pointers: 1, taps: 1 }));
-  // mc.on('singletap', function(e) {
-  //   var pointer = e.pointers[0];
-  //   var x = pointer.clientX;
-  //   var w = document.documentElement.clientWidth / 2;
-  //   console.log(x);
-  //   if (x < w) {
-  //     navToStep('prev');
-  //   }
-  //   else {
-  //     navToStep('next');
-  //   }
-  // });
-  $('body').on('click tap', function(e) {
-    var x = e.clientX;
-    var w = document.documentElement.clientWidth / 3;
-    if (x < w) {
-      navToStep('prev');
-    }
-    else {
-      navToStep('next');
-    }
-  });
+  var mc = new Hammer.Manager(document.body);
+  var initHammer = function() {
+    mc.add(new Hammer.Tap({ event: 'singletap', threshold: 2, pointers: 1, taps: 1 }));
+    mc.on('singletap', function(e) {
+      var pointer = e.pointers[0];
+      var x = pointer.clientX;
+      var w = document.documentElement.clientWidth / 3;
+      if (x < w) {
+        navToStep('prev');
+      }
+      else {
+        navToStep('next');
+      }
+    });
+  };
 
   // Storage
   var initStorage = function() {
