@@ -86,20 +86,6 @@ html.vh-bottom {
   vertical-align: bottom;
 }
 
-ec-end {
-  color: #FFF;
-  font-size: 10vw;
-  text-transform: uppercase;
-  display: -webkit-flex;
-  display:         flex;
-  -webkit-align-items: center;
-          align-items: center;
-  -webkit-justify-content: center;
-          justify-content: center;
-  height: 100%;
-  width: 100%;
-}
-
 /* comic specific */
 body {
   background: #000;
@@ -110,12 +96,7 @@ img {
 }
 ec-comic,
 ec-page,
-ec-panel,
-ec-panel-bg,
-ec-panel-protagonist,
-ec-panel-character,
-ec-panel-balloon,
-ec-panel-animation {
+ec-panel {
   display: block;
 }
 ec-comic {
@@ -125,106 +106,14 @@ ec-comic {
   position: relative;
   width: 100%;
 }
-ec-panel-bg,
-ec-panel-protagonist,
-ec-panel-character,
-ec-panel-balloon,
-ec-panel-animation,
-ec-layer {
+ec-page {
   height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
+  position: relative;
   width: 100%;
 }
-ec-panel-balloon {
-  z-index: 1;
+ec-panel {
+  position: absolute;
 }
 .step {
   display: none;
-}
-.three,
-.four,
-.nine {
-  font-size: 0;
-  height: 100%;
-  width: 100%;
-}
-.three ec-panel,
-.four ec-panel,
-.nine ec-panel {
-  position: relative;
-  vertical-align: top;
-}
-.three ec-panel {
-  height: 33.33%;
-}
-.four ec-panel {
-  height: 25%;
-}
-.nine ec-panel {
-  display: inline-block;
-  height: 33%;
-  width: 33%;
-}
-.layer-top {
-  visibility: hidden;
-}
-.step.show ~ .layer-top {
-  visibility: visible;
-}
-
-/* animations */
-ec-panel-animation {
-  font-size: 0;
-  white-space: nowrap;
-}
-ec-panel-animation img {
-  display: inline-block;
-}
-@-webkit-keyframes twostep {
-  100% {
-    -webkit-transform: translate3d(-200%, 0, 0);
-  }
-}
-@keyframes twostep {
-  100% {
-    transform: translate3d(-200%, 0, 0);
-  }
-}
-@-webkit-keyframes fourstep {
-  100% {
-    -webkit-transform: translate3d(-400%, 0, 0);
-  }
-}
-@keyframes fourstep {
-  100% {
-    transform: translate3d(-400%, 0, 0);
-  }
-}
-@-webkit-keyframes elevenstep {
-  100% {
-    -webkit-transform: translate3d(-1000%, 0, 0);
-  }
-}
-@keyframes elevenstep {
-  100% {
-    transform: translate3d(-1000%, 0, 0);
-  }
-}
-.infinite-twostep-animation {
-  -webkit-animation: twostep 2s steps(2) infinite;
-          animation: twostep 2s steps(2) infinite;
-}
-.twice-twostep-animation {
-  -webkit-animation: twostep 2s steps(2) 2 forwards;
-          animation: twostep 2s steps(2) 2 forwards;
-}
-.infinite-fourstep-animation {
-  -webkit-animation: fourstep 2s steps(4) infinite;
-          animation: fourstep 2s steps(4) infinite;
-}
-.once-11step-animation {
-  -webkit-animation: elevenstep 2s steps(10) 1 forwards;
-          animation: elevenstep 2s steps(10) 1 forwards;
 }
