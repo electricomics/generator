@@ -269,7 +269,7 @@ var projectStartMessage = function(type, id) {
   iframes[projectId].get(0).contentWindow.postMessage('{"type": "'+ type + '", "iframe": "' + projectId + '"}', serverUrl);
 };
 
-var projectSave = function(content, id) {
+var projectSave = function(content, id, cb) {
   var projectId = id || currentProject;
   var files = content;
   var p;
@@ -305,7 +305,7 @@ var projectSave = function(content, id) {
         writeJSON(p, c, (function(w) {
           w.saved = true;
           if (checkFilesStatus(projectId)) {
-            projectSaved(projectId, true);
+            projectSaved(projectId, true, cb);
           }
         })(projects[projectId].files[dest]));
       }
@@ -313,7 +313,7 @@ var projectSave = function(content, id) {
         writeFile(p, files[f], (function(w) {
           w.saved = true;
           if (checkFilesStatus(projectId)) {
-            projectSaved(projectId, true);
+            projectSaved(projectId, true, cb);
           }
         })(projects[projectId].files[dest]));
       }
@@ -321,11 +321,14 @@ var projectSave = function(content, id) {
   }
 };
 
-var projectSaved = function(id, status) {
+var projectSaved = function(id, status, cb) {
   var projectId = id || currentProject;
   iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '", "status": ' + status + '}', serverUrl);
   projects[projectId].saved = status;
   tabs[projectId].toggleClass('tab-unsaved', !status);
+  if (cb) {
+    cb();
+  }
 };
 
 var checkFilesStatus = function(id) {
@@ -373,11 +376,25 @@ var projectNew = function(newPath, name) {
 
 var projectClose = function(content, id) {
   var projectId = id || currentProject;
-  projectSave(content, projectId);
-  iframeClose(projectId);
-  delete projects[projectId];
-  localStorage.setItem('projects', JSON.stringify(projects));
-  // todo unmount folder
+  var cb = function() {
+    iframeClose(projectId);
+    delete projects[projectId];
+    localStorage.setItem('projects', JSON.stringify(projects));
+    // todo unmount folder
+  };
+  // check if we want so save
+  if (projects[projectId].saved) {
+    cb();
+  }
+  else {
+    if (window.confirm('do you want to save this project?')) {
+      projectSave(content, projectId, cb);
+    }
+    else {
+      cb();
+    }
+  }
+  
 };
 
 
