@@ -39,16 +39,17 @@ var options = {
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
-// project = { id, fsPath, serverPath, name }
+// project[id] = { fsPath, serverPath, name, files: { nameOfFile: { saved: bool } } }
 var projects = {};
 var projectsCounter = 0;
 var projectExt = '.elcxproject';
 var projectExtReg = new RegExp(projectExt + '$', 'i');
 var iframesOpen = 0;
 var currentProject;
+var projectsFiles = ['index.html', 'comic.json', 'project.json'];
 
 
-var writeJSON = function(path, content) {
+var writeJSON = function(path, content, cb) {
   var c;
   try {
     c = JSON.stringify(content, null, 2);
@@ -56,11 +57,11 @@ var writeJSON = function(path, content) {
   catch (e) {
     c = content;
   }
-  fs.writeFile(path, c);
+  writeFile(path, c, cb);
 };
 
-var writeFile = function(path, content) {
-  fs.writeFile(path, content);
+var writeFile = function(path, content, cb) {
+  fs.writeFile(path, content, cb);
 };
 
 var createZip = function(mypath) {
@@ -230,8 +231,14 @@ var projectOpen = function(path, name) {
   projects[id] = {
     name: nameNoExt,
     fsPath: path,
-    serverPath: '/' + id
+    serverPath: '/' + id,
+    files: {}
   };
+  for (var i = 0; i < projectsFiles.length; i++) {
+    projects[id].files[ projectsFiles[i] ] = {
+      saved: true
+    };
+  }
   // mount folder
   app.use('/' + id, express.static(path));
   // save that we opened this project
@@ -266,9 +273,23 @@ var projectSave = function(content, id) {
   var files = content;
   var p;
   var c;
+  var dest;
+
+  // check if project files are ok to be written
+  for (var file in projects[projectId].files) {
+    if (projects[projectId].files.hasOwnProperty(file)) {
+      if (projects[projectId].files[file].saved === false) {
+        console.log('file ' + projects[projectId].fsPath + '/' + file + ' not ready to be saved');
+        return false;
+      }
+    }
+  }
+
   for (var f in files) {
     if (files.hasOwnProperty(f)) {
-      p = path.join(projects[projectId].fsPath, f.replace('.hbs', ''));
+      dest = f.replace('.hbs', '');
+      p = path.join(projects[projectId].fsPath, dest);
+      projects[projectId].files[dest].saved = false;
       if (f.indexOf('.json') >= 0) {
         try {
           c = JSON.parse(files[f]);
@@ -276,10 +297,14 @@ var projectSave = function(content, id) {
         catch (e) {
           c = files[f];
         }
-        writeJSON(p, c);
+        writeJSON(p, c, (function(w) {
+          w.saved = true;
+        })(projects[projectId].files[dest]));
       }
       else {
-        writeFile(p, files[f]);
+        writeFile(p, files[f], (function(w) {
+          w.saved = true;
+        })(projects[projectId].files[dest]));
       }
     }
   }
