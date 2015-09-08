@@ -198,19 +198,19 @@ var serverStart = function() {
 };
 
 // not sure I need this
-var serverStop = function() {
-  if (server) {
-    server.close(function() {
-      console.log('closed');
-    });
-    for (var socketId in sockets) {
-      if (sockets.hasOwnProperty(socketId)) {
-        // console.log('socket', socketId, 'destroyed');
-        sockets[socketId].destroy();
-      }
-    }
-  }
-};
+// var serverStop = function() {
+//   if (server) {
+//     server.close(function() {
+//       console.log('closed');
+//     });
+//     for (var socketId in sockets) {
+//       if (sockets.hasOwnProperty(socketId)) {
+//         // console.log('socket', socketId, 'destroyed');
+//         sockets[socketId].destroy();
+//       }
+//     }
+//   }
+// };
 
 
 var projectOpen = function(path, name) {
@@ -353,7 +353,7 @@ var projectNew = function(newPath, name) {
   // check if folder already exists
   var stat = fs.statSync(newPath);
   if (stat.isFile() || stat.isDirectory()) {
-    if (confirm('Project ' + newPath + ' already exists, would you like to choose another name or location?')) {
+    if (window.confirm('Project ' + newPath + ' already exists, would you like to choose another name or location?')) {
       $newProject.val('');
       $newProject.trigger('click');
     }
