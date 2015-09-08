@@ -243,6 +243,7 @@ var projectOpen = function(path, name) {
 var projectOpenAll = function() {
   var proj;
   try {
+    // try to load the projects that were opened in the last session
     proj = JSON.parse(localStorage.getItem('projects'));
   }
   catch (e) {
