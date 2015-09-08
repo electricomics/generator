@@ -19,12 +19,12 @@ try {
 }
 
 // prevent backspace key from navigating back
-$(document).on('keydown', function(e) {
-  if (e.keyCode === 8) {
-    e.preventDefault();
-    return false;
-  }
-});
+// $(document).on('keydown', function(e) {
+//   if (e.keyCode === 8) {
+//     e.preventDefault();
+//     return false;
+//   }
+// });
 
 var $artboard = $('#artboard');
 var artboard = $artboard.get(0);
