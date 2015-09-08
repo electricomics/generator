@@ -287,15 +287,23 @@ var projectSave = function(content, id) {
 };
 
 var projectNew = function(newPath, name) {
-  // create package.json if it doesn't exist
-  // fs.exists(mypath + '/project.json', function(exists) {
-  //   if (!exists) {
-  //     var emptyComic = new Electricomic(null);
-  //     writeJSON('project.json', emptyComic.returnJSON());
-  //   }
-  // });
+  // check if folder has our extension
+  if (!projectExtReg.test(name)) {
+    name += projectExt;
+    newPath += projectExt;
+  }
 
-  // create folder and files
+  // check if folder already exists
+  var stat = fs.statSync(newPath);
+  if (stat.isFile() || stat.isDirectory()) {
+    if (confirm('Project ' + newPath + ' already exists, would you like to choose another name or location?')) {
+      $newProject.val('');
+      $newProject.trigger('click');
+    }
+    return false;
+  }
+
+  // create folder and copy files from our own folder
   var source = path.join(process.cwd(), 'comic');
   ncp(source, newPath, function (err) {
     if (err) {
@@ -305,6 +313,7 @@ var projectNew = function(newPath, name) {
     console.log('copy done');
   });
   
+  // open the newly created project
   projectOpen(newPath, name);
 };
 
