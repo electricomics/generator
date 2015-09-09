@@ -44,6 +44,7 @@ var projects = {};
 var projectsCounter = 0;
 var projectExt = '.elcxproject';
 var projectExtReg = new RegExp(projectExt + '$', 'i');
+var archiveExt = '.elcx';
 var iframesOpen = 0;
 var currentProject;
 var projectsFiles = ['index.html', 'comic.json', 'project.json'];
@@ -66,7 +67,7 @@ var writeFile = function(path, content, cb) {
 
 var createZip = function(mypath) {
   console.log('zip');
-  var outputPath = mypath + '-electricomic.zip';
+  var outputPath = mypath + archiveExt;
   var srcDirectory = mypath;
   var output = fs.createWriteStream(outputPath);
   var zipArchive = archiver('zip');
