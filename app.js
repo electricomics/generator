@@ -1,6 +1,6 @@
 /* global $ */
 
-var DEBUG = true;
+var DEBUG = false;
 
 var nwgui = require('nw.gui');
 var win = nwgui.Window.get();
@@ -22,7 +22,7 @@ if (DEBUG) {
   win.showDevTools();
 }
 else {
-  win.maximize();
+  // win.maximize();
 }
 
 var nativeMenuBar = new nwgui.Menu({ type: 'menubar' });
