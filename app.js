@@ -25,6 +25,14 @@ else {
   win.maximize();
 }
 
+var nativeMenuBar = new nwgui.Menu({ type: 'menubar' });
+try {
+  nativeMenuBar.createMacBuiltin('Electricomics Generator');
+  win.menu = nativeMenuBar;
+} catch (err) {
+  console.log(err.message);
+}
+
 // prevent backspace key from navigating back
 // $(document).on('keydown', function(e) {
 //   if (e.keyCode === 8) {
