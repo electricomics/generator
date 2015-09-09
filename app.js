@@ -351,28 +351,42 @@ var projectNew = function(newPath, name) {
     newPath += projectExt;
   }
 
-  // check if folder already exists
-  var stat = fs.statSync(newPath);
-  if (stat.isFile() || stat.isDirectory()) {
+  var save = function() {
+    // create folder and copy files from our own folder
+    var source = path.join(process.cwd(), 'comic');
+    ncp(source, newPath, function (err) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('copy done');
+    });
+    
+    // open the newly created project
+    projectOpen(newPath, name);
+  };
+  var dontSave = function() {
     if (window.confirm('Project ' + newPath + ' already exists, would you like to choose another name or location?')) {
       $newProject.val('');
       $newProject.trigger('click');
     }
-    return false;
-  }
+  };
 
-  // create folder and copy files from our own folder
-  var source = path.join(process.cwd(), 'comic');
-  ncp(source, newPath, function (err) {
-    if (err) {
-      console.log(err);
-      return;
+  // check if folder already exists
+  fs.stat(newPath, function(err) {
+    if (err == null) {
+      // file exists
+      return dontSave();
     }
-    console.log('copy done');
+    else if (err.code === 'ENOENT') {
+      // file does not exist
+      return save();
+    }
+    else {
+      // some other error that we threat as if file exists
+      return dontSave();
+    }
   });
-  
-  // open the newly created project
-  projectOpen(newPath, name);
 };
 
 var projectClose = function(content, id) {
