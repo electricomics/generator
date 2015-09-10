@@ -118,8 +118,12 @@ var iframeAdd = function(id) {
 
 var iframeClose = function(id) {
   var prevIframe = tabs[id].prev();
+  var nextIframe = tabs[id].next();
   if (prevIframe.length > 0) {
     iframeSelect(prevIframe.data('iframe'));
+  }
+  else if (nextIframe.length > 0) {
+    iframeSelect(nextIframe.data('iframe'));
   }
   iframes[id].remove();
   tabs[id].remove();
