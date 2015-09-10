@@ -995,6 +995,10 @@ if (useNodeWebkitServer) {
       
       var s = JSON.stringify(content);
       window.parent.postMessage('{"type": "' + msg.type + '", "iframe": "' + LOCAL_STORAGE + '", "content": ' + s + '}', '*');
+
+      if (msg.type === 'close') {
+        storage.clear();
+      }
     }
     if (msg.type === 'saved') {
       isSavedRemote = msg.status;
