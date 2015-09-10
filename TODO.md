@@ -10,5 +10,4 @@
 * Delete image from folder (not sure about this, but anyway it comes after the library)
 * Add/upload image(s) on drag&drop
 * Import project from .elcx archive
-* Add orientation metadata (portrait, landscape) ('both' in the future?)
 * Support for cover.png

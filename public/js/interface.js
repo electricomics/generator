@@ -33,6 +33,7 @@ var artboard = $artboard.get(0);
 var $pagesNav = $('#pages-nav');
 var $panelsNav = $('#panels-nav');
 var $comicName = $('#comic-name');
+var $comicOrientation = $('#comic-orientation');
 var $comicPxRatio2 = $('#comic-pxratio-2');
 var $comicWidth = $('#comic-width');
 var $comicHeight = $('#comic-height');
@@ -518,6 +519,7 @@ var loadComic = function() {
   $comicName.val(comicData.title);
   $comicSummary.val(comicData.summary);
   $comicVersion.val(comicData.version);
+  $comicOrientation.val(comicData.orientation || $comicOrientation.val());
   $comicDate.val(comicData.date);
   $comicWidth.val(comicData.screenW);
   $comicHeight.val(comicData.screenH);
@@ -699,6 +701,11 @@ $(document).on('change keyup', '#comic-version', function() {
 
 $(document).on('change keyup', '#comic-date', function() {
   myComic.updateDate(this.value);
+  saveLocalStorage();
+});
+
+$(document).on('change', '#comic-orientation', function() {
+  myComic.updateOrientation(this.value);
   saveLocalStorage();
 });
 

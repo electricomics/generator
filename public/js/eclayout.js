@@ -12,6 +12,7 @@ var Electricomic = function(existingComic) {
       screenW: 1024,
       screenH: 768,
       pxRatio: 1,
+      orientation: 'landscape',
       pages: [null]
     };
   };
@@ -69,6 +70,7 @@ var Electricomic = function(existingComic) {
       screenW: _comic.screenW,
       screenH: _comic.screenH,
       pxRatio: _comic.pxRatio,
+      orientation: _comic.orientation,
       pagesLen: pagesLen
     };
   };
@@ -188,6 +190,10 @@ var Electricomic = function(existingComic) {
   this.updateVersion = function(version) {
     version = parseInt(version, 10);
     editComic('version', version);
+  };
+
+  this.updateOrientation = function(orientation) {
+    editComic('orientation', orientation);
   };
 
   this.updateDate = function(date) {
