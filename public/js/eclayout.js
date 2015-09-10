@@ -1,8 +1,13 @@
 var Electricomic = function(existingComic) {
   var _comic;
+  var _today = new Date();
   var Comic = function() {
     return {
       title: 'Electricomic',
+      summary: '',
+      version: 1,
+      date: _today,
+      dateString: _today.getDate() + '/' + (_today.getMonth() + 1) + '/' + _today.getFullYear(),
       screenW: 1024,
       screenH: 768,
       pxRatio: 1,
@@ -49,6 +54,10 @@ var Electricomic = function(existingComic) {
 
     return {
       title: _comic.title,
+      summary: _comic.summary,
+      version: _comic.version,
+      date: _comic.date,
+      dateString: _comic.dateString,
       screenW: _comic.screenW,
       screenH: _comic.screenH,
       pxRatio: _comic.pxRatio,
@@ -151,6 +160,21 @@ var Electricomic = function(existingComic) {
 
   this.updatePxRatio = function(pxRatio) {
     editComic('pxRatio', pxRatio);
+  };
+
+  this.updateSummary = function(summary) {
+    editComic('summary', summary);
+  };
+
+  this.updateVersion = function(version) {
+    version = parseInt(version, 10);
+    editComic('version', version);
+  };
+
+  this.updateDate = function(date) {
+    var d = new Date(date);
+    editComic('date', date);
+    editComic('dateString', d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear());
   };
 
   this.addPage = function(pageObj, index) {

@@ -36,6 +36,9 @@ var $comicName = $('#comic-name');
 var $comicPxRatio2 = $('#comic-pxratio-2');
 var $comicWidth = $('#comic-width');
 var $comicHeight = $('#comic-height');
+var $comicSummary = $('#comic-summary');
+var $comicVersion = $('#comic-version');
+var $comicDate = $('#comic-date');
 var $panelTemplate = $($('#panel-template').html());
 var $pageTemplate = $($('#page-template').html());
 // var $exportTemplate = $('#export-template').html();
@@ -473,6 +476,9 @@ var updateImg = function(id, what) {
 var loadComic = function() {
   var comicData = myComic.getComic();
   $comicName.val(comicData.title);
+  $comicSummary.val(comicData.summary);
+  $comicVersion.val(comicData.version);
+  $comicDate.val(comicData.date);
   $comicWidth.val(comicData.screenW);
   $comicHeight.val(comicData.screenH);
   $comicPxRatio2.prop('checked', comicData.pxRatio === 2);
@@ -637,6 +643,21 @@ $('#comic-clear').on('click', function() {
 // comic
 $(document).on('change keyup', '#comic-name', function() {
   myComic.updateTitle(this.value);
+  saveLocalStorage();
+});
+
+$(document).on('change keyup', '#comic-summary', function() {
+  myComic.updateSummary(this.value);
+  saveLocalStorage();
+});
+
+$(document).on('change keyup', '#comic-version', function() {
+  myComic.updateVersion(this.value);
+  saveLocalStorage();
+});
+
+$(document).on('change keyup', '#comic-date', function() {
+  myComic.updateDate(this.value);
   saveLocalStorage();
 });
 

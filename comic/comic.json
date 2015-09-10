@@ -6,7 +6,7 @@
   ],
   "slug": "electricomics-comic",
   "version": 1,
-  "publish_date": "01/1/15",
+  "publish_date": "01/01/1970",
   "config" : {
     "orientation":"portrait",
     "buttons": [

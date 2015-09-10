@@ -36,7 +36,7 @@
     <details open>
       <summary>Settings</summary>
       <div>
-        <label>Comic Name</label>
+        <label for="comic-name">Comic Name</label>
         <input type="text" id="comic-name">
       </div>
       <div style="display: none;">
@@ -50,6 +50,20 @@
       </div>
       <div>
         <input type="button" class="comic-button" id="comic-clear" value="Clear">
+      </div>
+    </details>
+
+    <details open>
+      <summary>Metadata</summary>
+      <div>
+        <label for="comic-summary">Summary</label>
+        <textarea id="comic-summary" cols="30" rows="10"></textarea>
+      </div>
+      <div>
+        <label>Version <input type="number" min="1" value="1" id="comic-version"></label>
+      </div>
+      <div>
+        <label>Publication date <input type="date" id="comic-date"></label>
       </div>
     </details>
 
