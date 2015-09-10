@@ -20,17 +20,13 @@
 
 <ec-comic id="comic" style="width:{{screenW}}px; height:{{screenH}}px;">
 {{#pages}}
-{{#if show}}
-<ec-page id="step-{{@index}}" class="step">
-  {{#panels}}
-  {{#if id}}
-  <ec-panel id="panel-{{@../index}}-{{@index}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
-    <img src="{{{src}}}">
-  </ec-panel>
-  {{/if}}
-  {{/panels}}
-</ec-page>
-{{/if}}
+  <ec-page id="step-{{@index}}" class="step">
+    {{#panels}}
+    <ec-panel id="panel-{{@../index}}-{{@index}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
+      <img src="{{{src}}}">
+    </ec-panel>
+    {{/panels}}
+  </ec-page>
 {{/pages}}
 </ec-comic>
 

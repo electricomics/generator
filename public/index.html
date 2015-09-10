@@ -65,6 +65,16 @@
       <div>
         <label>Publication date <input type="date" id="comic-date"></label>
       </div>
+
+      <fieldset>
+        <legend>Creators</legend>
+        <div class="comic-creator-line">
+          <label>Name <input type="text" class="comic-creator-name"></label>
+          <label>Role <input type="text" class="comic-creator-role"></label>
+          <input type="button" class="comic-creator-add" value="+">
+          <input type="button" class="comic-creator-remove" value="-">
+        </div>
+      </fieldset>
     </details>
 
     <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">

@@ -36,6 +36,7 @@ var $comicName = $('#comic-name');
 var $comicPxRatio2 = $('#comic-pxratio-2');
 var $comicWidth = $('#comic-width');
 var $comicHeight = $('#comic-height');
+var $comicCreatorLine = $('.comic-creator-line').clone();
 var $comicSummary = $('#comic-summary');
 var $comicVersion = $('#comic-version');
 var $comicDate = $('#comic-date');
@@ -411,6 +412,45 @@ var addImgEvent = function($img) {
   });
 };
 
+var addCreatorLine = function($el, v) {
+  var $parent = $el.closest('.comic-creator-line');
+  var $newEl = $comicCreatorLine.clone();
+  $newEl.find('input[text]').val('');
+  if (v) {
+    $newEl.find('.comic-creator-name').val(v.name);
+    $newEl.find('.comic-creator-role').val(v.role);
+  }
+  $parent.after($newEl);
+};
+var removeCreatorLine = function($el) {
+  var $parent = $el.closest('.comic-creator-line');
+  // debugger;
+  if ($('.comic-creator-line').length === 1) {
+    addCreatorLine($el);
+  }
+  $parent.remove();
+};
+var loadCreators = function(arr) {
+  var $el = $('.comic-creator-name');
+  var $parent = $el.closest('.comic-creator-line');
+  $parent.find('.comic-creator-name').val(arr[0].name);
+  $parent.find('.comic-creator-role').val(arr[0].role);
+  for (var i = arr.length - 1; i > 0; i--) {
+    addCreatorLine($el, arr[i]);
+  }
+};
+var getCreators = function() {
+  var lines = $('.comic-creator-line');
+  var arr = [];
+  for (var i = 0; i < lines.length; i++) {
+    arr.push({
+      name: lines.eq(i).find('.comic-creator-name').val(),
+      role: lines.eq(i).find('.comic-creator-role').val()
+    });
+  }
+  return arr;
+};
+
 var addPanelForm = function(obj) {
   var $panel = $panelTemplate.clone();
 
@@ -483,6 +523,7 @@ var loadComic = function() {
   $comicHeight.val(comicData.screenH);
   $comicPxRatio2.prop('checked', comicData.pxRatio === 2);
   $artboard.width(comicData.screenW).height(comicData.screenH);
+  loadCreators(myComic.getCreators());
 
   loadPages(comicData.pagesLen);
   loadPage(CURRENT_PAGE);
@@ -658,6 +699,23 @@ $(document).on('change keyup', '#comic-version', function() {
 
 $(document).on('change keyup', '#comic-date', function() {
   myComic.updateDate(this.value);
+  saveLocalStorage();
+});
+
+$(document).on('change keyup', '.comic-creator-line input[type=text]', function() {
+  myComic.updateCreators(getCreators());
+  saveLocalStorage();
+});
+
+$(document).on('click', '.comic-creator-line .comic-creator-remove', function() {
+  removeCreatorLine($(this));
+  myComic.updateCreators(getCreators());
+  saveLocalStorage();
+});
+
+$(document).on('click', '.comic-creator-line .comic-creator-add', function() {
+  addCreatorLine($(this));
+  myComic.updateCreators(getCreators());
   saveLocalStorage();
 });
 

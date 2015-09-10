@@ -8,10 +8,17 @@ var Electricomic = function(existingComic) {
       version: 1,
       date: _today,
       dateString: _today.getDate() + '/' + (_today.getMonth() + 1) + '/' + _today.getFullYear(),
+      creators: [],
       screenW: 1024,
       screenH: 768,
       pxRatio: 1,
       pages: [null]
+    };
+  };
+  var Creators = function() {
+    return {
+      name: '',
+      role: '',
     };
   };
   var Page = function() {
@@ -58,11 +65,23 @@ var Electricomic = function(existingComic) {
       version: _comic.version,
       date: _comic.date,
       dateString: _comic.dateString,
+      creators: this.getCreators(),
       screenW: _comic.screenW,
       screenH: _comic.screenH,
       pxRatio: _comic.pxRatio,
       pagesLen: pagesLen
     };
+  };
+
+  this.getCreators = function() {
+    var arr = [];
+    for (var i = 0; i < _comic.creators.length; i++) {
+      arr.push({
+        name: _comic.creators[i].name,
+        role: _comic.creators[i].role
+      });
+    }
+    return arr;
   };
 
   this.getPage = function(pageN) {
@@ -175,6 +194,16 @@ var Electricomic = function(existingComic) {
     var d = new Date(date);
     editComic('date', date);
     editComic('dateString', d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear());
+  };
+
+  this.updateCreators = function(arr) {
+    _comic.creators = [];
+    for (var i = 0; i < arr.length; i++) {
+      _comic.creators.push({
+        name: arr[i].name,
+        role: arr[i].role
+      });
+    }
   };
 
   this.addPage = function(pageObj, index) {
