@@ -1,5 +1,16 @@
 {
   "title": "Electricomics Comic",
+  "version": 1,
+  "summary": "Electricomics initial comic",
+  "date": "2015-09-14",
+  "dateString": "14/9/2015",
+  "orientation": "landscape",
+  "creators": [
+    {
+      "name": "",
+      "role": ""
+    }
+  ],
   "screenW": 1024,
   "screenH": 768,
   "pxRatio": 1,

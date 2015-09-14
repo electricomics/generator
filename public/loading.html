@@ -28,18 +28,43 @@ if (!searchParams.path) {
   window.location = 'empty.html';
 }
 
-// if (!localStorage.getItem(searchParams.id)) {
-  $.ajax({
-    url: searchParams.path + '/project.json',
-    success: function(data) {
-      localStorage.setItem(searchParams.id, JSON.stringify(data));
-      window.location = 'index.html' + '?id=' + searchParams.id;
+var basicProject = {
+  'title': 'Electricomics Comic',
+  'version': 1,
+  'summary': 'Electricomics initial comic',
+  'date': '2015-09-14',
+  'dateString': '14/9/2015',
+  'orientation': 'landscape',
+  'creators': [
+    {
+      'name': '',
+      'role': ''
     }
-  });
-// }
-// else {
-//   window.location = 'index.html' + '?id=' + searchParams.id;
-// }
+  ],
+  'screenW': 1024,
+  'screenH': 768,
+  'pxRatio': 1,
+  'pages': [
+    null,
+    {
+      'id': '',
+      'name': '',
+      'show': true,
+      'panels': [
+        null
+      ]
+    }
+  ]
+};
+
+$.ajax({
+  url: searchParams.path + '/project.json',
+  success: function(data) {
+    var d = $.extend(basicProject, data);
+    localStorage.setItem(searchParams.id, JSON.stringify(d));
+    window.location = 'index.html' + '?id=' + searchParams.id;
+  }
+});
 </script>
 
 </body>
