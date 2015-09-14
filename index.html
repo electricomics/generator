@@ -115,7 +115,7 @@ input[type=file] {
     <header>
       <nav class="menu">
         <label class="menu-item">New Project<input type="file" id="new-project" nwsaveas="electricomic.elcxproject"></label>
-        <label class="menu-item">Open Project<input type="file" id="open-project" accept=".elcxproject"></label>
+        <label class="menu-item">Open Project<input type="file" id="open-project" nwdirectory></label>
         <input class="menu-item menu-item-project menu-item-disabled" type="button" id="save-project" value="Save Project">
         <input class="menu-item menu-item-project menu-item-disabled" type="button" id="close-project" value="Close Project">
         <input class="menu-item" type="button" id="quit" value="Quit">
@@ -132,8 +132,20 @@ input[type=file] {
     </main>
   </div>
 
-  <div class="dialog" id="dialog-close" title="Close this project?">
+  <div class="dialog" id="dialog-close-project" title="Close this project?">
     <p>Are you sure you want to close this project without saving it first?</p>
+  </div>
+
+  <div class="dialog" id="dialog-close-app" title="Quit the app?">
+    <p>Are you sure you want to quit the app?</p>
+  </div>
+
+  <div class="dialog" id="dialog-project-new" title="New project">
+    <p>This project already exists, do you want to choose another name or location?</p>
+  </div>
+
+  <div class="dialog" id="dialog-project-open" title="Open project">
+    <p>Project folder not valid, do you want to open another project?</p>
   </div>
   
   <script src="public/js/lib/jquery.min.js"></script>

@@ -230,6 +230,27 @@ var projectOpen = function(path, name) {
   if (!path) {
     return false;
   }
+  // if folder doesn't have our extension
+  if (!projectExtReg.test(name)) {
+    var confirm = $('#dialog-project-open').dialog({
+      resizable: false,
+      modal: true,
+      width: 550,
+      buttons: {
+        'Yes': function() {
+          $(this).dialog('close');
+          $openProject.val('');
+          $openProject.trigger('click');
+        },
+        'No': function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+    confirm.html('<p>Project <em>' + path + '</em> not valid, do you want to open another project?</p>');
+    confirm.dialog('open');
+    return false;
+  }
   for (var p in projects) {
     if (projects.hasOwnProperty(p)) {
       // check if this filesystem path aka the project has been already opened
@@ -378,10 +399,23 @@ var projectNew = function(newPath, name) {
     projectOpen(newPath, name);
   };
   var dontSave = function() {
-    if (window.confirm('Project ' + newPath + ' already exists, would you like to choose another name or location?')) {
-      $newProject.val('');
-      $newProject.trigger('click');
-    }
+    var confirm = $('#dialog-project-new').dialog({
+      resizable: false,
+      modal: true,
+      width: 550,
+      buttons: {
+        'Yes': function() {
+          $(this).dialog('close');
+          $newProject.val('');
+          $newProject.trigger('click');
+        },
+        'No': function() {
+          $(this).dialog('close');
+        }
+      }
+    });
+    confirm.html('<p>Project <em>' + newPath + '</em> already exists, would you like to choose another name or location?</p>');
+    confirm.dialog('open');
   };
 
   // check if folder already exists
@@ -414,7 +448,7 @@ var projectClose = function(content, id) {
     cb();
   }
   else {
-    var confirm = $('#dialog-close').dialog({
+    var confirm = $('#dialog-close-project').dialog({
       resizable: false,
       modal: true,
       width: 550,
@@ -481,9 +515,22 @@ var $menuItemProject = $('.menu-item-project');
 
 
 $quit.on('click', function() {
-  if (window.confirm('Are you sure you want to quit the app?')) {
-    win.close();
-  }
+  var confirm = $('#dialog-close-app').dialog({
+    resizable: false,
+    modal: true,
+    width: 550,
+    buttons: {
+      'Quit': function() {
+        $(this).dialog('close');
+        win.close();
+      },
+      Cancel: function() {
+        $(this).dialog('close');
+        return;
+      }
+    }
+  });
+  confirm.dialog('open');
 });
 
 win.on('close', function() {
