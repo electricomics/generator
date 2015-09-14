@@ -11,3 +11,4 @@
 * Add/upload image(s) on drag&drop
 * Import project from .elcx archive
 * Support for cover.png
+* When opening project, if folder doesn't exist, don't open anything
