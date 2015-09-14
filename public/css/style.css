@@ -25,8 +25,8 @@ body {
   background: #333;
   color: #EEE;
 }
-body {
-  font-family: 'komika_displayregular', Arial, sans-serif;
+body, input, textarea, select, button {
+  font-family: 'muli', Arial, sans-serif;
 }
 
 header {
