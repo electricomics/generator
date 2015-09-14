@@ -30,7 +30,7 @@ try {
   nativeMenuBar.createMacBuiltin('Electricomics Generator');
   win.menu = nativeMenuBar;
 } catch (err) {
-  console.log(err.message);
+  // console.log(err.message);
 }
 
 // prevent backspace key from navigating back
