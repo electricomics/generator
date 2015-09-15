@@ -230,8 +230,9 @@ var projectOpen = function(path, name) {
   if (!path) {
     return false;
   }
+
   // if folder doesn't have our extension
-  if (!projectExtReg.test(name)) {
+  if (!projectExtReg.test(path)) {
     var confirm = $('#dialog-project-open').dialog({
       resizable: false,
       modal: true,
@@ -251,35 +252,58 @@ var projectOpen = function(path, name) {
     confirm.dialog('open');
     return false;
   }
-  for (var p in projects) {
-    if (projects.hasOwnProperty(p)) {
-      // check if this filesystem path aka the project has been already opened
-      if (projects[p].fsPath === path) {
-        return false;
+
+  // check if folder physically exists
+  fs.stat(path, function(err) {
+    if (err == null) {
+      // folder exists
+      return ok();
+    }
+    else if (err.code === 'ENOENT') {
+      // folder does not exist
+      return ko();
+    }
+    else {
+      // some other error that we threat as if folder exists
+      return ok();
+    }
+  });
+
+  var ko = function() {
+    localStorage.setItem('projects', JSON.stringify(projects));
+  };
+
+  var ok = function() {
+    for (var p in projects) {
+      if (projects.hasOwnProperty(p)) {
+        // check if this filesystem path aka the project has been already opened
+        if (projects[p].fsPath === path) {
+          return false;
+        }
       }
     }
-  }
-  projectsCounter++;
-  var nameNoExt = name.replace(projectExtReg, '');
-  var id = projectsCounter + '-' + nameNoExt;
-  projects[id] = {
-    name: nameNoExt,
-    fsPath: path,
-    serverPath: '/' + id,
-    files: {},
-    saved: true
-  };
-  for (var i = 0; i < projectsFiles.length; i++) {
-    projects[id].files[ projectsFiles[i] ] = {
+    projectsCounter++;
+    var nameNoExt = name.replace(projectExtReg, '');
+    var id = projectsCounter + '-' + nameNoExt;
+    projects[id] = {
+      name: nameNoExt,
+      fsPath: path,
+      serverPath: '/' + id,
+      files: {},
       saved: true
     };
-  }
-  // mount folder
-  app.use('/' + id, express.static(path));
-  // save that we opened this project
-  localStorage.setItem('projects', JSON.stringify(projects));
-  // load iframe
-  iframeAdd(id);
+    for (var i = 0; i < projectsFiles.length; i++) {
+      projects[id].files[ projectsFiles[i] ] = {
+        saved: true
+      };
+    }
+    // mount folder
+    app.use('/' + id, express.static(path));
+    // save that we opened this project
+    localStorage.setItem('projects', JSON.stringify(projects));
+    // load iframe
+    iframeAdd(id);
+  };
 };
 
 var projectOpenAll = function() {
