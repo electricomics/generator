@@ -1,24 +1,29 @@
 {
-  "title": "Electricomics Comic",
-  "summary": "",
-  "creators": [
-    {"name": "", "role": ""}
-  ],
-  "slug": "electricomics-comic",
-  "version": 1,
-  "publish_date": "01/01/1970",
-  "config" : {
-    "orientation": "landscape",
-    "buttons": [
-             {
-                 "type": "sound",
-                 "action": "elcx:toggleAudio"
-             },
-             {
-                 "type": "hint",
-                 "action": "elcx:hint"
-             }
+    "config": {
+        "buttons": [
+            {
+                "action": "elcx:toggleAudio",
+                "type": "sound"
+            },
+            {
+                "action": "elcx:hint",
+                "type": "hint"
+            }
+        ],
+        "features": [
+            "tap"
+        ],
+        "orientation": "landscape"
+    },
+    "creators": [
+        {
+            "name": "",
+            "role": ""
+        }
     ],
-    "features": ["tap"]
-  }
+    "publish_date": "01/01/1970",
+    "slug": "electricomics-comic",
+    "summary": "",
+    "title": "Electricomics Comic",
+    "version": 1
 }
