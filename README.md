@@ -2,6 +2,8 @@
 This program allows you to create simple Electricomics. Each consisting of a number of images placed on steps.
 It is written in Javascript and packaged as an app using NW.js (http://http://nwjs.io).
 
+The intention is to build from here to create the all singing Electricomic Editor that people are crying out for
+
 The Releases tab contains prebuilt binaries for Windows, OS X and Linux.
 
 # Basics
@@ -23,3 +25,4 @@ We are working on a producing some better instructions, but for now here are a f
 - Install the required modules: _npm install_ from theprojects folder
 - Install Node Webkit: _npm install nw -g_
 - From the electricomics-generator project folder run _nw_
+
