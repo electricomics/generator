@@ -5,3 +5,4 @@ public/comic/images
 public/comic/output.html
 *.zip
 *.elcx
+.idea

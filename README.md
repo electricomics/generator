@@ -6,13 +6,11 @@ The intention is to build from here to create the all singing Electricomic edito
 
 The Releases tab contains prebuilt binaries for Windows and OS X. Linux users should be able to run from the **Running from source** section below.
 
-# Basics
-A Project contains all the files needed for an Electricomic. 
+# Getting Started
+Until we produce some better instructions [here's a great article](http://dangergeekuk.blogspot.co.uk/2015/09/how-to-make-electricomic.html) by Tim West on getting started with the Generator
 
-From the Generator you can Create, Open, Save and Close projects. When a project is open you can preview it or examine the generated files.
-
-We are working on a producing some better instructions, but for now here are a few key points:
-
+# Generator Basics
+- You can Create, Open, Save and Close projects. A Project contains all the files needed for an Electricomic. When a project is open you can preview it or examine the generated files.
 - An Electricomic is portrait or landscape and has a page size that is the same for all pages.
 - A new page can be added to the Electricomic by clicking the big green button.
 - Images are added to pages by clicking the *Add Image* button, selecting a file and then clicking *upload*. This is a little cumbersome but you get used to it. We recommend you always use PNG format images.
