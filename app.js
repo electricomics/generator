@@ -201,15 +201,16 @@ var serverStart = function() {
     app.post('/upload', multerUpload.fields([{name: 'panelAdd'}]), function(req, res) {
       var id = req.query.id;
       var txt = JSON.stringify(req.files);
+      console.log(txt);
       txt = JSON.parse(txt);
       if (txt.panelAdd) {
         if (Array.isArray(txt.panelAdd)) {
           for (var i = 0; i < txt.panelAdd.length; i++) {
-            txt.panelAdd[i].path = txt.panelAdd[i].path.replace(projects[id].fsPath + '/', '');
+            txt.panelAdd[i].path = txt.panelAdd[i].path.replace(projects[id].fsPath + path.sep, '');
           }
         }
         else {
-          txt.panelAdd.path = txt.panelAdd.path.replace(projects[id].fsPath + '/', '');
+          txt.panelAdd.path = txt.panelAdd.path.replace(projects[id].fsPath + path.sep, '');
         }
       }
       txt = JSON.stringify(txt);
@@ -365,7 +366,7 @@ var projectSave = function(content, id, cb) {
   for (var file in projects[projectId].files) {
     if (projects[projectId].files.hasOwnProperty(file)) {
       if (projects[projectId].files[file].saved === false) {
-        console.log('file ' + projects[projectId].fsPath + '/' + file + ' not ready to be saved');
+        console.log('file ' + projects[projectId].fsPath + path.sep + file + ' not ready to be saved');
         return false;
       }
     }
