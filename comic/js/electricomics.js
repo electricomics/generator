@@ -1100,23 +1100,30 @@ var _future = [];
 module.exports = {
   add: function (obj) {
     var ref = { id: obj.id };
-    history.pushState(ref, '', '#/step/' + ref.id.toString());
-    _future = [];
-    _history.push(ref.id.toString());
+    if(document.origin !== 'null') {
+      history.pushState(ref, '', '#/step/' + ref.id.toString());
+      _future = [];
+      _history.push(ref.id.toString());
+    }
   },
   start: function (obj) {
     var ref = { id: obj.id };
-    history.replaceState(ref, '', '#/step/' + ref.id.toString());
-    _history = [];
-    _future = [];
-    _history.push(ref.id.toString());
+    if(document.origin !== 'null') {
+       history.replaceState(ref, '', '#/step/' + ref.id.toString());
+       _history = [];
+       _future = [];
+       _history.push(ref.id.toString());
+    }   
+
   },
   createFuture: function(current) {
     var ref = { id: current };
     var item = _history.pop();
     _future.unshift(item);
-    history.pushState(ref, '', '#/step/' + ref.id.toString());
-    _history.push(current);
+     if(document.origin !== 'null') {
+        history.pushState(ref, '', '#/step/' + ref.id.toString());
+        _history.push(current);
+    }
   },
   getIndex: function (n) {
     var item;
