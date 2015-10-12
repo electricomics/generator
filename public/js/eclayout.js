@@ -26,6 +26,11 @@ through which recipients can access the Corresponding Source.
 @licend  The above is the entire license notice
 for the JavaScript code in this page.
 */
+
+/**
+ * Class to manipulate the structure of the comic
+ * It should be independent from the UI used to create it
+ */
 var Electricomic = function(existingComic) {
   var _comic;
   var _today = new Date();
