@@ -27,6 +27,8 @@ through which recipients can access the Corresponding Source.
 @licend  The above is the entire license notice
 for the JavaScript code in this page.
 */
+
+// for debugging purposes
 var DEBUG = false;
 
 var nwgui = require('nw.gui');
@@ -52,6 +54,8 @@ else {
   // win.maximize();
 }
 
+// hack to make keyboard shortcuts work (at least under Mac OS)
+// https://github.com/nwjs/nw.js/issues/2462
 var nativeMenuBar = new nwgui.Menu({ type: 'menubar' });
 try {
   nativeMenuBar.createMacBuiltin('Electricomics Generator');
@@ -61,6 +65,7 @@ try {
 }
 
 // prevent backspace key from navigating back
+// to fix as this jack would block all the back keys, even on input fields
 // $(document).on('keydown', function(e) {
 //   if (e.keyCode === 8) {
 //     e.preventDefault();
@@ -68,12 +73,20 @@ try {
 //   }
 // });
 
+// address of the created server
+// the port will be in an advanded setting panel to avoid collision with existent servers
 var options = {
   host: '127.0.0.1',
   port: 8123
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
+// what do we save in local memory for each project?
+// id is a unique for the session identifier, formed of:
+// a counter, increased for every open project in the session
+// name of the open project without the extension.
+// with session we mean the time during which the app is open.
+// when the app is closed and reopen the session restart, so does the counter
 // project[id] = { fsPath, serverPath, name, saved, files: { nameOfFile: { saved: bool } } }
 var projects = {};
 var projectsCounter = 0;
@@ -82,9 +95,16 @@ var projectExtReg = new RegExp(projectExt + '$', 'i');
 var archiveExt = '.elcx';
 var iframesOpen = 0;
 var currentProject;
+// to be kept in sync with /public/js/interface.js var templateFiles
 var projectsFiles = ['index.html', 'comic.json', 'project.json'];
 
 
+/**
+ * Asynchronously write json object into filesystem file
+ * @param {string} path - Path of the file
+ * @param {string} content - Content to write
+ * @param {function} cb - Callback when writing is done ok
+ */
 var writeJSON = function(path, content, cb) {
   var c;
   try {
@@ -96,10 +116,21 @@ var writeJSON = function(path, content, cb) {
   writeFile(path, c, cb);
 };
 
+/**
+ * Asynchronously writes data to a file, replacing the file if it already exists
+ * @param {string} path - Path of the file
+ * @param {string} content - Content to write
+ * @param {function} cb - Callback when writing is done ok
+ */
 var writeFile = function(path, content, cb) {
   fs.writeFile(path, content, cb);
 };
 
+/**
+ * Compress project folder into our own archive
+ * http://soledadpenades.com/2014/01/22/compressing-files-with-node-js/
+ * @param {string} mypath - Path and name of the created archive
+ */
 var createZip = function(mypath) {
   console.log('zip');
   var outputPath = mypath + archiveExt;
@@ -122,6 +153,10 @@ var createZip = function(mypath) {
 };
 
 
+/*
+ * Disable/enable top menu items depending if any project is open or not
+ * Items like "save project" or "close project" should not be available if no project is open
+ */
 var iframeFrill = function() {
   if (iframesOpen <= 0) {
     $menuItemProject.addClass('menu-item-disabled');
@@ -131,6 +166,10 @@ var iframeFrill = function() {
   }
 };
 
+/**
+ * Add an iframe with the open project url and its relative tab
+ * @param {string} id - Project id
+ */
 var iframeAdd = function(id) {
   var $newIframe = $('<iframe class="iframe" src="' + serverUrl + '/loading.html?id=' + id + '&path=' + projects[id].serverPath + '" frameborder="0" id="iframe-' + id + '"></iframe>');
   var $newTab = $('<span class="tab" id="tab-' + id + '" data-iframe="' + id + '">' + projects[id].name + '</span>');
@@ -143,6 +182,10 @@ var iframeAdd = function(id) {
   iframeFrill();
 };
 
+/**
+ * Remove iframe and tab of selected project and focus the one on its left or its right
+ * @param {string} id - Project id
+ */
 var iframeClose = function(id) {
   var prevIframe = tabs[id].prev();
   var nextIframe = tabs[id].next();
@@ -160,6 +203,10 @@ var iframeClose = function(id) {
   iframeFrill();
 };
 
+/**
+ * Focus selected open project
+ * @param {string} id - Project id
+ */
 var iframeSelect = function(id) {
   currentProject = id;
   $('.iframe-selected').removeClass('iframe-selected');
@@ -170,9 +217,11 @@ var iframeSelect = function(id) {
 
 
 // configure multer
+// multer is the middleware for handling the upload of images
 var multerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     var id = req.query.id;
+    // all the images will always end up in the `images` folder of the comic project
     cb(null, projects[id].fsPath + '/images');
   },
   filename: function (req, file, cb) {
@@ -187,6 +236,9 @@ var multerUpload = multer({
 });
 
 
+/**
+ * Start the local server
+ */
 var serverStart = function() {
   //check if server is already running
   http.get(options, function(res) {
@@ -198,6 +250,10 @@ var serverStart = function() {
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
 
+    // all the projects will upload to the same url, but they will send their
+    // project id into the query string to tell the server into which physical
+    // folder it should save the file. this is due to the fact that there is no
+    // other way at the moment to pass to multer this information
     app.post('/upload', multerUpload.fields([{name: 'panelAdd'}]), function(req, res) {
       var id = req.query.id;
       var txt = JSON.stringify(req.files);
@@ -238,6 +294,9 @@ var serverStart = function() {
   });
 };
 
+/**
+ * Stop the local server
+ */
 // not sure I need this
 // var serverStop = function() {
 //   if (server) {
@@ -254,12 +313,18 @@ var serverStart = function() {
 // };
 
 
+/**
+ * Open project
+ * @param {string} path - Path in the filesystem of the project
+ * @param {string} name - Name in the filesystem of the project/file - It can be with or without extension, we take care of this later
+ */
 var projectOpen = function(path, name) {
   if (!path) {
     return false;
   }
 
-  // if folder doesn't have our extension
+  // if folder doesn't have our extension we throw a message notifing the error and asking
+  // if the user want to select another folder
   if (!projectExtReg.test(path)) {
     var confirm = $('#dialog-project-open').dialog({
       resizable: false,
@@ -297,10 +362,12 @@ var projectOpen = function(path, name) {
     }
   });
 
+  // folder doesn't exist, just do nothing and save current valid open projects in memory
   var ko = function() {
     localStorage.setItem('projects', JSON.stringify(projects));
   };
 
+  // folder exists
   var ok = function() {
     for (var p in projects) {
       if (projects.hasOwnProperty(p)) {
@@ -310,6 +377,7 @@ var projectOpen = function(path, name) {
         }
       }
     }
+    // create session data of this project
     projectsCounter++;
     var nameNoExt = name.replace(projectExtReg, '');
     var id = projectsCounter + '-' + nameNoExt;
@@ -334,6 +402,9 @@ var projectOpen = function(path, name) {
   };
 };
 
+/**
+ * Open all projects that were open when app was closed last time
+ */
 var projectOpenAll = function() {
   var proj;
   try {
@@ -350,11 +421,23 @@ var projectOpenAll = function() {
   }
 };
 
+/**
+ * Send a message to the iframe of the selected project
+ * Communications between the app container (which runs under file://) and the pages in the local server (which runs under http://) can ben done only through window.postMessage (a method that enables cross-origin communication)
+ * @param {string} type - Type of the message
+ * @param {string} id - Project id
+ */
 var projectStartMessage = function(type, id) {
   var projectId = id || currentProject;
   iframes[projectId].get(0).contentWindow.postMessage('{"type": "'+ type + '", "iframe": "' + projectId + '"}', serverUrl);
 };
 
+/**
+ * Save project - writes the content sent from the local server into physical files. We don't want the functionality to actually create the content based on template+data in this side of the app
+ * @param {object} content - Object containing file names and the content to write into
+ * @param {string} id - Project id
+ * @param {function} cb - Callback when saving is done ok
+ */
 var projectSave = function(content, id, cb) {
   var projectId = id || currentProject;
   var files = content;
@@ -371,12 +454,15 @@ var projectSave = function(content, id, cb) {
       }
     }
   }
+  // reset the saved status
   for (var ff in projects[projectId].files) {
     if (projects[projectId].files.hasOwnProperty(ff)) {
       projects[projectId].files[ff].saved = false;
     }
   }
 
+  // the content sent from the server is an object where each key is the name of
+  // a file, and it's value the text to write into the file
   for (var f in files) {
     if (files.hasOwnProperty(f)) {
       dest = f.replace('.hbs', '');
@@ -407,8 +493,15 @@ var projectSave = function(content, id, cb) {
   }
 };
 
+/**
+ * Change saved status of the project
+ * @param {string} id - Project id
+ * @param {boolean} status - Status of the project
+ * @param {function} cb - Callback when status is changed
+ */
 var projectSaved = function(id, status, cb) {
   var projectId = id || currentProject;
+  // send message to the iframe with the new status - could this be made better?
   iframes[projectId].get(0).contentWindow.postMessage('{"type": "saved", "iframe": "' + projectId + '", "status": ' + status + '}', serverUrl);
   projects[projectId].saved = status;
   tabs[projectId].toggleClass('tab-unsaved', !status);
@@ -417,6 +510,11 @@ var projectSaved = function(id, status, cb) {
   }
 };
 
+/**
+ * Check if all the files of the project are saved (which is a status we change before and after writing them in the filesystem)
+ * @param {string} id - Project id
+ * @returns {boolean} true if all files are saved
+ */
 var checkFilesStatus = function(id) {
   var projectId = id || currentProject;
   for (var file in projects[projectId].files) {
@@ -429,6 +527,11 @@ var checkFilesStatus = function(id) {
   return true;
 };
 
+/**
+ * Create new project
+ * @param {string} newPath - Path in the filesystem where to save the project
+ * @param {string} name - Name of the project. It can be with or without extension, we take care of this later
+ */
 var projectNew = function(newPath, name) {
   // check if folder has our extension
   if (!projectExtReg.test(name)) {
@@ -436,8 +539,8 @@ var projectNew = function(newPath, name) {
     newPath += projectExt;
   }
 
+  // create folder and copy files from our own folder
   var save = function() {
-    // create folder and copy files from our own folder
     var source = path.join(process.cwd(), 'comic');
     ncp(source, newPath, function (err) {
       if (err) {
@@ -450,6 +553,9 @@ var projectNew = function(newPath, name) {
     // open the newly created project
     projectOpen(newPath, name);
   };
+  
+  // if the folder we want to create already exists, we throw a message notifing
+  // the error and asking if the user want to choose another name or location
   var dontSave = function() {
     var confirm = $('#dialog-project-new').dialog({
       resizable: false,
@@ -487,18 +593,25 @@ var projectNew = function(newPath, name) {
   });
 };
 
+/**
+ * Close project
+ * @param {object} content - Object containing file names and the content to write into
+ * @param {string} id - Project id
+ */
 var projectClose = function(content, id) {
   var projectId = id || currentProject;
+  // close function
   var cb = function() {
     iframeClose(projectId);
     delete projects[projectId];
     localStorage.setItem('projects', JSON.stringify(projects));
     // todo unmount folder
   };
-  // check if we want so save
+  // if project is already saved, just close it
   if (projects[projectId].saved) {
     cb();
   }
+  // if project is not already saved, ask the user what to do
   else {
     var confirm = $('#dialog-close-project').dialog({
       resizable: false,
@@ -514,6 +627,7 @@ var projectClose = function(content, id) {
         },
         'Save and close': function() {
           $(this).dialog('close');
+          // note the `cb` function as callback for when project is finally saved
           projectSave(content, projectId, cb);
         }
       }
@@ -524,7 +638,9 @@ var projectClose = function(content, id) {
 };
 
 
+// Listener for the postMessages from the iframes
 window.addEventListener('message', function(e) {
+  // check that that the messages come from our local server
   if (e.origin !== serverUrl) {
     return false;
   }
@@ -585,6 +701,8 @@ $quit.on('click', function() {
   confirm.dialog('open');
 });
 
+// use the close event to catch every type of closing, not only the one from our
+// top menu (e.g. keyboard shortcut close)
 win.on('close', function() {
   this.hide(); // Pretend to be closed already
   // todo save all projects
@@ -597,6 +715,8 @@ $newProject.on('change', function() {
   console.log(path, name);
   if (path !== '') {
     projectNew(path, name);
+    // reset its value so it can catch the next event in case we select the same
+    // previous value
     this.value = '';
   }
 });
@@ -607,6 +727,8 @@ $openProject.on('change', function() {
   console.log(path, name);
   if (path !== '') {
     projectOpen(path, name);
+    // reset its value so it can catch the next event in case we select the same
+    // previous value
     this.value = '';
   }
 });
@@ -629,6 +751,7 @@ $comicPreview.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
+  // open comic preview in the system default browser
   nwgui.Shell.openExternal(path.join(serverUrl, projects[currentProject].serverPath));
 });
 
@@ -636,6 +759,7 @@ $comicFolder.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
+  // open the project folder in the system finder
   nwgui.Shell.showItemInFolder(projects[currentProject].fsPath);
 });
 
@@ -643,7 +767,11 @@ $comicExport.on('click', function() {
   if ($(this).hasClass('menu-item-disabled')) {
     return;
   }
+  // create the project archive a level above the project folder, otherwise if
+  // we create it in the same folder that it's trying to compress, it would
+  // create a not nice loop trying to include itself
   createZip(projects[currentProject].fsPath);
+  // open the project folder in the system finder
   nwgui.Shell.showItemInFolder(projects[currentProject].fsPath);
 });
 
