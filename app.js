@@ -29,7 +29,7 @@ for the JavaScript code in this page.
 */
 
 // for debugging purposes
-var DEBUG = false;
+var DEBUG = true;
 
 var nwgui = require('nw.gui');
 var win = nwgui.Window.get();
@@ -41,6 +41,8 @@ var path = require('path');
 var fs = require('fs');
 var archiver = require('archiver');
 var ncp = require('ncp').ncp;
+// var livereload = require('express-livereload');
+var livereload = require('livereload');
 
 // server stuff
 var server;
@@ -53,6 +55,12 @@ if (DEBUG) {
 else {
   // win.maximize();
 }
+
+// livereload
+var livereloadConfig = {
+  // watchDir: path.join(process.cwd(), 'public')
+};
+var livereloadServer;
 
 // hack to make keyboard shortcuts work (at least under Mac OS)
 // https://github.com/nwjs/nw.js/issues/2462
@@ -250,6 +258,13 @@ var serverStart = function() {
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
 
+    // middleware for adding the livereload script to the response
+    app.use(require('connect-livereload')());
+    // add livereload functionality to express
+    // var xx = livereload(app, livereloadConfig);
+    // console.log(xx);
+    livereloadServer = livereload.createServer(livereloadConfig);
+
     // all the projects will upload to the same url, but they will send their
     // project id into the query string to tell the server into which physical
     // folder it should save the file. this is due to the fact that there is no
@@ -394,9 +409,15 @@ var projectOpen = function(path, name) {
       };
     }
     // mount folder
+    app.get('/' + id, function (req, res) {
+      console.log('aaa', req.originalUrl);
+      // res.send(res.body);
+    });
     app.use('/' + id, express.static(path));
     // save that we opened this project
     localStorage.setItem('projects', JSON.stringify(projects));
+    // livereload
+    livereloadServer.watch(path);
     // load iframe
     iframeAdd(id);
   };

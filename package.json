@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "archiver": "^0.15.0",
+    "connect-livereload": "^0.5.3",
     "express": "^4.12.0",
+    "express-livereload": "0.0.24",
+    "livereload": "^0.3.7",
     "multer": "^1.0.3",
     "ncp": "^2.0.0"
   },
