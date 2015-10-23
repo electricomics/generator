@@ -41,8 +41,8 @@ var path = require('path');
 var fs = require('fs');
 var archiver = require('archiver');
 var ncp = require('ncp').ncp;
-// var livereload = require('express-livereload');
 var livereload = require('livereload');
+var connectInject = require('connect-inject');
 
 // server stuff
 var server;
@@ -258,11 +258,7 @@ var serverStart = function() {
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
 
-    // middleware for adding the livereload script to the response
-    app.use(require('connect-livereload')());
-    // add livereload functionality to express
-    // var xx = livereload(app, livereloadConfig);
-    // console.log(xx);
+    // add livereload server
     livereloadServer = livereload.createServer(livereloadConfig);
 
     // all the projects will upload to the same url, but they will send their
@@ -408,16 +404,16 @@ var projectOpen = function(path, name) {
         saved: true
       };
     }
+    // add path for livereload to watch
+    livereloadServer.watch(path);
+    // add livereload scripts to the comic preview
+    app.get('/' + id + '/', connectInject({
+      snippet: "\n<script>//<![CDATA[\ndocument.write('<script src=\"//" + options.host + ":35729/livereload.js?snipver=1\"><\\/script>')\n//]]></script>\n" + '\n<script>var myPath = \'' + path + '\';</script>\n<script src="/js/template.js"></script>'
+    }));
     // mount folder
-    app.get('/' + id, function (req, res) {
-      console.log('aaa', req.originalUrl);
-      // res.send(res.body);
-    });
     app.use('/' + id, express.static(path));
     // save that we opened this project
     localStorage.setItem('projects', JSON.stringify(projects));
-    // livereload
-    livereloadServer.watch(path);
     // load iframe
     iframeAdd(id);
   };
