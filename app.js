@@ -85,7 +85,8 @@ try {
 // the port will be in an advanded setting panel to avoid collision with existent servers
 var options = {
   host: '127.0.0.1',
-  port: 8123
+  port: 8123,
+  livereloadPort: 35729
 };
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
@@ -408,7 +409,7 @@ var projectOpen = function(path, name) {
     livereloadServer.watch(path);
     // add livereload scripts to the comic preview
     app.get('/' + id + '/', connectInject({
-      snippet: "\n<script>//<![CDATA[\ndocument.write('<script src=\"//" + options.host + ":35729/livereload.js?snipver=1\"><\\/script>')\n//]]></script>\n" + '\n<script>var myPath = \'' + path + '\';</script>\n<script src="/js/template.js"></script>'
+      snippet: '\n<script src=\"//' + options.host + ':' + options.livereloadPort + '/livereload.js?snipver=1\"></script>\n' + '\n<script>var myPath = \'' + path + '\';</script>\n<script src="/js/template.js"></script>'
     }));
     // mount folder
     app.use('/' + id, express.static(path));
