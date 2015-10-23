@@ -44,6 +44,13 @@ var ncp = require('ncp').ncp;
 var livereload = require('livereload');
 var connectInject = require('connect-inject');
 
+// settings
+var options = {
+  host: '127.0.0.1',
+  port: 8123,
+  livereloadPort: 35729
+};
+
 // server stuff
 var server;
 var sockets = {};
@@ -58,7 +65,7 @@ else {
 
 // livereload
 var livereloadConfig = {
-  // watchDir: path.join(process.cwd(), 'public')
+  port: options.livereloadPort
 };
 var livereloadServer;
 
@@ -83,11 +90,6 @@ try {
 
 // address of the created server
 // the port will be in an advanded setting panel to avoid collision with existent servers
-var options = {
-  host: '127.0.0.1',
-  port: 8123,
-  livereloadPort: 35729
-};
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
 // what do we save in local memory for each project?

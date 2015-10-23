@@ -1,3 +1,5 @@
+/* global LiveReload, myPath */
+
 LiveReload.connector.handlers._message = LiveReload.connector.handlers.message;
 
 LiveReload.connector.handlers.message = function(message) { 
@@ -5,4 +7,4 @@ LiveReload.connector.handlers.message = function(message) {
     return;
   }
   return LiveReload.connector.handlers._message.apply(this, arguments);
-}
+};
