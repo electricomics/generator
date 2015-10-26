@@ -31,6 +31,7 @@ for the JavaScript code in this page.
 // for debugging purposes
 var DEBUG = true;
 
+// npm modules
 var nwgui = require('nw.gui');
 var win = nwgui.Window.get();
 var express = require('express');
@@ -248,6 +249,69 @@ var multerUpload = multer({
 
 
 /**
+ * Create and start livereload server
+ */
+var livereloadStart = function() {
+  livereloadServer = livereload.createServer(livereloadConfig);
+  // api to unwatch folders to disable the auto reload on save
+  // at the moment it's defined here until it will be added to the node-livereload
+  // npm module - a pull request has already been sent
+  // https://github.com/napcs/node-livereload/pull/45
+  livereloadServer.unwatch = function(dirname) {
+    if (typeof dirname === 'string') {
+      dirname = [dirname];
+    }
+    return dirname.forEach((function(_this) {
+      return function(dir) {
+        return _this.walkTree(dir, function(err, filename) {
+          if (err) {
+            throw err;
+          }
+          return fs.unwatchFile(filename);
+        });
+      };
+    })(this));
+  };
+};
+
+
+/**
+ * Enable auto reload for the project
+ */
+var livereloadEnable = function(path) {
+  livereloadServer.watch(path);
+};
+
+
+/**
+ * Disable auto reload for the project
+ */
+var livereloadDisable = function(path) {
+  livereloadServer.unwatch(path);
+};
+
+
+/**
+ * Toogle auto reload for the project
+ * @param {string} id - Project id
+ * @param {boolean} status - True to enable auto reload
+ */
+var livereloadToggle = function(id, status) {
+  var path = projects[id].fsPath;
+  if (status == null) {
+    status = !projects[id].livereload;
+  }
+  projects[id].livereload = status;
+  if (status) {
+    livereloadEnable(path);
+  }
+  else {
+    livereloadDisable(path);
+  }
+};
+
+
+/**
  * Start the local server
  */
 var serverStart = function() {
@@ -262,7 +326,7 @@ var serverStart = function() {
     app.use(express.static(path.join(process.cwd(), 'public')));
 
     // add livereload server
-    livereloadServer = livereload.createServer(livereloadConfig);
+    livereloadStart();
 
     // all the projects will upload to the same url, but they will send their
     // project id into the query string to tell the server into which physical
@@ -408,7 +472,7 @@ var projectOpen = function(path, name) {
       };
     }
     // add path for livereload to watch
-    livereloadServer.watch(path);
+    livereloadEnable(path);
     // add livereload scripts to the comic preview
     app.get('/' + id + '/', connectInject({
       snippet: '\n<script src=\"//' + options.host + ':' + options.livereloadPort + '/livereload.js?snipver=1\"></script>\n' + '\n<script>var myPath = \'' + path + '\';</script>\n<script src="/js/template.js"></script>'
