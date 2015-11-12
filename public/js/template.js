@@ -8,3 +8,10 @@ LiveReload.connector.handlers.message = function(message) {
   }
   return LiveReload.connector.handlers._message.apply(this, arguments);
 };
+
+var originalFx = window.onload;
+
+window.onload = function() {
+  originalFx();
+  $('ec-curtains').trigger('click');
+};

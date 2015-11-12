@@ -259,18 +259,20 @@ var livereloadStart = function() {
 
 /**
  * Enable auto reload for the project
+ * @param {string} fsPath - Folder to watch
  */
-var livereloadEnable = function(path) {
-  livereloadServer.watcher.add(path);
+var livereloadEnable = function(fsPath) {
+  livereloadServer.watcher.add(fsPath);
 };
 
 
 /**
  * Disable auto reload for the project
+ * @param {string} fsPath - Folder to unwatch
  */
-var livereloadDisable = function(path) {
+var livereloadDisable = function(fsPath) {
   // todo fix the fact that I have to specify a file
-  livereloadServer.watcher.unwatch(path + '/index.html');
+  livereloadServer.watcher.unwatch(path.join(fsPath, 'index.html'));
 };
 
 
