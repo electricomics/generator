@@ -253,25 +253,7 @@ var multerUpload = multer({
  */
 var livereloadStart = function() {
   livereloadServer = livereload.createServer(livereloadConfig);
-  // api to unwatch folders to disable the auto reload on save
-  // at the moment it's defined here until it will be added to the node-livereload
-  // npm module - a pull request has already been sent
-  // https://github.com/napcs/node-livereload/pull/45
-  livereloadServer.unwatch = function(dirname) {
-    if (typeof dirname === 'string') {
-      dirname = [dirname];
-    }
-    return dirname.forEach((function(_this) {
-      return function(dir) {
-        return _this.walkTree(dir, function(err, filename) {
-          if (err) {
-            throw err;
-          }
-          return fs.unwatchFile(filename);
-        });
-      };
-    })(this));
-  };
+  livereloadServer.watch();
 };
 
 
@@ -279,7 +261,7 @@ var livereloadStart = function() {
  * Enable auto reload for the project
  */
 var livereloadEnable = function(path) {
-  livereloadServer.watch(path);
+  livereloadServer.watcher.add(path);
 };
 
 
@@ -287,7 +269,8 @@ var livereloadEnable = function(path) {
  * Disable auto reload for the project
  */
 var livereloadDisable = function(path) {
-  livereloadServer.unwatch(path);
+  // todo fix the fact that I have to specify a file
+  livereloadServer.watcher.unwatch(path + '/index.html');
 };
 
 
@@ -297,11 +280,12 @@ var livereloadDisable = function(path) {
  * @param {boolean} status - True to enable auto reload
  */
 var livereloadToggle = function(id, status) {
-  var path = projects[id].fsPath;
+  var projectId = id || currentProject;
+  var path = projects[projectId].fsPath;
   if (status == null) {
-    status = !projects[id].livereload;
+    status = !projects[projectId].livereload;
   }
-  projects[id].livereload = status;
+  projects[projectId].livereload = status;
   if (status) {
     livereloadEnable(path);
   }
@@ -745,6 +729,9 @@ window.addEventListener('message', function(e) {
   }
   if (msg.type === 'changed') {
     projectSaved(msg.iframe, msg.status);
+  }
+  if (msg.type === 'livereload') {
+    livereloadToggle(msg.iframe, msg.status);
   }
 }, false);
 

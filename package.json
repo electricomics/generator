@@ -13,7 +13,7 @@
     "archiver": "^0.15.0",
     "connect-inject": "^0.4.0",
     "express": "^4.12.0",
-    "livereload": "^0.3.7",
+    "livereload": "^0.4.0",
     "multer": "^1.0.3",
     "ncp": "^2.0.0"
   },
