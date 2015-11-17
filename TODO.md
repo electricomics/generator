@@ -13,3 +13,5 @@
 * Support for cover.png
 * When opening project, if folder doesn't exist, don't open anything
 * Drag and drop image on canvas area should be a way to upload it to the server
+* Add a field for url so people can give a reference to their website or original location or similar
+* Livereload feature
