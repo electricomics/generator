@@ -29,8 +29,9 @@ for the JavaScript code in this page.
 */
 
 // for debugging purposes
-var DEBUG = false;
+var DEBUG = true;
 
+// npm modules
 var nwgui = require('nw.gui');
 var win = nwgui.Window.get();
 var express = require('express');
@@ -41,6 +42,15 @@ var path = require('path');
 var fs = require('fs');
 var archiver = require('archiver');
 var ncp = require('ncp').ncp;
+var livereload = require('livereload');
+var connectInject = require('connect-inject');
+
+// settings
+var options = {
+  host: '127.0.0.1',
+  port: 8123,
+  livereloadPort: 35729
+};
 
 // server stuff
 var server;
@@ -53,6 +63,12 @@ if (DEBUG) {
 else {
   // win.maximize();
 }
+
+// livereload
+var livereloadConfig = {
+  port: options.livereloadPort
+};
+var livereloadServer;
 
 // hack to make keyboard shortcuts work (at least under Mac OS)
 // https://github.com/nwjs/nw.js/issues/2462
@@ -75,10 +91,6 @@ try {
 
 // address of the created server
 // the port will be in an advanded setting panel to avoid collision with existent servers
-var options = {
-  host: '127.0.0.1',
-  port: 8123
-};
 var serverUrl = 'http://' + options.host + ':' + options.port;
 
 // what do we save in local memory for each project?
@@ -237,6 +249,55 @@ var multerUpload = multer({
 
 
 /**
+ * Create and start livereload server
+ */
+var livereloadStart = function() {
+  livereloadServer = livereload.createServer(livereloadConfig);
+  livereloadServer.watch();
+};
+
+
+/**
+ * Enable auto reload for the project
+ * @param {string} fsPath - Folder to watch
+ */
+var livereloadEnable = function(fsPath) {
+  livereloadServer.watcher.add(fsPath);
+};
+
+
+/**
+ * Disable auto reload for the project
+ * @param {string} fsPath - Folder to unwatch
+ */
+var livereloadDisable = function(fsPath) {
+  // todo fix the fact that I have to specify a file
+  livereloadServer.watcher.unwatch(path.join(fsPath, 'index.html'));
+};
+
+
+/**
+ * Toogle auto reload for the project
+ * @param {string} id - Project id
+ * @param {boolean} status - True to enable auto reload
+ */
+var livereloadToggle = function(id, status) {
+  var projectId = id || currentProject;
+  var path = projects[projectId].fsPath;
+  if (status == null) {
+    status = !projects[projectId].livereload;
+  }
+  projects[projectId].livereload = status;
+  if (status) {
+    livereloadEnable(path);
+  }
+  else {
+    livereloadDisable(path);
+  }
+};
+
+
+/**
  * Start the local server
  */
 var serverStart = function() {
@@ -249,6 +310,9 @@ var serverStart = function() {
     // all environments
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
+
+    // add livereload server
+    livereloadStart();
 
     // all the projects will upload to the same url, but they will send their
     // project id into the query string to tell the server into which physical
@@ -393,6 +457,12 @@ var projectOpen = function(path, name) {
         saved: true
       };
     }
+    // add path for livereload to watch
+    livereloadEnable(path);
+    // add livereload scripts to the comic preview
+    app.get('/' + id + '/', connectInject({
+      snippet: '\n<script src=\"//' + options.host + ':' + options.livereloadPort + '/livereload.js?snipver=1\"></script>\n' + '\n<script>var myPath = \'' + path + '\';</script>\n<script src="/js/template.js"></script>'
+    }));
     // mount folder
     app.use('/' + id, express.static(path));
     // save that we opened this project
@@ -661,6 +731,9 @@ window.addEventListener('message', function(e) {
   }
   if (msg.type === 'changed') {
     projectSaved(msg.iframe, msg.status);
+  }
+  if (msg.type === 'livereload') {
+    livereloadToggle(msg.iframe, msg.status);
   }
 }, false);
 

@@ -772,6 +772,11 @@ $(document).on('change click', '#comic-pxratio-2', function() {
   saveLocalStorage();
 });
 
+$(document).on('change', '#live-reload', function() {
+  var status = $(this).prop('checked');
+  window.parent.postMessage('{"type": "livereload", "iframe": "' + LOCAL_STORAGE + '", "status": ' + status + '}', '*');
+});
+
 
 // panel
 if (useLocal && isFileReader) {
