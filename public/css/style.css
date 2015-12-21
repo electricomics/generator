@@ -22,8 +22,9 @@ li {
 }
 
 body {
-  background: #333;
-  color: #EEE;
+  background: #000 url(../img/Electricomics-bg.svg) no-repeat top left;
+  background-size: cover;
+  color: #FFF;
 }
 body, input, textarea, select, button {
   font-family: 'muli', Arial, sans-serif;
