@@ -34,7 +34,7 @@
 
   <div class="panels">
     <details open>
-      <summary>Settings</summary>
+      <summary><span>Settings</span></summary>
       <div>
         <label for="comic-name">Comic Name</label>
         <input type="text" id="comic-name">
@@ -62,7 +62,7 @@
     </details>
 
     <details open>
-      <summary>Metadata</summary>
+      <summary><span>Metadata</span></summary>
       <div>
         <label for="comic-summary">Summary</label>
         <textarea id="comic-summary" cols="30" rows="10"></textarea>
@@ -85,10 +85,14 @@
       </fieldset>
     </details>
 
-    <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">
-      <label for="panel-add" class="comic-button">Add Image<input type="file" id="panel-add" name="panelAdd" style="display:none;" value="Add Image" multiple accept="image/*"></label>
-      <input type="submit" id="panel-add-submit" value="Upload" style="display: none;">
-    </form>
+    <details open>
+      <summary><span>Images</span></summary>
+	  <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">
+        <label for="panel-add" class="comic-button">Add Image<input type="file" id="panel-add" name="panelAdd" style="display:none;" value="Add Image" multiple accept="image/*"></label>
+        <input type="submit" id="panel-add-submit" value="Upload" style="display: none;">
+      </form>
+	</details>
+	
     <ul id="panels-nav" class="panels-nav"></ul>
     
     <script type="text/template" id="panel-template">
