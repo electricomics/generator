@@ -232,6 +232,7 @@ select {
   padding: 10px 10px 0 10px;
   font-size: 0.8em;
   min-height: 31px;
+  position: relative;
 }
 
 .panels details div:last-child {
@@ -325,9 +326,10 @@ details[open] ~ .panels-nav {
   background-repeat: no-repeat;
   height: 24px;
   width: 24px;
-  margin-left: 51px;
-  display: inline-block;
-  /*display: none;*/
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 61px;
 }
 
 .panel-nav-resized {
@@ -336,8 +338,10 @@ details[open] ~ .panels-nav {
   height: 24px;
   width: 27px;
   cursor: default;
-  display: inline-block;
-  /*display: none;*/
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 95px;
 }
 
 /* pages */
