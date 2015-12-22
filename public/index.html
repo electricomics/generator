@@ -19,15 +19,15 @@
   <nav class="pages-nav">
     <!-- <span class="pages-nav-add" data-page="0">Add</span> -->
     <ul id="pages-nav" class="page-nav-wrapper"></ul>
-    <span class="pages-nav-add" data-page="-1"><span class="fa fa-file fa-2x addCenter"></span></span>
-    
+    <span class="pages-nav-add comic-button" data-page="-1">Add new step</span>
+
     <script type="text/template" id="page-template">
     <li class="page-nav js-page-nav">
       <input type="text" class="page-name">
-      <!--<span class="page-nav-add" title="Add page after this"><span class="fa fa-plus-circle"></span></span>
-      <span class="page-nav-clone" title="Clone this page"><span class="fa fa-clone"></span></span>-->
-      <span class="page-nav-remove" title="Delete page"><span class="fa fa-trash"></span></span>
-      <span class="page-nav-handle" title="Move page"><span class="fa fa-arrows-h fa-lg"></span></span>
+      <span class="page-nav-add add-button" title="Add page after this">+</span>
+      <span class="page-nav-clone add-button" title="Clone this page"><span class="fa fa-clone"></span></span>
+      <span class="page-nav-remove remove-button" title="Delete page">-</span>
+      <span class="page-nav-handle" title="Move page"><span class="drag-icon"></span></span>
     </li>
     </script>
   </nav>
@@ -57,7 +57,7 @@
         <label>height <input type="number" min="1" id="comic-height"></label>
       </div>
       <div>
-        <input type="button" class="comic-button" id="comic-clear" value="Clear">
+        <input type="button" class="comic-button half-width" id="comic-clear" value="Clear">
       </div>
     </details>
 
@@ -79,8 +79,8 @@
         <div class="comic-creator-line">
           <label>Name <input type="text" class="comic-creator-name"></label>
           <label>Role <input type="text" class="comic-creator-role"></label>
-          <input type="button" class="comic-creator-add" value="+">
-          <input type="button" class="comic-creator-remove" value="-">
+          <input type="button" class="comic-creator-add add-button" value="+">
+          <input type="button" class="comic-creator-remove remove-button" value="-">
         </div>
       </fieldset>
     </details>
@@ -88,13 +88,12 @@
     <details open>
       <summary><span>Images</span></summary>
 	  <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">
-        <label for="panel-add" class="comic-button">Add Image<input type="file" id="panel-add" name="panelAdd" style="display:none;" value="Add Image" multiple accept="image/*"></label>
-        <input type="submit" id="panel-add-submit" value="Upload" style="display: none;">
+        <label for="panel-add" class="comic-button full-width">Add Image<input type="file" id="panel-add" name="panelAdd" style="display:none;" value="Add Image" multiple accept="image/*"></label>
+        <input type="submit" id="panel-add-submit" class="comic-button full-width" value="Upload" style="display: none;">
       </form>
+	  <ul id="panels-nav" class="panels-nav"></ul>
 	</details>
 	
-    <ul id="panels-nav" class="panels-nav"></ul>
-    
     <script type="text/template" id="panel-template">
       <li class="panel">
         <span class="panel-nav-handle" title="Reorder image"><span class="fa fa-arrows-v"></span></span>
@@ -106,7 +105,9 @@
         <input type="hidden" readonly class="panel-id">
         <input type="hidden" class="panel-w-natural">
         <input type="hidden" class="panel-h-natural">
-        <input type="text" readonly class="panel-name">
+		<div>
+		  <input type="text" readonly class="panel-name">
+		</div>
         <div>
           <label>width <input type="number" min="1" class="panel-w"></label>
         </div>
@@ -122,9 +123,13 @@
         <div>
           <label>z-index <input type="number" min="1" class="panel-z"></label>
         </div>
-        <span class="panel-nav-remove" title="Delete image"><span class="fa fa-trash"></span></span>
-        <span class="panel-nav-original" title="Restore original size"><span class="fa fa-arrows-alt"></span></span>
-        <span class="panel-nav-resized" title="This image has been resized"><span class="fa fa-warning"></span></span>
+        <div>
+		  <span class="panel-nav-remove comic-button full-width" title="Delete image">Clear image</span>
+		</div>
+		<div>
+          <span class="panel-nav-original" title="Restore original size"></span>
+          <span class="panel-nav-resized" title="This image has been resized"></span>
+		</div>
       </li>
     </script>
   </div>
