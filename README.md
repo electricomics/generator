@@ -22,6 +22,5 @@ Until we produce some better instructions [here's a great article](http://danger
 - Download the source or clone the github repo
 - Install NodeJS from https://nodejs.org/
 - Install the required modules: _npm install_ from the projects folder
-- Install Node Webkit: _npm install nw -g_
-- From the electricomics-generator project folder run _nw_
+- From the "generator" project folder run _npm start_
 
