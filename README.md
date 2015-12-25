@@ -7,7 +7,7 @@ The intention is to build from here to create the all singing Electricomic edito
 The Releases tab contains prebuilt binaries for Windows and OS X. Linux users should be able to run from the **Running from source** section below.
 
 # Getting Started
-Until we produce some better instructions [here's a great article](http://dangergeekuk.blogspot.co.uk/2015/09/how-to-make-electricomic.html) by Tim West on getting started with the Generator
+Until we produce some better instructions, go to the [Releases page] and download the release made for your operating system. Also, [here's a great article](http://dangergeekuk.blogspot.co.uk/2015/09/how-to-make-electricomic.html) by Tim West on getting started with the Generator.
 
 # Generator Basics
 - You can Create, Open, Save and Close projects. A Project contains all the files needed for an Electricomic. When a project is open you can preview it or examine the generated files.
