@@ -87,12 +87,12 @@
 
     <details open>
       <summary><span>Images</span></summary>
-	  <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">
+	    <form id="form-panel-add" action="/upload" enctype="multipart/form-data" method="post">
         <label for="panel-add" class="comic-button full-width">Add Image<input type="file" id="panel-add" name="panelAdd" style="display:none;" value="Add Image" multiple accept="image/*"></label>
         <input type="submit" id="panel-add-submit" class="comic-button full-width" value="Upload" style="display: none;">
       </form>
-	  <ul id="panels-nav" class="panels-nav"></ul>
-	</details>
+	    <ul id="panels-nav" class="panels-nav"></ul>
+	  </details>
 	
     <script type="text/template" id="panel-template">
       <li class="panel">
@@ -105,9 +105,9 @@
         <input type="hidden" readonly class="panel-id">
         <input type="hidden" class="panel-w-natural">
         <input type="hidden" class="panel-h-natural">
-		<div>
-		  <input type="text" readonly class="panel-name">
-		</div>
+		    <div>
+		      <input type="text" readonly class="panel-name">
+		    </div>
         <div>
           <label>width <input type="number" min="1" class="panel-w"></label>
         </div>
@@ -124,12 +124,12 @@
           <label>z-index <input type="number" min="1" class="panel-z"></label>
         </div>
         <div>
-		  <span class="panel-nav-remove comic-button full-width" title="Delete image">Clear image</span>
-		</div>
-		<div>
+		      <span class="panel-nav-remove comic-button full-width" title="Delete image">Clear image</span>
+		    </div>
+		    <div class="resize-icons-wrapper">
           <span class="panel-nav-original" title="Restore original size"></span>
           <span class="panel-nav-resized" title="This image has been resized"></span>
-		</div>
+		    </div>
       </li>
     </script>
   </div>

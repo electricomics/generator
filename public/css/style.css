@@ -4,6 +4,10 @@
           box-sizing: border-box;
 }
 html,
+body {
+  overflow:hidden;
+}
+html,
 body,
 h1,
 ul,
@@ -22,7 +26,9 @@ li {
 }
 
 body {
-  background-image: url(../img/Electricomics-bg.svg);
+  /* MM: Background exports wrongs colour from sketch as svg for unknown reason */
+  /*background-image: url(../img/Electricomics-Generator-bg.svg);*/
+  background-image: url(../img/Electricomics-Generator-bg.png);
   background-repeat: no-repeat;
   background-position: 0 0;
   background-size: cover;
@@ -81,7 +87,7 @@ input[type=text] {
 
 input[type=number] {
   margin-left: 5px;
-  width: 50px;
+  width: 60px;
   float: right;
   text-align: center;
 }
@@ -181,10 +187,11 @@ select {
 .panels {
   bottom: 0;
   left: 0;
-  padding: 0 10px;
+  padding: 0 0 10px 10px;
   position: absolute;
   top: 70px;
   width: 240px;
+  overflow-y: auto;
 }
 
 .panels details {
@@ -193,6 +200,7 @@ select {
   background: #000;
   border: 2px solid #FFF;
   margin-top: 10px;
+  width: 220px;
 }
 
 .panels details:first-child {
@@ -302,10 +310,6 @@ details[open] ~ .panels-nav {
   padding-left: 25px;
 }
 
-.panel:last-child {
-  margin-bottom: 23px;
-}
-
 .panels detail .panel div {
   padding-left: 0;
   padding-right: 0;
@@ -321,15 +325,17 @@ details[open] ~ .panels-nav {
   height: 50px;
 }
 
+.panels details div.resize-icons-wrapper {
+  min-height: 0px;
+}
+
 .panel-nav-original {
   background-image: url(../img/resize-image.svg);
   background-repeat: no-repeat;
   height: 24px;
   width: 24px;
   display: none;
-  position: absolute;
-  top: 10px;
-  left: 61px;
+  margin-left: 55px;
 }
 
 .panel-nav-resized {
@@ -339,9 +345,7 @@ details[open] ~ .panels-nav {
   width: 27px;
   cursor: default;
   display: none;
-  position: absolute;
-  top: 10px;
-  left: 95px;
+  margin-left: 5px;
 }
 
 /* pages */
@@ -421,7 +425,6 @@ input[type=text].page-name {
 .page-nav-handle,
 .panel-nav-handle {
   position: absolute;
-  background: #000;
   color: #FFF;
   cursor: move;
   text-align: center;
@@ -435,6 +438,7 @@ input[type=text].page-name {
 }
 
 .page-nav-handle {
+  background: #000;
   padding-top: 2px;
   height: 25px;
   width: 100px;
@@ -450,6 +454,7 @@ input[type=text].page-name {
 }
 
 .panel-nav-handle {
+  background: transparent;
   width: 25px;
   height: 100%;
 }
@@ -537,6 +542,9 @@ input[type=text].page-name {
 .show {
   display: block;
 }
+.show-icon {
+  display: inline-block;
+}
 .overlay-close {
   color: #000;
   padding: 0 5px;
@@ -581,7 +589,8 @@ input[type=text].page-name {
 /* Scrollbars */
 
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 /* Track */

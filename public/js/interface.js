@@ -164,12 +164,12 @@ var showResize = function(panelId) {
   var wNatural = $panelWrapper.find('.panel-w-natural').val() * 1;
   var hNatural = $panelWrapper.find('.panel-h-natural').val() * 1;
   if (w === wNatural && h === hNatural) {
-    $resized.removeClass('show');
-    $original.removeClass('show');
+    $resized.removeClass('show-icon');
+    $original.removeClass('show-icon');
   }
   else {
-    $resized.addClass('show');
-    $original.addClass('show');
+    $resized.addClass('show-icon');
+    $original.addClass('show-icon');
   }
 };
 
