@@ -459,6 +459,11 @@ input[type=text].page-name {
   height: 100%;
 }
 
+.panel:last-child .panel-nav-handle {
+  border-bottom: 2px solid transparent;
+  border-bottom-left-radius: 30px;
+}
+
 .panel-nav-handle .fa-arrows-v {
   position: absolute;
   top: 45%;
