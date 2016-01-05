@@ -146,9 +146,16 @@ var saveLocalStorage = function() {
 };
 
 var realSizeImg = function($el) {
-  var realImg = $el.find('img').get(0);
+  /* MM: calling the function from imgLoaded need to pass directly the image not the containing div */
+  if ($el.get(0).nodeName === "IMG") {
+    var realImg = $el.get(0);
+  }
+  else {
+    var realImg = $el.find('img').get(0);
+  } 
   var w = realImg.naturalWidth;
   var h = realImg.naturalHeight;
+  //console.log('realSizeImg. naturalWidth: '+w+', naturalHeight: '+h+', realImg', realImg)
   return {
     w: w,
     h: h
@@ -163,6 +170,7 @@ var showResize = function(panelId) {
   var h = $panelWrapper.find('.panel-h').val() * 1;
   var wNatural = $panelWrapper.find('.panel-w-natural').val() * 1;
   var hNatural = $panelWrapper.find('.panel-h-natural').val() * 1;
+  //console.log('showResize. wNatural: '+wNatural+', hNatural: '+hNatural+', w: '+w+', h: '+h);
   if (w === wNatural && h === hNatural) {
     $resized.removeClass('show-icon');
     $original.removeClass('show-icon');
@@ -253,10 +261,6 @@ var addImgFile = function(imgFile, pos) {
   
   newImg.w = w;
   newImg.h = h;
-
-  var realSize = realSizeImg($img);
-  newImg.naturalW = realSize.w;
-  newImg.naturalH = realSize.h;
 
   var newPanel = myComic.addPanel(CURRENT_PAGE, newImg);
   newImg.pageN = newPanel.pageN;
@@ -352,23 +356,26 @@ var addPanel = function(pageN, panelN) {
 };
 
 var imgLoaded = function(obj, $img) {
-  console.log('loaded', obj, $img);
+  //console.log('imgLoaded', obj, $img);
   var $div = $('#' + obj.id);
-  var w = 0;
-  var h = 0;
   var $panelWrapper = $('#panel' + obj.id);
   var $w = $panelWrapper.find('.panel-w');
   var $h = $panelWrapper.find('.panel-h');
-  
-  w = $img.get(0).naturalWidth;
-  h = $img.get(0).naturalHeight;
-  
-  $div.css('width', w + 'px');
-  $div.css('height', h + 'px');
 
-  $w.val(w);
+  // MM: this code used to be in addImgFile but natural size only exists when image is loaded.
+  var realSize = realSizeImg($img);
+  obj.naturalW = realSize.w;
+  obj.naturalH = realSize.h;
+  // this hidden input is used as reference to decide whether to show the resize icon or not in showResize
+  $panelWrapper.find('.panel-w-natural').val(obj.naturalW);
+  $panelWrapper.find('.panel-h-natural').val(obj.naturalH);
+  
+  $div.css('width', realSize.w + 'px');
+  $div.css('height', realSize.h + 'px');
+
+  $w.val(realSize.w);
   $w.trigger('change');
-  $h.val(h);
+  $h.val(realSize.h);
   $h.trigger('change');
   saveLocalStorage();
 };
@@ -393,7 +400,7 @@ var appendImg = function(obj) {
   // when we drop a new image on the artboard we don't know its size yet,
   // we need to append it first and then find it out
   if (obj.w == null || obj.h == null) {
-    $img.one('load', function(e) {
+    $img.on('load', function(e) {
       imgLoaded(obj, $(this), e);
     });
   }
@@ -421,7 +428,7 @@ var addImgEvent = function($img) {
     aspectRatio: true,
     handles: 'all',
     stop: function(event, ui) {
-      // console.log(ui.size.width, ui.size.height);
+      //console.log('image resize: W: '+ui.size.width+', H: '+ ui.size.height);
       $w.val(ui.size.width);
       $w.trigger('change');
       $h.val(ui.size.height);
@@ -869,6 +876,7 @@ $(document).on('click', '.panel-nav-original', function(e) {
   var $h = $panelWrapper.find('.panel-h');
   var w = el.naturalWidth;
   var h = el.naturalHeight;
+  //console.log('resize code: naturalWidth: '+w+', naturalHeight: '+h+', image:', el);
   $w.val(w).trigger('change');
   $h.val(h).trigger('change');
 });
