@@ -83,6 +83,9 @@ var $textareaInputButton = $('#textarea-input-button');
 var CURRENT_PAGE = 1;
 var LOCAL_STORAGE = 'electricomic';
 
+
+/* --- Conditional Code for NodeWebkitServer --- */
+
 if (useNodeWebkitServer) {
   if (window.location.search !== '') {
     var searchParams = (function() {
@@ -116,6 +119,9 @@ if (useNodeWebkitServer) {
   })();
 }
 
+/* --- END Conditional Code for NodeWebkitServer --- */
+
+
 if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
   var filereaderSWFopt = {
     filereader: 'js/lib/FileReader/filereader.swf'
@@ -126,6 +132,9 @@ if (typeof isLteIE9 !== 'undefined' && isLteIE9) {
 var ID = function() {
   return '_' + Math.random().toString(36).substr(2, 9);
 };
+
+
+/* --- Local Storage Code --- */
 
 var storage = new Storage(LOCAL_STORAGE);
 
@@ -145,37 +154,14 @@ var saveLocalStorage = function() {
   }
 };
 
-var realSizeImg = function($el) {
-  var realImg = $el.find('img').get(0);
-  var w = realImg.naturalWidth;
-  var h = realImg.naturalHeight;
-  return {
-    w: w,
-    h: h
-  };
-};
-
-var showResize = function(panelId) {
-  var $panelWrapper = $('#panel' + panelId);
-  var $resized = $panelWrapper.find('.panel-nav-resized');
-  var $original = $panelWrapper.find('.panel-nav-original');
-  var w = $panelWrapper.find('.panel-w').val() * 1;
-  var h = $panelWrapper.find('.panel-h').val() * 1;
-  var wNatural = $panelWrapper.find('.panel-w-natural').val() * 1;
-  var hNatural = $panelWrapper.find('.panel-h-natural').val() * 1;
-  if (w === wNatural && h === hNatural) {
-    $resized.removeClass('show');
-    $original.removeClass('show');
-  }
-  else {
-    $resized.addClass('show');
-    $original.addClass('show');
-  }
-};
-
 // var clearLocalStorage = function() {
 //   storage.clear();
 // };
+
+/* --- END Local Storage Code --- */
+
+
+/* --- Conditional Code for FileReader --- */
 
 if (isFileReader) {
   var handleFileSelect = function(e) {
@@ -224,6 +210,46 @@ if (isFileReader) {
 else {
   // TODO: fallback for FileReader
 }
+/* --- END Conditional Code for FileReader --- */
+
+
+/* --- Image related functions --- */
+
+var realSizeImg = function($el) {
+  /* MM: calling the function from imgLoaded need to pass directly the image not the containing div */
+  if ($el.get(0).nodeName === "IMG") {
+    var realImg = $el.get(0);
+  }
+  else {
+    var realImg = $el.find('img').get(0);
+  } 
+  var w = realImg.naturalWidth;
+  var h = realImg.naturalHeight;
+  //console.log('realSizeImg. naturalWidth: '+w+', naturalHeight: '+h+', realImg', realImg)
+  return {
+    w: w,
+    h: h
+  };
+};
+
+var showResize = function(panelId) {
+  var $panelWrapper = $('#panel' + panelId);
+  var $resized = $panelWrapper.find('.panel-nav-resized');
+  var $original = $panelWrapper.find('.panel-nav-original');
+  var w = $panelWrapper.find('.panel-w').val() * 1;
+  var h = $panelWrapper.find('.panel-h').val() * 1;
+  var wNatural = $panelWrapper.find('.panel-w-natural').val() * 1;
+  var hNatural = $panelWrapper.find('.panel-h-natural').val() * 1;
+  //console.log('showResize. wNatural: '+wNatural+', hNatural: '+hNatural+', w: '+w+', h: '+h);
+  if (w === wNatural && h === hNatural) {
+    $resized.removeClass('show-icon');
+    $original.removeClass('show-icon');
+  }
+  else {
+    $resized.addClass('show-icon');
+    $original.addClass('show-icon');
+  }
+};
 
 var addImgFile = function(imgFile, pos) {
   var zIndexes = getZIndexes('');
@@ -231,32 +257,54 @@ var addImgFile = function(imgFile, pos) {
   if (biggest == null) {
     biggest = 0;
   }
+
+  var comicData = myComic.getComic();
+  var xPercent = pos.x * 100 / comicData.screenW;
+  var yPercent = pos.y * 100 / comicData.screenH;
+
   var newImg = {
     id: ID(),
     src: imgFile.src,
     x: pos.x,
     y: pos.y,
+    xPercent: xPercent,
+    yPercent: yPercent,
     z: biggest + 1,
     name: imgFile.name
   };
   var $img = appendImg(newImg);
-  var w = $img.width();
+
+  console.log('addImgFile. x: '+pos.x+', y: '+pos.y+', xPercent: '+xPercent+', yPercent: '+yPercent);
+
+  /* MM: I think this whole W/H related code is actually useless until the image is loaded and should be move there and removed here altogether */
+
+  /*var w = $img.width();
   var h = $img.height();
 
   // TODO: make it flexible for future pixel ratio
   if ($comicPxRatio2.is(':checked')) {
     w = w / 2;
     h = h / 2;
-    $img.css('width', w + 'px');
-    $img.css('height', h + 'px');
+    // MM: should this CSS be % and changed in all cases regardless of ratio ?
+    //$img.css('width', w + 'px');
+    //$img.css('height', h + 'px');
   }
-  
+
+  var wPercent = w * 100 / comicData.screenW;
+  var hPercent = h * 100 / comicData.screenH;
+
   newImg.w = w;
   newImg.h = h;
+  newImg.wPercent = wPercent;
+  newImg.hPercent = hPercent;
 
-  var realSize = realSizeImg($img);
-  newImg.naturalW = realSize.w;
-  newImg.naturalH = realSize.h;
+  console.log('addImgFile. w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent);
+
+  // MM: should this CSS be % and changed in all cases regardless of ratio ?
+  $img.css('width', wPercent + '%');
+  $img.css('height', hPercent + '%');*/
+
+/* MM: END useless H/W code */
 
   var newPanel = myComic.addPanel(CURRENT_PAGE, newImg);
   newImg.pageN = newPanel.pageN;
@@ -275,100 +323,27 @@ var addRelativeImg = function(obj, pos) {
   addImgFile(imgFile, pos);
 };
 
-// var createHtml = function(save) {
-//   var obj = myComic.returnJSON();
-//   obj.save = save || false;
-//   var source = $exportTemplate;
-//   var template = Handlebars.compile(source);
-//   var rendered = template(obj);
-//   return rendered;
-// };
-
-var createTemplateContent = function(save) {
-  var obj = myComic.returnJSON();
-  obj.save = save || false;
-  var template = {};
-  var rendered = {};
-  for (var i = 0; i < templateFiles.length; i++) {
-    template[ templateFiles[i] ] = Handlebars.compile(templateFilesContent[ templateFiles[i] ]);
-    rendered[ templateFiles[i] ] = template[ templateFiles[i] ](obj);
-  }
-  return rendered;
-};
-
-var clearArtboard = function() {
-  $artboard.html('');
-};
-
-var clearPanelsNav = function() {
-  $panelsNav.html('');
-};
-
-var clearPagesNav = function() {
-  $pagesNav.html('');
-};
-
-var addPageNav = function(index) {
-  var $li = $pageTemplate.clone();
-  $li.attr('id', 'page-' + index)
-    .attr('data-page', index);
-  if ($pagesNav.is(':empty')) {
-    $pagesNav.append($li);
-  }
-  else {
-    $pagesNav.find('li:eq(' + (index - 2) + ')').after($li);
-  }
-  var name = myComic.getPageName(index);
-  if (name) {
-    $li.find('.page-name').val(name);
-  }
-};
-
-var loadPage = function(pageN) {
-  CURRENT_PAGE = pageN;
-  clearArtboard();
-  clearPanelsNav();
-  loadPanels(pageN);
-  $('.page-nav.selected').removeClass('selected');
-  $('#page-' + CURRENT_PAGE).addClass('selected');
-};
-
-var loadPanels = function(pageN) {
-  var page = myComic.getPage(pageN);
-  for (var i = 1; i <= page.panelsLen; i++) {
-    addPanel(pageN, i);
-  }
-};
-
-var addPanel = function(pageN, panelN) {
-  var panel = myComic.getPanelByIndex(pageN, panelN);
-  var $img = appendImg(panel);
-  var realSize = realSizeImg($img);
-  panel.naturalW = realSize.w;
-  panel.naturalH = realSize.h;
-  addPanelForm(panel);
-  addImgEvent($img);
-  showResize(panel.id);
-};
-
 var imgLoaded = function(obj, $img) {
-  console.log('loaded', obj, $img);
+  //console.log('imgLoaded', obj, $img);
   var $div = $('#' + obj.id);
-  var w = 0;
-  var h = 0;
   var $panelWrapper = $('#panel' + obj.id);
   var $w = $panelWrapper.find('.panel-w');
   var $h = $panelWrapper.find('.panel-h');
-  
-  w = $img.get(0).naturalWidth;
-  h = $img.get(0).naturalHeight;
-  
-  $div.css('width', w + 'px');
-  $div.css('height', h + 'px');
 
-  $w.val(w);
+  // MM: this code used to be in addImgFile but natural size only exists when image is loaded.
+  var realSize = realSizeImg($img);
+  obj.naturalW = realSize.w;
+  obj.naturalH = realSize.h;
+  // this hidden input is used as reference to decide whether to show the resize icon or not in showResize
+  $panelWrapper.find('.panel-w-natural').val(obj.naturalW);
+  $panelWrapper.find('.panel-h-natural').val(obj.naturalH);
+  
+  $div.css('width', realSize.w + 'px');
+  $div.css('height', realSize.h + 'px');
+
+  $w.val(realSize.w);
   $w.trigger('change');
-  $h.val(h);
+  $h.val(realSize.h);
   $h.trigger('change');
   saveLocalStorage();
 };
@@ -393,7 +368,7 @@ var appendImg = function(obj) {
   // when we drop a new image on the artboard we don't know its size yet,
   // we need to append it first and then find it out
   if (obj.w == null || obj.h == null) {
-    $img.one('load', function(e) {
+    $img.on('load', function(e) {
       imgLoaded(obj, $(this), e);
     });
   }
@@ -421,7 +396,7 @@ var addImgEvent = function($img) {
     aspectRatio: true,
     handles: 'all',
     stop: function(event, ui) {
-      // console.log(ui.size.width, ui.size.height);
+      //console.log('image resize: W: '+ui.size.width+', H: '+ ui.size.height);
       $w.val(ui.size.width);
       $w.trigger('change');
       $h.val(ui.size.height);
@@ -440,43 +415,53 @@ var addImgEvent = function($img) {
   });
 };
 
-var addCreatorLine = function($el, v) {
-  var $parent = $el.closest('.comic-creator-line');
-  var $newEl = $comicCreatorLine.clone();
-  $newEl.find('input[text]').val('');
-  if (v) {
-    $newEl.find('.comic-creator-name').val(v.name);
-    $newEl.find('.comic-creator-role').val(v.role);
+var updateImg = function(id, what) {
+  var $el = $('#' + id);
+  // wrapper created by jqueryUI
+  var $parEl = $el.closest('.ui-wrapper');
+  if (what.w != null) {
+    $el.css('width', what.w + 'px');
+    $parEl.css('width', what.w + 'px');
   }
-  $parent.after($newEl);
-};
-var removeCreatorLine = function($el) {
-  var $parent = $el.closest('.comic-creator-line');
-  // debugger;
-  if ($('.comic-creator-line').length === 1) {
-    addCreatorLine($el);
+  if (what.h != null) {
+    $el.css('height', what.h + 'px');
+    $parEl.css('height', what.h + 'px');
   }
-  $parent.remove();
-};
-var loadCreators = function(arr) {
-  var $el = $('.comic-creator-name');
-  var $parent = $el.closest('.comic-creator-line');
-  $parent.find('.comic-creator-name').val(arr[0].name);
-  $parent.find('.comic-creator-role').val(arr[0].role);
-  for (var i = arr.length - 1; i > 0; i--) {
-    addCreatorLine($el, arr[i]);
+  if (what.x != null) {
+    $el.css('left', what.x + 'px');
+    $parEl.css('left', what.x + 'px');
+  }
+  if (what.y != null) {
+    $el.css('top', what.y + 'px');
+    $parEl.css('top', what.y + 'px');
+  }
+  if (what.z != null) {
+    $el.css('z-index', what.z);
+    $parEl.css('z-index', what.z);
   }
 };
-var getCreators = function() {
-  var lines = $('.comic-creator-line');
-  var arr = [];
-  for (var i = 0; i < lines.length; i++) {
-    arr.push({
-      name: lines.eq(i).find('.comic-creator-name').val(),
-      role: lines.eq(i).find('.comic-creator-role').val()
-    });
+
+/* --- END Image related functions --- */
+
+
+/* --- Panel related functions --- */
+
+var loadPanels = function(pageN) {
+  var page = myComic.getPage(pageN);
+  for (var i = 1; i <= page.panelsLen; i++) {
+    addPanel(pageN, i);
   }
-  return arr;
+};
+
+var addPanel = function(pageN, panelN) {
+  var panel = myComic.getPanelByIndex(pageN, panelN);
+  var $img = appendImg(panel);
+  var realSize = realSizeImg($img);
+  panel.naturalW = realSize.w;
+  panel.naturalH = realSize.h;
+  addPanelForm(panel);
+  addImgEvent($img);
+  showResize(panel.id);
 };
 
 var addPanelForm = function(obj) {
@@ -507,39 +492,153 @@ var addPanelForm = function(obj) {
   $panelsNav.append($panel);
 };
 
+var clearPanelsNav = function() {
+  $panelsNav.html('');
+};
+
+var panelInfo = function(el) {
+  var $el = $(el);
+  var $panelWrapper = $el.closest('.panel');
+  var id = $panelWrapper.find('.panel-id').val();
+  var pageN = $panelWrapper.find('.panel-page').val();
+  var panelN = $panelWrapper.find('.panel-index').val();
+  return {
+    id: id,
+    pageN: pageN,
+    panelN: panelN
+  };
+};
+
+/* --- END Panel related functions --- */
+
+
+/* --- Page related functions --- */
+
+var clearPagesNav = function() {
+  $pagesNav.html('');
+};
+
+var addPageNav = function(index) {
+  var $li = $pageTemplate.clone();
+  $li.attr('id', 'page-' + index)
+    .attr('data-page', index);
+  if ($pagesNav.is(':empty')) {
+    $pagesNav.append($li);
+  }
+  else {
+    $pagesNav.find('li:eq(' + (index - 2) + ')').after($li);
+  }
+  var name = myComic.getPageName(index);
+  if (name) {
+    $li.find('.page-name').val(name);
+  }
+};
+
+var loadPage = function(pageN) {
+  CURRENT_PAGE = pageN;
+  clearArtboard();
+  clearPanelsNav();
+  loadPanels(pageN);
+  $('.page-nav.selected').removeClass('selected');
+  $('#page-' + CURRENT_PAGE).addClass('selected');
+};
+
+var loadPages = function(pagesLen) {
+  clearPagesNav();
+  for (var i = 0; i < pagesLen; i++) {
+    var c = i + 1;
+    addPageNav(c);
+  }
+};
+
+var pageInfo = function(el) {
+  var $el = $(el);
+  var $pageWrapper = $el.closest('.page-nav');
+  var pageN = $pageWrapper.data('page') * 1;
+  return pageN;
+};
+
+/* --- END Page related functions --- */
+
+
+/* --- Creator related functions --- */
+
+var addCreatorLine = function($el, v) {
+  var $parent = $el.closest('.comic-creator-line');
+  var $newEl = $comicCreatorLine.clone();
+  $newEl.find('input[text]').val('');
+  if (v) {
+    $newEl.find('.comic-creator-name').val(v.name);
+    $newEl.find('.comic-creator-role').val(v.role);
+  }
+  $parent.after($newEl);
+};
+
+var removeCreatorLine = function($el) {
+  var $parent = $el.closest('.comic-creator-line');
+  // debugger;
+  if ($('.comic-creator-line').length === 1) {
+    addCreatorLine($el);
+  }
+  $parent.remove();
+};
+
+var loadCreators = function(arr) {
+  var $el = $('.comic-creator-name');
+  var $parent = $el.closest('.comic-creator-line');
+  $parent.find('.comic-creator-name').val(arr[0].name);
+  $parent.find('.comic-creator-role').val(arr[0].role);
+  for (var i = arr.length - 1; i > 0; i--) {
+    addCreatorLine($el, arr[i]);
+  }
+};
+
+var getCreators = function() {
+  var lines = $('.comic-creator-line');
+  var arr = [];
+  for (var i = 0; i < lines.length; i++) {
+    arr.push({
+      name: lines.eq(i).find('.comic-creator-name').val(),
+      role: lines.eq(i).find('.comic-creator-role').val()
+    });
+  }
+  return arr;
+};
+
+/* --- END Creator related functions --- */
+
+
+// var createHtml = function(save) {
+//   var obj = myComic.returnJSON();
+//   obj.save = save || false;
+//   var source = $exportTemplate;
+//   var template = Handlebars.compile(source);
+//   var rendered = template(obj);
+//   return rendered;
+// };
+
+var createTemplateContent = function(save) {
+  var obj = myComic.returnJSON();
+  obj.save = save || false;
+  var template = {};
+  var rendered = {};
+  for (var i = 0; i < templateFiles.length; i++) {
+    template[ templateFiles[i] ] = Handlebars.compile(templateFilesContent[ templateFiles[i] ]);
+    rendered[ templateFiles[i] ] = template[ templateFiles[i] ](obj);
+  }
+  return rendered;
+};
+
+var clearArtboard = function() {
+  $artboard.html('');
+};
+
 var updateScreen = function() {
   var w = $comicWidth.val();
   var h = $comicHeight.val();
   $artboard.css('width', w + 'px');
   $artboard.css('height', h + 'px');
 };
-
-var updateImg = function(id, what) {
-  var $el = $('#' + id);
-  // wrapper created by jqueryUI
-  var $parEl = $el.closest('.ui-wrapper');
-  if (what.w != null) {
-    $el.css('width', what.w + 'px');
-    $parEl.css('width', what.w + 'px');
-  }
-  if (what.h != null) {
-    $el.css('height', what.h + 'px');
-    $parEl.css('height', what.h + 'px');
-  }
-  if (what.x != null) {
-    $el.css('left', what.x + 'px');
-    $parEl.css('left', what.x + 'px');
-  }
-  if (what.y != null) {
-    $el.css('top', what.y + 'px');
-    $parEl.css('top', what.y + 'px');
-  }
-  if (what.z != null) {
-    $el.css('z-index', what.z);
-    $parEl.css('z-index', what.z);
-  }
-};
-
 
 var loadComic = function() {
   var comicData = myComic.getComic();
@@ -558,33 +657,7 @@ var loadComic = function() {
   loadPage(CURRENT_PAGE);
 };
 
-var loadPages = function(pagesLen) {
-  clearPagesNav();
-  for (var i = 0; i < pagesLen; i++) {
-    var c = i + 1;
-    addPageNav(c);
-  }
-};
 
-var panelInfo = function(el) {
-  var $el = $(el);
-  var $panelWrapper = $el.closest('.panel');
-  var id = $panelWrapper.find('.panel-id').val();
-  var pageN = $panelWrapper.find('.panel-page').val();
-  var panelN = $panelWrapper.find('.panel-index').val();
-  return {
-    id: id,
-    pageN: pageN,
-    panelN: panelN
-  };
-};
-
-var pageInfo = function(el) {
-  var $el = $(el);
-  var $pageWrapper = $el.closest('.page-nav');
-  var pageN = $pageWrapper.data('page') * 1;
-  return pageN;
-};
 
 
 // page
@@ -754,12 +827,16 @@ $(document).on('click', '.comic-creator-line .comic-creator-add', function() {
 });
 
 $(document).on('change keyup', '#comic-width', function() {
+  console.log('!!! COMIC WIDTH CHANGED !!!');
+  // TODO: triggger to recalculate all % in existing images and panels
   myComic.updateScreen(this.value);
   updateScreen();
   saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-height', function() {
+  console.log('!!! COMIC HEIGHT CHANGED !!!');
+  // TODO: triggger to recalculate all % in existing images and panels
   myComic.updateScreen(null, this.value);
   updateScreen();
   saveLocalStorage();
@@ -773,7 +850,8 @@ $(document).on('change click', '#comic-pxratio-2', function() {
 });
 
 
-// panel
+/* --- Panel: conditional code FileReader OR Server --- */
+
 if (useLocal && isFileReader) {
   $('#panel-add').on('change', function(e) {
     var files = e.target.files;
@@ -836,6 +914,9 @@ else {
   $('label[for="panel-add"]').hide();
 }
 
+/* --- END Panel: conditional code FileReader OR Server --- */
+
+
 $panelsNav.sortable({
   handle: '.panel-nav-handle',
   update: function(event, ui) {
@@ -869,6 +950,7 @@ $(document).on('click', '.panel-nav-original', function(e) {
   var $h = $panelWrapper.find('.panel-h');
   var w = el.naturalWidth;
   var h = el.naturalHeight;
+  //console.log('resize code: naturalWidth: '+w+', naturalHeight: '+h+', image:', el);
   $w.val(w).trigger('change');
   $h.val(h).trigger('change');
 });
@@ -998,6 +1080,8 @@ var getZIndexes = function(avoidId) {
 };
 
 
+/* --- Conditional code: NodeWebkitServer ONLY --- */
+
 if (useNodeWebkitServer) {
   window.addEventListener('message', function(e) {
     if (e.origin !== 'file://') {
@@ -1039,6 +1123,8 @@ if (useNodeWebkitServer) {
     }
   }, false);
 }
+
+/* --- END Conditional code: NodeWebkitServer ONLY --- */
 
 
 var existingComic = storage.get() || null;
