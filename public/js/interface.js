@@ -761,12 +761,16 @@ $(document).on('click', '.comic-creator-line .comic-creator-add', function() {
 });
 
 $(document).on('change keyup', '#comic-width', function() {
+  console.log('!!! COMIC WIDTH CHANGED !!!');
+  // TODO: triggger to recalculate all % in existing images and panels
   myComic.updateScreen(this.value);
   updateScreen();
   saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-height', function() {
+  console.log('!!! COMIC HEIGHT CHANGED !!!');
+  // TODO: triggger to recalculate all % in existing images and panels
   myComic.updateScreen(null, this.value);
   updateScreen();
   saveLocalStorage();
