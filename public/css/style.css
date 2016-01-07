@@ -306,8 +306,6 @@ details[open] ~ .panels-nav {
 .panel {
   border-top: 2px solid #FFF;
   position: relative;
-  /* for drag handle on left */
-  padding-left: 25px;
 }
 
 .panels detail .panel div {
@@ -335,7 +333,7 @@ details[open] ~ .panels-nav {
   height: 24px;
   width: 24px;
   display: none;
-  margin-left: 55px;
+  margin-left: 68px;
 }
 
 .panel-nav-resized {
@@ -426,10 +424,10 @@ input[type=text].page-name {
 .panel-nav-handle {
   position: absolute;
   color: #FFF;
+  background: #000;
   cursor: move;
   text-align: center;
   top: 0;
-  left: 0;
 }
 
 .page-nav-handle:hover,
@@ -438,10 +436,10 @@ input[type=text].page-name {
 }
 
 .page-nav-handle {
-  background: #000;
   padding-top: 2px;
   height: 25px;
   width: 100px;
+  left: 0;
 }
 
 .page-nav-handle .drag-icon {
@@ -454,21 +452,22 @@ input[type=text].page-name {
 }
 
 .panel-nav-handle {
-  background: transparent;
-  width: 25px;
-  height: 100%;
+  width: 40px;
+  height: 40px;
+  right: 0;
+  z-index: 10;
 }
 
-.panel:last-child .panel-nav-handle {
-  border-bottom: 2px solid transparent;
-  border-bottom-left-radius: 30px;
+.panel-nav-handle .drag-icon {
+  background-image: url(../img/drag-handle-vertical.svg);
+  background-repeat: no-repeat;
+  height: 20px;
+  width: 10px;
+  display: inline-block;
+  margin-top: 10px;
 }
 
-.panel-nav-handle .fa-arrows-v {
-  position: absolute;
-  top: 45%;
-  left: 10px;
-}
+
 
 /* artboard */
 
