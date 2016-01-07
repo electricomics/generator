@@ -1,8 +1,8 @@
 {
-  "title": "{{{title}}}",
-  "summary": "{{{summary}}}",
+  "title": "{{jsesc title}}",
+  "summary": "{{jsesc summary}}",
   "creators": [
-    {{#creators}} {"name": "{{{name}}}", "role": "{{{role}}}" } {{#unless @last}},{{/unless}} {{/creators}}
+    {{#creators}} {"name": "{{jsesc name}}", "role": "{{jsesc role}}" } {{#unless @last}},{{/unless}} {{/creators}}
   ],
   "slug": "electricomics-comic",
   "version": {{version}},
@@ -10,14 +10,14 @@
   "config" : {
     "orientation":"{{orientation}}",
     "buttons": [
-             {
-                 "type": "sound",
-                 "action": "elcx:toggleAudio"
-             },
-             {
-                 "type": "hint",
-                 "action": "elcx:hint"
-             }
+      {
+        "type": "sound",
+        "action": "elcx:toggleAudio"
+      },
+      {
+        "type": "hint",
+        "action": "elcx:hint"
+      }
     ],
     "features": ["tap"]
   }

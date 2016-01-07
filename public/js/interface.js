@@ -1,4 +1,4 @@
-/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9, Storage */
+/* global $, mousePositionElement, Electricomic, confirm, Handlebars, Blob, saveAs, isLteIE9, Storage, jsesc */
 /*!
  * Electricomics
  * https://github.com/electricomics
@@ -284,6 +284,10 @@ var addRelativeImg = function(obj, pos) {
 //   return rendered;
 // };
 
+Handlebars.registerHelper('jsesc', function (text) {
+  text = jsesc(text, { json: true, wrap: false });
+  return new Handlebars.SafeString(text);
+});
 var createTemplateContent = function(save) {
   var obj = myComic.returnJSON();
   obj.save = save || false;
@@ -998,6 +1002,12 @@ var getZIndexes = function(avoidId) {
 };
 
 
+// Stringify JSON while escaping characters
+var stringify = function(input) {
+  var output = jsesc(input, { json: true });
+  return output;
+};
+
 if (useNodeWebkitServer) {
   window.addEventListener('message', function(e) {
     if (e.origin !== 'file://') {
@@ -1019,7 +1029,7 @@ if (useNodeWebkitServer) {
       for (var c in content) {
         if (content.hasOwnProperty(c) && c.indexOf('.json') >= 0) {
           try {
-            content[c] = JSON.stringify(JSON.parse(content[c]));
+            content[c] = stringify(JSON.parse(content[c]));
           } catch (e) {
 
           }
@@ -1027,7 +1037,7 @@ if (useNodeWebkitServer) {
       }
       content['project.json.hbs'] = storage.getItem();
       
-      var s = JSON.stringify(content);
+      var s = stringify(content);
       window.parent.postMessage('{"type": "' + msg.type + '", "iframe": "' + LOCAL_STORAGE + '", "content": ' + s + '}', '*');
 
       if (msg.type === 'close') {
