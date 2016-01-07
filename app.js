@@ -41,6 +41,7 @@ var path = require('path');
 var fs = require('fs');
 var archiver = require('archiver');
 var ncp = require('ncp').ncp;
+var jsesc = require('jsesc');
 
 // server stuff
 var server;
@@ -100,6 +101,25 @@ var projectsFiles = ['index.html', 'comic.json', 'project.json'];
 
 
 /**
+ * Stringify JSON while escaping characters
+ * @param {string/array/object} input
+ * @param {boolean} indent - True to format the output nicely for arrays and objects
+ * @returns {string}
+ */
+var stringify = function(input, indent) {
+  var opts = {
+    json: true
+  };
+  if (indent) {
+    opts.compact = false;
+    opts.indent = '  ';
+  }
+  var output = jsesc(input, opts);
+  return output;
+};
+
+
+/**
  * Asynchronously write json object into filesystem file
  * @param {string} path - Path of the file
  * @param {string} content - Content to write
@@ -108,7 +128,7 @@ var projectsFiles = ['index.html', 'comic.json', 'project.json'];
 var writeJSON = function(path, content, cb) {
   var c;
   try {
-    c = JSON.stringify(content, null, 2);
+    c = stringify(content, true);
   }
   catch (e) {
     c = content;
@@ -249,6 +269,7 @@ var serverStart = function() {
     // all environments
     app.set('port', options.port);
     app.use(express.static(path.join(process.cwd(), 'public')));
+    app.use('/vendor/jsesc.js', express.static(path.join(process.cwd(), 'node_modules', 'jsesc', 'jsesc.js')));
 
     // all the projects will upload to the same url, but they will send their
     // project id into the query string to tell the server into which physical
@@ -364,7 +385,7 @@ var projectOpen = function(path, name) {
 
   // folder doesn't exist, just do nothing and save current valid open projects in memory
   var ko = function() {
-    localStorage.setItem('projects', JSON.stringify(projects));
+    localStorage.setItem('projects', stringify(projects));
   };
 
   // folder exists
@@ -396,7 +417,7 @@ var projectOpen = function(path, name) {
     // mount folder
     app.use('/' + id, express.static(path));
     // save that we opened this project
-    localStorage.setItem('projects', JSON.stringify(projects));
+    localStorage.setItem('projects', stringify(projects));
     // load iframe
     iframeAdd(id);
   };
@@ -604,7 +625,7 @@ var projectClose = function(content, id) {
   var cb = function() {
     iframeClose(projectId);
     delete projects[projectId];
-    localStorage.setItem('projects', JSON.stringify(projects));
+    localStorage.setItem('projects', stringify(projects));
     // todo unmount folder
   };
   // if project is already saved, just close it

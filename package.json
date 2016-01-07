@@ -12,6 +12,7 @@
   "dependencies": {
     "archiver": "^0.15.0",
     "express": "^4.12.0",
+    "jsesc": "^0.5.0",
     "multer": "^1.0.3",
     "ncp": "^2.0.0"
   },
