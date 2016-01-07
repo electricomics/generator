@@ -22,7 +22,8 @@
 {{#pages}}
   <ec-page id="step-{{@index}}" class="step">
     {{#panels}}
-    <ec-panel id="panel-{{@../index}}-{{@index}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">
+    <!--<ec-panel id="panel-{{@../index}}-{{@index}}" style="width:{{w}}px; height:{{h}}px; left:{{x}}px; top:{{y}}px; z-index:{{z}};">-->
+    <ec-panel id="panel-{{@../index}}-{{@index}}" style="width:{{wPercent}}%; height:{{hPercent}}%; left:{{xPercent}}%; top:{{yPercent}}%; z-index:{{z}};">
       <img src="{{{src}}}">
     </ec-panel>
     {{/panels}}

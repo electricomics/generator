@@ -274,37 +274,40 @@ var addImgFile = function(imgFile, pos) {
   };
   var $img = appendImg(newImg);
 
-  console.log('addImgFile. x: '+pos.x+', y: '+pos.y+', xPercent: '+xPercent+', yPercent: '+yPercent);
+  console.log('addImgFile WRITE x: '+pos.x+', y: '+pos.y+', xPercent: '+xPercent+', yPercent: '+yPercent);
 
-  /* MM: I think this whole W/H related code is actually useless until the image is loaded and should be move there and removed here altogether */
-
-  /*var w = $img.width();
+  // the code below only sets width and height for images in a saved comic
+  // when adding a new image that is not loaded yet, dimensions  are undefined EDIT: actually 0 according to console.log
+  // therefore this code is repeated in imgLoaded
+  var w = $img.width();
   var h = $img.height();
 
-  // TODO: make it flexible for future pixel ratio
-  if ($comicPxRatio2.is(':checked')) {
-    w = w / 2;
-    h = h / 2;
+  //if (typeof w !== "undefined" && typeof h !== "undefined") {
+  if (w !== 0 && h !== 0) {
+
+    // TODO: make it flexible for future pixel ratio
+    if ($comicPxRatio2.is(':checked')) {
+      w = w / 2;
+      h = h / 2;
+      // MM: should this CSS be % and changed in all cases regardless of ratio ?
+      //$img.css('width', w + 'px');
+      //$img.css('height', h + 'px');
+    }
+
+    var wPercent = w * 100 / comicData.screenW;
+    var hPercent = h * 100 / comicData.screenH;
+
+    newImg.w = w;
+    newImg.h = h;
+    newImg.wPercent = wPercent;
+    newImg.hPercent = hPercent;
+
+    console.log('addImgFile WRITE w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent);
+
     // MM: should this CSS be % and changed in all cases regardless of ratio ?
-    //$img.css('width', w + 'px');
-    //$img.css('height', h + 'px');
+    $img.css('width', wPercent + '%');
+    $img.css('height', hPercent + '%');
   }
-
-  var wPercent = w * 100 / comicData.screenW;
-  var hPercent = h * 100 / comicData.screenH;
-
-  newImg.w = w;
-  newImg.h = h;
-  newImg.wPercent = wPercent;
-  newImg.hPercent = hPercent;
-
-  console.log('addImgFile. w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent);
-
-  // MM: should this CSS be % and changed in all cases regardless of ratio ?
-  $img.css('width', wPercent + '%');
-  $img.css('height', hPercent + '%');*/
-
-/* MM: END useless H/W code */
 
   var newPanel = myComic.addPanel(CURRENT_PAGE, newImg);
   newImg.pageN = newPanel.pageN;
@@ -330,16 +333,45 @@ var imgLoaded = function(obj, $img) {
   var $w = $panelWrapper.find('.panel-w');
   var $h = $panelWrapper.find('.panel-h');
 
-  // MM: this code used to be in addImgFile but natural size only exists when image is loaded.
+  // MM: this code used to be in addImgFile but image size only exists when image is loaded.
+  // read natural size of the image
   var realSize = realSizeImg($img);
+
+  // save natural size for use as reference in resize code
   obj.naturalW = realSize.w;
   obj.naturalH = realSize.h;
   // this hidden input is used as reference to decide whether to show the resize icon or not in showResize
   $panelWrapper.find('.panel-w-natural').val(obj.naturalW);
   $panelWrapper.find('.panel-h-natural').val(obj.naturalH);
-  
-  $div.css('width', realSize.w + 'px');
-  $div.css('height', realSize.h + 'px');
+
+  // set actual width and height for a new image
+  // for an image from saved comic, same code happens in addImgFile
+
+  var w = realSize.w;
+  var h = realSize.h;
+
+  // TODO: make it flexible for future pixel ratio
+  if ($comicPxRatio2.is(':checked')) {
+    w = w / 2;
+    h = h / 2;
+  }
+
+  var comicData = myComic.getComic();
+  var wPercent = w * 100 / comicData.screenW;
+  var hPercent = h * 100 / comicData.screenH;
+
+  obj.w = w;
+  obj.h = h;
+  obj.wPercent = wPercent;
+  obj.hPercent = hPercent;
+
+  console.log('imgLoaded WRITE w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent);
+ 
+  // MM: should CSS be put on $div or $img ??? can no longer be both since % inside % will multiply. $img previously set in add ImgFile before dimensions existed, so probably was never set
+  //$div.css('width', realSize.w + 'px');
+  //$div.css('height', realSize.h + 'px');
+  $div.css('width', wPercent + '%');
+  $div.css('height', hPercent + '%');
 
   $w.val(realSize.w);
   $w.trigger('change');
@@ -355,13 +387,22 @@ var appendImg = function(obj) {
   if (useServer) {
     src = LOCAL_STORAGE + '/' + src;
   }
+
   var w = 0;
   var h = 0;
+  var wPercent = 0;
+  var hPercent = 0;
+
   $div.attr('id', obj.id);
   $img.attr('src', src);
-  $div.css('left', obj.x + 'px');
-  $div.css('top', obj.y + 'px');
+
+  console.log('appendImg READ x: '+obj.x+', y: '+obj.y+', xPercent: '+obj.xPercent+', yPercent: '+obj.yPercent);
+  //$div.css('left', obj.x + 'px');
+  //$div.css('top', obj.y + 'px');
+  $div.css('left', obj.xPercent + '%');
+  $div.css('top', obj.yPercent + '%');
   $div.css('z-index', obj.z);
+
   $div.append($img);
   $artboard.append($div);
 
@@ -372,14 +413,25 @@ var appendImg = function(obj) {
       imgLoaded(obj, $(this), e);
     });
   }
-  if (obj.w != null) {
+
+  console.log('appendImg READ w: '+obj.w+', h: '+obj.h+', wPercent: '+obj.wPercent+', hPercent: '+obj.hPercent);
+  // MM: I'm confused because we test for null but if image not loaded yet, console.log says the dimensions are undefined
+  /*if (obj.w != null) {
     w = obj.w;
   }
   if (obj.h != null) {
     h = obj.h;
   }
   $div.css('width', w + 'px');
-  $div.css('height', h + 'px');
+  $div.css('height', h + 'px');*/
+  if (obj.wPercent != null) {
+    wPercent = obj.wPercent;
+  }
+  if (obj.hPercent != null) {
+    hPercent = obj.hPercent;
+  }
+  $div.css('width', wPercent + '%');
+  $div.css('height', hPercent + '%');
   
   return $div;
 };
@@ -396,7 +448,7 @@ var addImgEvent = function($img) {
     aspectRatio: true,
     handles: 'all',
     stop: function(event, ui) {
-      //console.log('image resize: W: '+ui.size.width+', H: '+ ui.size.height);
+      console.log('image resize: W: '+ui.size.width+', H: '+ ui.size.height);
       $w.val(ui.size.width);
       $w.trigger('change');
       $h.val(ui.size.height);
@@ -406,7 +458,7 @@ var addImgEvent = function($img) {
   // make it draggable
   $img.draggable({
     stop: function(event, ui) {
-      // console.log(ui.position.left, ui.position.top);
+      console.log('image drag: left: '+ui.position.left+', top: '+ui.position.top);
       $x.val(ui.position.left);
       $x.trigger('change');
       $y.val(ui.position.top);
@@ -419,21 +471,43 @@ var updateImg = function(id, what) {
   var $el = $('#' + id);
   // wrapper created by jqueryUI
   var $parEl = $el.closest('.ui-wrapper');
+
+  // MM: now that we set sizes in %, should put the css only on one of the 2 wrappers? 
+  // because % inside % will multiply won't they ???
+  // or do the % only go in the generated comic, the editor, which has the jquery UI wrapper, remains in px ???
+  var comicData = myComic.getComic();
+
   if (what.w != null) {
-    $el.css('width', what.w + 'px');
-    $parEl.css('width', what.w + 'px');
+    var wPercent = what.w * 100 / comicData.screenW;
+    console.log('updateImg SET CSS w: '+what.w+', wPercent: '+wPercent);
+    //$el.css('width', what.w + 'px');
+    //$parEl.css('width', what.w + 'px');
+    $el.css('width', wPercent + '%');
+    $parEl.css('width', wPercent + '%');
   }
   if (what.h != null) {
-    $el.css('height', what.h + 'px');
-    $parEl.css('height', what.h + 'px');
+    var hPercent = what.h * 100 / comicData.screenH;
+    console.log('updateImg SET CSS h: '+what.h+', hPercent: '+hPercent);
+    //$el.css('height', what.h + 'px');
+    //$parEl.css('height', what.h + 'px');
+    $el.css('height', hPercent + '%');
+    $parEl.css('height', hPercent + '%');
   }
   if (what.x != null) {
-    $el.css('left', what.x + 'px');
-    $parEl.css('left', what.x + 'px');
+    var xPercent = what.x * 100 / comicData.screenW;
+    console.log('updateImg SET CSS x: '+what.x+', xPercent: '+xPercent);
+    //$el.css('left', what.x + 'px');
+    //$parEl.css('left', what.x + 'px');
+    $el.css('left', xPercent + '%');
+    $parEl.css('left', xPercent + '%');
   }
   if (what.y != null) {
-    $el.css('top', what.y + 'px');
-    $parEl.css('top', what.y + 'px');
+    var yPercent = what.y * 100 / comicData.screenH;
+    console.log('updateImg SET CSS y: '+what.y+', yPercent: '+yPercent);
+    //$el.css('top', what.y + 'px');
+    //$parEl.css('top', what.y + 'px');
+    $el.css('top', yPercent + '%');
+    $parEl.css('top', yPercent + '%');
   }
   if (what.z != null) {
     $el.css('z-index', what.z);
@@ -608,6 +682,22 @@ var getCreators = function() {
 /* --- END Creator related functions --- */
 
 
+/* --- Artboard related functions --- */
+
+var clearArtboard = function() {
+  $artboard.html('');
+};
+
+var updateArtboard = function() {
+  var w = $comicWidth.val();
+  var h = $comicHeight.val();
+  $artboard.css('width', w + 'px');
+  $artboard.css('height', h + 'px');
+};
+
+/* --- END Artboard related functions --- */
+
+
 // var createHtml = function(save) {
 //   var obj = myComic.returnJSON();
 //   obj.save = save || false;
@@ -629,17 +719,6 @@ var createTemplateContent = function(save) {
   return rendered;
 };
 
-var clearArtboard = function() {
-  $artboard.html('');
-};
-
-var updateScreen = function() {
-  var w = $comicWidth.val();
-  var h = $comicHeight.val();
-  $artboard.css('width', w + 'px');
-  $artboard.css('height', h + 'px');
-};
-
 var loadComic = function() {
   var comicData = myComic.getComic();
   $comicName.val(comicData.title);
@@ -656,8 +735,6 @@ var loadComic = function() {
   loadPages(comicData.pagesLen);
   loadPage(CURRENT_PAGE);
 };
-
-
 
 
 // page
@@ -830,7 +907,7 @@ $(document).on('change keyup', '#comic-width', function() {
   console.log('!!! COMIC WIDTH CHANGED !!!');
   // TODO: triggger to recalculate all % in existing images and panels
   myComic.updateScreen(this.value);
-  updateScreen();
+  updateArtboard();
   saveLocalStorage();
 });
 
@@ -838,7 +915,7 @@ $(document).on('change keyup', '#comic-height', function() {
   console.log('!!! COMIC HEIGHT CHANGED !!!');
   // TODO: triggger to recalculate all % in existing images and panels
   myComic.updateScreen(null, this.value);
-  updateScreen();
+  updateArtboard();
   saveLocalStorage();
 });
 

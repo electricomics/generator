@@ -72,6 +72,10 @@ var Electricomic = function(existingComic) {
       h: 0,
       x: 0,
       y: 0,
+      wPercent: 0,
+      hPercent: 0,
+      xPercent: 0,
+      yPercent: 0,
       z: 0
     };
   };
@@ -159,6 +163,10 @@ var Electricomic = function(existingComic) {
       h: panel.h,
       x: panel.x,
       y: panel.y,
+      wPercent: panel.wPercent,
+      hPercent: panel.hPercent,
+      xPercent: panel.xPercent,
+      yPercent: panel.yPercent,
       z: panel.z,
       pageN: pageN,
       panelN: panelN
@@ -210,6 +218,7 @@ var Electricomic = function(existingComic) {
     if (h != null) {
       editComic('screenH', h);
     }
+    // MM: TODO recalculate all percentage
   };
 
   this.updatePxRatio = function(pxRatio) {
@@ -310,18 +319,26 @@ var Electricomic = function(existingComic) {
   this.resizePanel = function(pageN, panelN, w, h) {
     if (w != null) {
       editPanel(pageN, panelN, 'w', w);
+      var wPercent = w * 100 / _comic.screenW;
+      editPanel(pageN, panelN, 'wPercent', wPercent);
     }
     if (h != null) {
       editPanel(pageN, panelN, 'h', h);
+      var hPercent = h * 100 / _comic.screenH;
+      editPanel(pageN, panelN, 'hPercent', hPercent);
     }
   };
 
   this.moveXYPanel = function(pageN, panelN, x, y) {
     if (x != null) {
       editPanel(pageN, panelN, 'x', x);
+      var xPercent = x * 100 / _comic.screenW;
+      editPanel(pageN, panelN, 'xPercent', xPercent);
     }
     if (y != null) {
       editPanel(pageN, panelN, 'y', y);
+      var yPercent = y * 100 / _comic.screenH;
+      editPanel(pageN, panelN, 'yPercent', yPercent);
     }
   };
 
