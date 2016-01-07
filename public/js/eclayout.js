@@ -76,6 +76,8 @@ var Electricomic = function(existingComic) {
       hPercent: 0,
       xPercent: 0,
       yPercent: 0,
+      naturalW: 0,
+      naturalH: 0,
       z: 0
     };
   };
@@ -167,6 +169,8 @@ var Electricomic = function(existingComic) {
       hPercent: panel.hPercent,
       xPercent: panel.xPercent,
       yPercent: panel.yPercent,
+      naturalW: panel.naturalW,
+      naturalH: panel.naturalH,
       z: panel.z,
       pageN: pageN,
       panelN: panelN
