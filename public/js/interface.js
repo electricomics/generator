@@ -685,15 +685,54 @@ var clearArtboard = function() {
   $artboard.html('');
 };
 
-var updateArtboard = function() {
-  var w = $comicWidth.val();
-  var h = $comicHeight.val();
-  $artboard.css('width', w + 'px');
-  $artboard.css('height', h + 'px');
-};
-
 /* --- END Artboard related functions --- */
 
+var updateScreen = function() {
+  var newW = $comicWidth.val();
+  var newH = $comicHeight.val();
+
+  var oldW = parseInt($artboard.css('width').replace('px',''));
+  var oldH = parseInt($artboard.css('height').replace('px',''));
+
+  console.log('interface.updateScreen newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH);
+
+  $artboard.css('width', newW + 'px');
+  $artboard.css('height', newH + 'px');
+
+  // eclayout just updated the comic model, and it's synchronous, so just get the updated % from there
+  //var comicPanels = myComic.getPanels();
+  var comicPanels = myComic.getPanelsByPage(CURRENT_PAGE);
+  
+  // update horizontally
+  if (newW !== oldW) {
+    for (var i = 0; i < comicPanels.length; i++) {
+      var panel = comicPanels[i];
+      var $el = $('#' + panel.id);
+      // wrapper created by jqueryUI
+      var $parEl = $el.closest('.ui-wrapper');
+      console.log('HORIZONTAL panel id: '+panel.id);
+      $el.css('width', panel.wPercent + '%');
+      $parEl.css('width', panel.wPercent + '%');
+      $el.css('left', panel.xPercent + '%');
+      $parEl.css('left', panel.xPercent + '%');
+    }
+  }
+
+  // update vertically
+  if (newH !== oldH) {
+    for (var i = 0; i < comicPanels.length; i++) {
+      var panel = comicPanels[i];
+      var $el = $('#' + panel.id);
+      // wrapper created by jqueryUI
+      var $parEl = $el.closest('.ui-wrapper');
+      console.log('VERTICAL panel id: '+panel.id);
+      $el.css('height', panel.hPercent + '%');
+      $parEl.css('height', panel.hPercent + '%');
+      $el.css('top', panel.yPercent + '%');
+      $parEl.css('top', panel.yPercent + '%');
+    }
+  }
+};
 
 // var createHtml = function(save) {
 //   var obj = myComic.returnJSON();
@@ -901,18 +940,18 @@ $(document).on('click', '.comic-creator-line .comic-creator-add', function() {
 });
 
 $(document).on('change keyup', '#comic-width', function() {
-  console.log('!!! COMIC WIDTH CHANGED !!!');
-  // TODO: triggger to recalculate all % in existing images and panels
+  console.log('!!! COMIC WIDTH CHANGED: '+this.value);
+  // recalculate all % in existing images and panels
   myComic.updateScreen(this.value);
-  updateArtboard();
+  updateScreen();
   saveLocalStorage();
 });
 
 $(document).on('change keyup', '#comic-height', function() {
-  console.log('!!! COMIC HEIGHT CHANGED !!!');
-  // TODO: triggger to recalculate all % in existing images and panels
+  console.log('!!! COMIC HEIGHT CHANGED: '+this.value);
+  // recalculate all % in existing images and panels
   myComic.updateScreen(null, this.value);
-  updateArtboard();
+  updateScreen();
   saveLocalStorage();
 });
 

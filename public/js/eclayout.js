@@ -125,6 +125,27 @@ var Electricomic = function(existingComic) {
     return arr;
   };
 
+  // return an array of all Panels on a specified page with their dimensions and positions in %
+  this.getPanelsByPage = function(pageN) {
+    if (pageN > _comic.pages.length - 1) {
+      return false;
+    }
+    var arrPanels = [];
+    var panels = _comic.pages[pageN].panels;
+    for (var i = 1; i < panels.length; i++) {
+      var panel = panels[i];
+      arrPanels.push({
+        id: panel.id,
+        wPercent: panel.wPercent,
+        hPercent: panel.hPercent,
+        xPercent: panel.xPercent,
+        xPercent: panel.xPercent
+      });
+    }
+    //console.log('getPanelsByPage: '+pageN, arrPanels);
+    return arrPanels;
+  };
+
   this.getPage = function(pageN) {
     if (pageN > _comic.pages.length - 1) {
       return false;
@@ -215,14 +236,47 @@ var Electricomic = function(existingComic) {
     editComic('title', title);
   };
 
-  this.updateScreen = function(w, h) {
-    if (w != null) {
-      editComic('screenW', w);
+  var updatePercentage = function(newW, oldW, newH, oldH) {
+
+    // update horizontally
+    if (typeof newW !== 'undefined' && newW !== null && newW !== oldW) {
+      for (var i = 1; i < _comic.pages.length; i++) {
+        var panels = _comic.pages[i].panels;
+        for (var j = 1; j < panels.length; j++) {
+          var panel = panels[j];
+          panel.wPercent = panel.w * 100 / newW;
+          panel.xPercent = panel.x * 100 / newW;
+          console.log('HORIZONTAL newW: '+newW+' img: '+panel.id+', wPercent: '+panel.wPercent+', xPercent: '+panel.xPercent);
+        }
+      }
     }
-    if (h != null) {
-      editComic('screenH', h);
+
+    // update vertically
+    if (typeof newH !== 'undefined' && newH !== null && newH !== oldH) {
+      for (var i = 1; i < _comic.pages.length; i++) {
+        var panels = _comic.pages[i].panels;
+        for (var j = 1; j < panels.length; j++) {
+          var panel = panels[j];
+          panel.hPercent = panel.h * 100 / newH;
+          panel.yPercent = panel.y * 100 / newH;
+          console.log('VERTICAL newH: '+newH+' img: '+panel.id+', hPercent: '+panel.hPercent+', yPercent: '+panel.yPercent);
+        }
+      }
     }
-    // MM: TODO recalculate all percentage
+  };
+
+  this.updateScreen = function(newW, newH) {
+    var oldW = _comic.screenW;
+    var oldH = _comic.screenH;
+    console.log('eclayout.updateScreen ARGS newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH);
+    if (newW != null) {
+      editComic('screenW', newW);
+    }
+    if (newH != null) {
+      editComic('screenH', newH);
+    }
+    // recalculate all percentage dimensions
+    updatePercentage(newW, oldW, newH, oldH);
   };
 
   this.updatePxRatio = function(pxRatio) {
