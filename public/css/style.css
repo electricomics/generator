@@ -26,9 +26,7 @@ li {
 }
 
 body {
-  /* MM: Background exports wrongs colour from sketch as svg for unknown reason */
-  /*background-image: url(../img/Electricomics-Generator-bg.svg);*/
-  background-image: url(../img/Electricomics-Generator-bg.png);
+  background-image: url(../img/bg.png);
   background-repeat: no-repeat;
   background-position: 0 0;
   background-size: cover;
@@ -50,7 +48,7 @@ h1 {
   padding-left: 240px;
   font-size: 2.2em;
   font-weight: normal;
-  background-image: url(../img/Electricomics-logo.svg);
+  background-image: url(../img/logo.svg);
   background-repeat: no-repeat;
   background-position: 99px 13px;
 }
@@ -608,7 +606,7 @@ input[type=text].page-name {
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  background: rgba(220,220,220,0.4); 
+  background: rgb(220,220,220); 
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
