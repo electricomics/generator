@@ -939,21 +939,25 @@ $(document).on('click', '.comic-creator-line .comic-creator-add', function() {
   saveLocalStorage();
 });
 
-$(document).on('change keyup', '#comic-width', function() {
+var updateComicWidth = debounce(function() {
   console.log('!!! COMIC WIDTH CHANGED: '+this.value);
   // recalculate all % in existing images and panels
   myComic.updateScreen(this.value);
   updateScreen();
   saveLocalStorage();
-});
+}, DEBOUNCE_TIME_KEYUP);
 
-$(document).on('change keyup', '#comic-height', function() {
+$(document).on('change keyup', '#comic-width', updateComicWidth);
+
+var updateComicHeight = debounce(function() {
   console.log('!!! COMIC HEIGHT CHANGED: '+this.value);
   // recalculate all % in existing images and panels
   myComic.updateScreen(null, this.value);
   updateScreen();
   saveLocalStorage();
-});
+}, DEBOUNCE_TIME_KEYUP);
+
+$(document).on('change keyup', '#comic-height', updateComicHeight);
 
 $(document).on('change click', '#comic-pxratio-2', function() {
   var ratio = $(this).is(':checked') ? 2 : 1;
