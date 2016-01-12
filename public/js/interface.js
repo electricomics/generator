@@ -225,7 +225,7 @@ var realSizeImg = function($el) {
   } 
   var w = realImg.naturalWidth;
   var h = realImg.naturalHeight;
-  console.log('realSizeImg. naturalWidth: '+w+', naturalHeight: '+h+', realImg', realImg)
+  //console.log('realSizeImg. naturalWidth: '+w+', naturalHeight: '+h+', realImg', realImg)
   return {
     w: w,
     h: h
@@ -302,7 +302,7 @@ var addImgFile = function(imgFile, pos) {
     newImg.wPercent = wPercent;
     newImg.hPercent = hPercent;
 
-    console.log('addImgFile WRITE w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent);
+    //console.log('addImgFile WRITE w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent);
 
     // MM: should this CSS be % and changed in all cases regardless of ratio ?
     $img.css('width', wPercent + '%');
@@ -364,7 +364,7 @@ var imgLoaded = function(obj, $img) {
   obj.wPercent = wPercent;
   obj.hPercent = hPercent;
 
-  console.log('imgLoaded WRITE w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent+', naturalW: '+obj.naturalW+', naturalH: '+obj.naturalH);
+  //console.log('imgLoaded WRITE w: '+w+', h: '+h+', wPercent: '+wPercent+', hPercent: '+hPercent+', naturalW: '+obj.naturalW+', naturalH: '+obj.naturalH);
  
   // MM: should CSS be put on $div or $img ??? can no longer be both since % inside % will multiply. $img previously set in add ImgFile before dimensions existed, so probably was never set
   //$div.css('width', realSize.w + 'px');
@@ -395,7 +395,7 @@ var appendImg = function(obj) {
   $div.attr('id', obj.id);
   $img.attr('src', src);
 
-  console.log('appendImg READ x: '+obj.x+', y: '+obj.y+', xPercent: '+obj.xPercent+', yPercent: '+obj.yPercent);
+  //console.log('appendImg READ x: '+obj.x+', y: '+obj.y+', xPercent: '+obj.xPercent+', yPercent: '+obj.yPercent);
   //$div.css('left', obj.x + 'px');
   //$div.css('top', obj.y + 'px');
   $div.css('left', obj.xPercent + '%');
@@ -408,13 +408,13 @@ var appendImg = function(obj) {
   // when we drop a new image on the artboard, the size is not available until the image has loaded
   // we need to append it first and then get the dimensions once the image has loaded
   if (obj.w == null || obj.h == null) {
-    console.log('appendImg NULL CASE DEFINE ONLOAD')
+    //console.log('appendImg NULL CASE DEFINE ONLOAD')
     $img.on('load', function(e) {
       imgLoaded(obj, $(this), e);
     });
   }
 
-  console.log('appendImg READ w: '+obj.w+', h: '+obj.h+', wPercent: '+obj.wPercent+', hPercent: '+obj.hPercent+', naturalW: '+obj.naturalW+', naturalH: '+obj.naturalH);
+  //console.log('appendImg READ w: '+obj.w+', h: '+obj.h+', wPercent: '+obj.wPercent+', hPercent: '+obj.hPercent+', naturalW: '+obj.naturalW+', naturalH: '+obj.naturalH);
   // MM: I'm confused because we test for null but if image not loaded yet, console.log says the dimensions are undefined
   /*if (obj.w != null) {
     w = obj.w;
@@ -687,21 +687,15 @@ var clearArtboard = function() {
 
 /* --- END Artboard related functions --- */
 
-var updateScreen = function() {
-  var newW = $comicWidth.val();
-  var newH = $comicHeight.val();
 
-  var oldW = parseInt($artboard.css('width').replace('px',''));
-  var oldH = parseInt($artboard.css('height').replace('px',''));
+/* --- Canvas resize related functions --- */
 
-  console.log('interface.updateScreen newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH);
-
-  $artboard.css('width', newW + 'px');
-  $artboard.css('height', newH + 'px');
-
+// On canvas resize, preserve raw pixel size of images and recalculate all percentage relative to new canvas size
+var recalculatePercentage = function(newW, oldW, newH, oldH) {
   // eclayout just updated the comic model, and it's synchronous, so just get the updated % from there
-  //var comicPanels = myComic.getPanels();
   var comicPanels = myComic.getPanelsByPage(CURRENT_PAGE);
+
+  console.log('recalculatePercentage VALUES newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH+'. TYPEOF newW: '+typeof newW+', oldW: '+typeof oldW+', newH: '+typeof newH+', oldH: '+typeof oldH);
   
   // update horizontally
   if (newW !== oldW) {
@@ -710,7 +704,7 @@ var updateScreen = function() {
       var $el = $('#' + panel.id);
       // wrapper created by jqueryUI
       var $parEl = $el.closest('.ui-wrapper');
-      console.log('HORIZONTAL panel id: '+panel.id);
+      console.log('INTERFACE HORIZONTAL % panel id: '+panel.id+', wPercent: '+panel.wPercent+', xPercent: '+panel.xPercent);
       $el.css('width', panel.wPercent + '%');
       $parEl.css('width', panel.wPercent + '%');
       $el.css('left', panel.xPercent + '%');
@@ -725,7 +719,7 @@ var updateScreen = function() {
       var $el = $('#' + panel.id);
       // wrapper created by jqueryUI
       var $parEl = $el.closest('.ui-wrapper');
-      console.log('VERTICAL panel id: '+panel.id);
+      console.log('INTERFACE VERTICAL % panel id: '+panel.id+', hPercent: '+panel.hPercent+', yPercent: '+panel.yPercent);
       $el.css('height', panel.hPercent + '%');
       $parEl.css('height', panel.hPercent + '%');
       $el.css('top', panel.yPercent + '%');
@@ -733,6 +727,94 @@ var updateScreen = function() {
     }
   }
 };
+
+var recalculatePixels = function(newW, oldW, newH, oldH) {
+  // eclayout just updated the comic model, and it's synchronous, so just get the updated px from there
+  var comicPanels = myComic.getPanelsByPage(CURRENT_PAGE);
+
+  console.log('recalculatePixels VALUES newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH+'. TYPEOF newW: '+typeof newW+', oldW: '+typeof oldW+', newH: '+typeof newH+', oldH: '+typeof oldH);
+
+  // update horizontally
+  if (newW !== oldW) {
+    for (var i = 0; i < comicPanels.length; i++) {
+      var panel = comicPanels[i];
+      var $panelWrapper = $('#panel' + panel.id);
+      console.log('INTERFACE HORIZONTAL PX panel id: '+panel.id+', w: '+panel.w+', x: '+panel.x);
+      $panelWrapper.find('.panel-w').val(panel.w);
+      $panelWrapper.find('.panel-x').val(panel.x);
+      showResize(panel.id);
+    }
+  }
+
+  // update vertically
+  if (newH !== oldH) {
+    for (var i = 0; i < comicPanels.length; i++) {
+      var panel = comicPanels[i];
+      var $panelWrapper = $('#panel' + panel.id);
+      console.log('INTERFACE HORIZONTAL PX panel id: '+panel.id+', h: '+panel.h+', y: '+panel.y);
+      $panelWrapper.find('.panel-h').val(panel.h);
+      $panelWrapper.find('.panel-y').val(panel.y);
+      showResize(panel.id);
+    }
+  }
+};
+
+var updateScreen = function(imageResizeMode) {
+  var newW = $comicWidth.val();
+  var newH = $comicHeight.val();
+
+  var oldW = $artboard.css('width').replace('px','');
+  var oldH = $artboard.css('height').replace('px','');
+
+  console.log('interface.updateScreen newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH);
+
+  $artboard.css('width', newW + 'px');
+  $artboard.css('height', newH + 'px');
+
+  // preserve image raw pixel size and recalculate all percentage relative to new canvas size
+  if (imageResizeMode === 'preservePixel') {
+    console.log('updateScreen: '+imageResizeMode);
+    recalculatePercentage(newW, oldW, newH, oldH);
+  }
+  // preserve image proportion in percentage relative to canvas size and recalculate raw pixel size
+  else if (imageResizeMode === 'preservePercent'){
+    console.log('updateScreen: '+imageResizeMode);
+    recalculatePixels(newW, oldW, newH, oldH);
+  }
+};
+
+// Resize the Canvas after user has updated a size value in UI
+// resize the images with the mode selected by the user in dialog box: preservePixel or preservePercent
+var resizeCanvas = function(imageResizeMode) {
+  var newW = $comicWidth.val();
+  var newH = $comicHeight.val();
+  myComic.updateScreen(newW, newH, imageResizeMode);
+  updateScreen(imageResizeMode);
+  saveLocalStorage();
+};
+
+var resizeCanvasPrompt = debounce(function() {
+  // ask user whether the preserve raw px size of proportion in % of the canvas
+  var resizeImagesPrompt = $('#dialog-canvas-resized').dialog({
+    resizable: false,
+    modal: true,
+    width: 550,
+    buttons: {
+      'Preserve pixel size': function() {
+        $(this).dialog('close');
+        resizeCanvas('preservePixel');
+      },
+      'Preserve proportion relative to canvas size': function() {
+        $(this).dialog('close');
+        resizeCanvas('preservePercent');
+      }
+    }
+  });
+  resizeImagesPrompt.dialog('open');
+}, DEBOUNCE_TIME_DIALOG);
+
+/* --- END Canvas resize related functions --- */
+
 
 // var createHtml = function(save) {
 //   var obj = myComic.returnJSON();
@@ -883,8 +965,6 @@ $textareaInputButton.on('click', function() {
   }
 });
 
-
-
 // Clear
 $('#comic-clear').on('click', function() {
   var check = confirm('Are you sure you want to delete everything?');
@@ -894,7 +974,6 @@ $('#comic-clear').on('click', function() {
     loadComic();
   }
 });
-
 
 // comic
 $(document).on('change keyup', '#comic-name', function() {
@@ -939,7 +1018,10 @@ $(document).on('click', '.comic-creator-line .comic-creator-add', function() {
   saveLocalStorage();
 });
 
-var updateComicWidth = debounce(function() {
+$(document).on('change keyup', '#comic-width', resizeCanvasPrompt);
+$(document).on('change keyup', '#comic-height', resizeCanvasPrompt);
+
+/*var updateComicWidth = debounce(function() {
   console.log('!!! COMIC WIDTH CHANGED: '+this.value);
   // recalculate all % in existing images and panels
   myComic.updateScreen(this.value);
@@ -957,7 +1039,7 @@ var updateComicHeight = debounce(function() {
   saveLocalStorage();
 }, DEBOUNCE_TIME_KEYUP);
 
-$(document).on('change keyup', '#comic-height', updateComicHeight);
+$(document).on('change keyup', '#comic-height', updateComicHeight);*/
 
 $(document).on('change click', '#comic-pxratio-2', function() {
   var ratio = $(this).is(':checked') ? 2 : 1;

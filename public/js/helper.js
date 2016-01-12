@@ -30,6 +30,8 @@ for the JavaScript code in this page.
 
 // default time values for debounce function below
 var DEBOUNCE_TIME_KEYUP = 750;
+// longer delay when showing a dialogue box, because it's better to wait a bit more than risk showing it twice.
+var DEBOUNCE_TIME_DIALOG = 1000;
 
 // Debounce function taken from Underscore.js
 // Returns a function, that, as long as it continues to be invoked, will not

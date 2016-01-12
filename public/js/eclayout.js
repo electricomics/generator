@@ -125,7 +125,7 @@ var Electricomic = function(existingComic) {
     return arr;
   };
 
-  // return an array of all Panels on a specified page with their dimensions and positions in %
+  // return an array of all Panels on a specified page
   this.getPanelsByPage = function(pageN) {
     if (pageN > _comic.pages.length - 1) {
       return false;
@@ -136,10 +136,19 @@ var Electricomic = function(existingComic) {
       var panel = panels[i];
       arrPanels.push({
         id: panel.id,
+        name: panel.name,
+        src: panel.src,
+        w: panel.w,
+        h: panel.h,
+        x: panel.x,
+        y: panel.y,
         wPercent: panel.wPercent,
         hPercent: panel.hPercent,
         xPercent: panel.xPercent,
-        xPercent: panel.xPercent
+        yPercent: panel.yPercent,
+        naturalW: panel.naturalW,
+        naturalH: panel.naturalH,
+        z: panel.z
       });
     }
     //console.log('getPanelsByPage: '+pageN, arrPanels);
@@ -236,7 +245,8 @@ var Electricomic = function(existingComic) {
     editComic('title', title);
   };
 
-  var updatePercentage = function(newW, oldW, newH, oldH) {
+  // preserve image raw pixel size and recalculate all percentage relative to new canvas size
+  var recalculatePercentage = function(newW, oldW, newH, oldH) {
 
     // update horizontally
     if (typeof newW !== 'undefined' && newW !== null && newW !== oldW) {
@@ -246,7 +256,7 @@ var Electricomic = function(existingComic) {
           var panel = panels[j];
           panel.wPercent = panel.w * 100 / newW;
           panel.xPercent = panel.x * 100 / newW;
-          console.log('HORIZONTAL newW: '+newW+' img: '+panel.id+', wPercent: '+panel.wPercent+', xPercent: '+panel.xPercent);
+          console.log('ECLAYOUT HORIZONTAL RECALC % newW: '+newW+' img: '+panel.id+', wPercent: '+panel.wPercent+', xPercent: '+panel.xPercent);
         }
       }
     }
@@ -259,13 +269,43 @@ var Electricomic = function(existingComic) {
           var panel = panels[j];
           panel.hPercent = panel.h * 100 / newH;
           panel.yPercent = panel.y * 100 / newH;
-          console.log('VERTICAL newH: '+newH+' img: '+panel.id+', hPercent: '+panel.hPercent+', yPercent: '+panel.yPercent);
+          console.log('ECLAYOUT VERTICAL RECALC % newH: '+newH+' img: '+panel.id+', hPercent: '+panel.hPercent+', yPercent: '+panel.yPercent);
         }
       }
     }
   };
 
-  this.updateScreen = function(newW, newH) {
+  // preserve image proportion in percentage relative to canvas size and recalculate raw pixel size
+  var recalculatePixels = function(newW, oldW, newH, oldH) {
+
+    // update horizontally
+    if (typeof newW !== 'undefined' && newW !== null && newW !== oldW) {
+      for (var i = 1; i < _comic.pages.length; i++) {
+        var panels = _comic.pages[i].panels;
+        for (var j = 1; j < panels.length; j++) {
+          var panel = panels[j];
+          panel.w = panel.wPercent * newW / 100;
+          panel.x = panel.xPercent * newW / 100;
+          console.log('ECLAYOUT HORIZONTAL RECALC PX newW: '+newW+' img: '+panel.id+', w: '+panel.w+', x: '+panel.x);
+        }
+      }
+    }
+
+    // update vertically
+    if (typeof newH !== 'undefined' && newH !== null && newH !== oldH) {
+      for (var i = 1; i < _comic.pages.length; i++) {
+        var panels = _comic.pages[i].panels;
+        for (var j = 1; j < panels.length; j++) {
+          var panel = panels[j];
+          panel.h = panel.hPercent * newH / 100;
+          panel.y = panel.yPercent * newH / 100;
+          console.log('ECLAYOUT VERTICAL RECALC PX newH: '+newH+' img: '+panel.id+', h: '+panel.h+', y: '+panel.y);
+        }
+      }
+    }
+  };
+
+  this.updateScreen = function(newW, newH, imageResizeMode) {
     var oldW = _comic.screenW;
     var oldH = _comic.screenH;
     console.log('eclayout.updateScreen ARGS newW: '+newW+', oldW: '+oldW+', newH: '+newH+', oldH: '+oldH);
@@ -275,8 +315,15 @@ var Electricomic = function(existingComic) {
     if (newH != null) {
       editComic('screenH', newH);
     }
-    // recalculate all percentage dimensions
-    updatePercentage(newW, oldW, newH, oldH);
+
+    // preserve image raw pixel size and recalculate all percentage relative to new canvas size
+    if (imageResizeMode === 'preservePixel') {
+      recalculatePercentage(newW, oldW, newH, oldH);
+    }
+    // preserve image proportion in percentage relative to canvas size and recalculate raw pixel size
+    else if (imageResizeMode === 'preservePercent'){
+      recalculatePixels(newW, oldW, newH, oldH);
+    }
   };
 
   this.updatePxRatio = function(pxRatio) {
