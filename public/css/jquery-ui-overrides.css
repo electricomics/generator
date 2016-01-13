@@ -1,0 +1,142 @@
+/* jQuery UI dialog box style overrides */
+/* CSS file linked both from within the iframe and from the main index.html */
+
+.dialog {
+  display: none;
+}
+
+.ui-widget {
+  font-family: 'muli', Arial, sans-serif;
+  font-size: 1em;
+  text-transform: uppercase;
+}
+
+.ui-widget button {
+  font-family: 'muli', Arial, sans-serif;
+}
+
+.ui-widget-content {
+  background: #000;
+  border: none;
+  color: #FFF;
+  font-size: 0.8em;
+}
+
+.ui-dialog {
+  color: #FFF;
+  font-size: 1em;
+  background: #000;
+  border: 2px solid #FFF;
+  border-radius: 30px;
+  padding: 0;
+}
+
+.ui-widget-header {
+  background: #000;
+  border: none;
+  border-bottom: 2px solid #FFF;
+  padding: 10px;
+  font-weight: normal;
+  text-align: center;
+  font-size: 1em;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+  padding: 10px;
+}
+
+.ui-dialog .ui-dialog-titlebar-close {
+  top: 10px;
+  right: 10px;
+}
+
+.ui-state-default .ui-icon.ui-icon-closethick,
+.ui-icon-closethick {
+  background-image: url(../img/close.svg);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: cover;
+}
+
+.ui-dialog .ui-dialog-title {
+  margin: 0;
+}
+
+.ui-dialog-content,
+.ui-dialog .ui-dialog-content {
+  padding: 10px;
+}
+
+.ui-dialog-content p,
+.ui-dialog .ui-dialog-content p {
+  margin: 0;
+}
+
+.ui-dialog-buttonpane,
+.ui-dialog .ui-dialog-buttonpane {
+  border-top: 2px solid #FFF;
+  padding: 10px 10px 0;
+  text-align: center;
+  margin: 0;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+  float: none;
+}
+
+.ui-dialog-buttonpane button,
+.ui-dialog .ui-dialog-buttonpane button {
+  margin: 0 10px 10px 0;
+}
+
+.ui-button-text-only .ui-button-text {
+  padding: 0;
+}
+
+.ui-dialog-buttonpane button:last-child,
+.ui-dialog .ui-dialog-buttonpane button:last-child {
+  margin-right: 0;
+}
+
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+  background: #000;
+  border: 2px solid #FFF;
+  border-radius: 20px;
+  color: #FFF;
+  display: inline-block;
+  margin: 0;
+  padding: 7px 20px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+.ui-state-hover,
+.ui-widget-content .ui-state-hover,
+.ui-widget-header .ui-state-hover {
+  color: #DDD;
+  border: 2px solid #DDD;
+  font-weight: normal;
+}
+
+.ui-state-default.ui-dialog-titlebar-close,
+.ui-widget-content .ui-state-default.ui-dialog-titlebar-close,
+.ui-widget-header .ui-state-default.ui-dialog-titlebar-close {
+  background: #000;
+  border: none;
+  border-radius: 0;
+  color: #FFF;
+  display: inline-block;
+  margin: 0;
+  padding: 10px;
+}
+
+.ui-state-hover.ui-dialog-titlebar-close,
+.ui-widget-content .ui-state-hover.ui-dialog-titlebar-close,
+.ui-widget-header .ui-state-hover.ui-dialog-titlebar-close {
+  background: #333;
+  color: #FFF;
+  border: none;
+}
