@@ -133,6 +133,16 @@ var ID = function() {
   return '_' + Math.random().toString(36).substr(2, 9);
 };
 
+// functions to prevent calculated px values to round above the canvas size
+var roundHorizontal = function(x) {
+  var comicWidth = $comicWidth.val();
+  return Math.min(Math.round(x), comicWidth);
+};
+
+var roundVertical = function(x) {
+  var comicHeight = $comicHeight.val();
+  return Math.min(Math.round(x), comicHeight);
+};
 
 /* --- Local Storage Code --- */
 
@@ -449,9 +459,9 @@ var addImgEvent = function($img) {
     handles: 'all',
     stop: function(event, ui) {
       //console.log('image resize: W: '+ui.size.width+', H: '+ ui.size.height);
-      $w.val(ui.size.width);
+      $w.val(roundHorizontal(ui.size.width));
       $w.trigger('change');
-      $h.val(ui.size.height);
+      $h.val(roundVertical(ui.size.height));
       $h.trigger('change');
     }
   });
@@ -459,9 +469,9 @@ var addImgEvent = function($img) {
   $img.draggable({
     stop: function(event, ui) {
       //console.log('image drag: left: '+ui.position.left+', top: '+ui.position.top);
-      $x.val(ui.position.left);
+      $x.val(roundHorizontal(ui.position.left));
       $x.trigger('change');
-      $y.val(ui.position.top);
+      $y.val(roundVertical(ui.position.top));
       $y.trigger('change');
     }
   });
@@ -540,10 +550,13 @@ var addPanelForm = function(obj) {
 
   $panel.find('.panel-w-natural').val(obj.naturalW);
   $panel.find('.panel-h-natural').val(obj.naturalH);
-  $panel.find('.panel-w').val(obj.w);
-  $panel.find('.panel-h').val(obj.h);
-  $panel.find('.panel-x').val(obj.x);
-  $panel.find('.panel-y').val(obj.y);
+  // MM round px values to nearest integer, making sure they don't go over the comic size.
+  // if the px values have been calculated after resize, they may be non-integer
+  // display integer makes sense in UI, but keep float value in model to avoid accumulating rounding errors if image is resized several times
+  $panel.find('.panel-w').val(roundHorizontal(obj.w));
+  $panel.find('.panel-h').val(roundVertical(obj.h));
+  $panel.find('.panel-x').val(roundHorizontal(obj.x));
+  $panel.find('.panel-y').val(roundVertical(obj.y));
   $panel.find('.panel-z').val(obj.z);
   
   $panel.find('.panel-page').val(obj.pageN);
@@ -740,8 +753,11 @@ var recalculatePixels = function(newW, oldW, newH, oldH) {
       var panel = comicPanels[i];
       var $panelWrapper = $('#panel' + panel.id);
       console.log('INTERFACE HORIZONTAL PX panel id: '+panel.id+', w: '+panel.w+', x: '+panel.x);
-      $panelWrapper.find('.panel-w').val(panel.w);
-      $panelWrapper.find('.panel-x').val(panel.x);
+      // MM round px values to nearest integer, making sure they don't go over the comic size.
+      // if the px values have been calculated after resize, they may be non-integer
+      // display integer makes sense in UI, but keep float value in model to avoid accumulating rounding errors if image is resized several times
+      $panelWrapper.find('.panel-w').val(roundHorizontal(panel.w));
+      $panelWrapper.find('.panel-x').val(roundHorizontal(panel.x));
       showResize(panel.id);
     }
   }
@@ -752,8 +768,8 @@ var recalculatePixels = function(newW, oldW, newH, oldH) {
       var panel = comicPanels[i];
       var $panelWrapper = $('#panel' + panel.id);
       console.log('INTERFACE HORIZONTAL PX panel id: '+panel.id+', h: '+panel.h+', y: '+panel.y);
-      $panelWrapper.find('.panel-h').val(panel.h);
-      $panelWrapper.find('.panel-y').val(panel.y);
+      $panelWrapper.find('.panel-h').val(roundVertical(panel.h));
+      $panelWrapper.find('.panel-y').val(roundVertical(panel.y));
       showResize(panel.id);
     }
   }
