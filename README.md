@@ -1,6 +1,6 @@
 # Introduction
 This program allows you to create simple Electricomics. Each consisting of a number of images placed on steps.
-It is written in Javascript and packaged as an app using NW.js (http://http://nwjs.io).
+It is written in Javascript and packaged as an app using NW.js (http://nwjs.io).
 
 The intention is to build from here to create the all singing Electricomic editor that people are crying out for.
 
